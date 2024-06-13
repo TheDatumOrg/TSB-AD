@@ -134,8 +134,7 @@ We organize the detection algorithms in TSB-AD in the following three categories
 | Algorithm    | Description|
 |:--|:---------|
 |MCD|is based on minimum covariance determinant, which seeks to find a subset of all the sequences to estimate the mean and covariance matrix of the subset with minimal determinant. Subsequently, Mahalanobis distance is utilized to calculate the distance from sub-sequences to the mean, which is regarded as the anomaly score.|
-|OCSVM|fits the dataset to find the normal data's boundary by maximizing the margin between the origin and the
-normal samples.|
+|OCSVM|fits the dataset to find the normal data's boundary by maximizing the margin between the origin and the normal samples.|
 |LOF|calculates the anomaly score by comparing local density with that of its neighbors.|
 |KNN|produces the anomaly score of the input instance as the distance to its $k$-th nearest neighbor.|
 |KMeansAD|calculates the anomaly scores for each sub-sequence by measuring the distance to the centroid of its assigned cluster, as determined by the k-means algorithm.|
