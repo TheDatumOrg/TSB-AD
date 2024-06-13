@@ -18,7 +18,13 @@ import os
 import tqdm
 
 import torchinfo
-from utils.dataset import ReconstructDataset
+import sys
+sys.path.append('..')
+try:
+    from utils.dataset import ReconstructDataset
+except:
+    from ..utils.dataset import ReconstructDataset
+
 
 class EarlyStopping:
     def __init__(self, patience=7, verbose=False, delta=0):

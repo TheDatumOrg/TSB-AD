@@ -19,8 +19,12 @@ import torch.nn.functional as F
 from transformers.models.gpt2.modeling_gpt2 import GPT2Model
 from einops import rearrange
 
-from utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, FixedEmbedding, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
-from utils.dataset import ReconstructDataset
+try:
+    from utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, FixedEmbedding, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
+    from utils.dataset import ReconstructDataset
+except:
+    from ..utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, FixedEmbedding, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
+    from ..utils.dataset import ReconstructDataset    
 
 class DataEmbedding_wo_pos(nn.Module):
     def __init__(self, c_in, d_model, embed_type='fixed', freq='h', dropout=0.1):

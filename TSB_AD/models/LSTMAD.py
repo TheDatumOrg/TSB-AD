@@ -11,8 +11,12 @@ import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
-from utils.torch_utility import EarlyStoppingTorch
-from utils.dataset import ForecastDataset
+try:
+    from utils.torch_utility import EarlyStoppingTorch
+    from utils.dataset import ForecastDataset
+except:
+    from ..utils.torch_utility import EarlyStoppingTorch
+    from ..utils.dataset import ForecastDataset    
 
 class LSTMModel(nn.Module):
     def __init__(self, window_size, feats, 

@@ -18,7 +18,11 @@ from sklearn.utils import check_array
 from .base import BaseDetector
 import sys
 sys.path.append('..')
-from utils.utility import check_parameter
+try:
+    from utils.utility import check_parameter
+except:
+    from ..utils.utility import check_parameter
+
 
 class COF(BaseDetector):
     """Connectivity-Based Outlier Factor (COF) COF uses the ratio of average

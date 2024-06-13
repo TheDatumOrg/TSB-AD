@@ -16,9 +16,12 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 import math
 
-from utils.torch_utility import EarlyStoppingTorch
-from utils.dataset import ReconstructDataset
-
+try:
+    from utils.torch_utility import EarlyStoppingTorch
+    from utils.dataset import ReconstructDataset
+except:
+    from ..utils.torch_utility import EarlyStoppingTorch
+    from ..utils.dataset import ReconstructDataset    
 
 class Model(nn.Module):
 

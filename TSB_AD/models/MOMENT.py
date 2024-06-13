@@ -17,8 +17,12 @@ from torch import nn
 import math
 
 from .base import BaseDetector
-from utils.dataset import ReconstructDataset_Moment
-from utils.torch_utility import EarlyStoppingTorch
+try:
+    from utils.dataset import ReconstructDataset_Moment
+    from utils.torch_utility import EarlyStoppingTorch
+except:
+    from ..utils.dataset import ReconstructDataset_Moment
+    from ..utils.torch_utility import EarlyStoppingTorch    
 
 class MOMENT(BaseDetector):
     def __init__(self, 

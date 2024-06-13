@@ -20,8 +20,12 @@ import tqdm
 
 import sys
 sys.path.append('..')
-from utils.dataset import ReconstructDataset
-from utils.torch_utility import EarlyStoppingTorch
+try:
+    from utils.dataset import ReconstructDataset
+    from utils.torch_utility import EarlyStoppingTorch
+except:
+    from ..utils.dataset import ReconstructDataset
+    from ..utils.torch_utility import EarlyStoppingTorch
 
 class USADModel(nn.Module):
     def __init__(self, feats):

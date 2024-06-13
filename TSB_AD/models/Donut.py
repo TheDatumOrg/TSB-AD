@@ -14,8 +14,12 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from typing import Tuple, Sequence, Union, Callable
 
-from utils.torch_utility import EarlyStoppingTorch
-from utils.dataset import ReconstructDataset
+try:
+    from utils.torch_utility import EarlyStoppingTorch
+    from utils.dataset import ReconstructDataset
+except:
+    from ..utils.torch_utility import EarlyStoppingTorch
+    from ..utils.dataset import ReconstructDataset    
 
 class DonutModel(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim, mask_prob) -> None:

@@ -13,10 +13,15 @@ from sklearn.cluster import KMeans
 from sklearn.utils import check_array
 from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.estimator_checks import check_estimator
-from utils.stat_models import pairwise_distances_no_broadcast
-from utils.utility import check_parameter
 
+try:
+    from utils.stat_models import pairwise_distances_no_broadcast
+    from utils.utility import check_parameter
+except:
+    from ..utils.stat_models import pairwise_distances_no_broadcast
+    from ..utils.utility import check_parameter    
 from .base import BaseDetector
+
 
 class CBLOF(BaseDetector):
     r"""The CBLOF operator calculates the outlier score based on cluster-based

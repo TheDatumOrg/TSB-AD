@@ -19,8 +19,10 @@ from .base import BaseDetector
 # noinspection PyProtectedMember
 import sys
 sys.path.append('..')
-from utils.utility import invert_order
-
+try:
+    from utils.utility import invert_order
+except:
+    from ..utils.utility import invert_order
 
 class IForest(BaseDetector):
     """Wrapper of scikit-learn Isolation Forest with more functionalities.

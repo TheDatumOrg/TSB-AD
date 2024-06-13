@@ -18,9 +18,12 @@ from .base import BaseDetector
 
 import sys
 sys.path.append('..')
-from utils.utility import check_parameter
-from utils.utility import standardizer
-
+try:
+    from utils.utility import check_parameter
+    from utils.utility import standardizer
+except:
+    from ..utils.utility import check_parameter
+    from ..utils.utility import standardizer    
 
 class PCA(BaseDetector):
     """Principal component analysis (PCA) can be used in detecting outliers.

@@ -17,7 +17,11 @@ from .base import BaseDetector
 
 import sys
 sys.path.append('..')
-from utils.utility import check_parameter, get_optimal_n_bins, invert_order
+try:
+    from utils.utility import check_parameter, get_optimal_n_bins, invert_order
+except:
+    from ..utils.utility import check_parameter, get_optimal_n_bins, invert_order
+
 
 class HBOS(BaseDetector):
     """Histogram- based outlier detection (HBOS) is an efficient unsupervised

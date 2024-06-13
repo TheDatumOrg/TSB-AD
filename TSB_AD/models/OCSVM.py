@@ -19,8 +19,10 @@ from .base import BaseDetector
 
 import sys
 sys.path.append('..')
-from utils.utility import invert_order
-
+try:
+    from utils.utility import invert_order
+except:
+    from ..utils.utility import invert_order
 
 class OCSVM(BaseDetector):
     """Wrapper of scikit-learn one-class SVM Class with more functionalities.

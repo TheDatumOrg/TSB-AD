@@ -17,9 +17,14 @@ from .feature import Window
 from .base import BaseDetector
 import sys
 sys.path.append('..')
-from utils.stat_models import pairwise_distances_no_broadcast
-from utils.dataset import TSDataset
-from utils.utility import get_activation_by_name
+try:
+    from utils.stat_models import pairwise_distances_no_broadcast
+    from utils.dataset import TSDataset
+    from utils.utility import get_activation_by_name
+except:
+    from ..utils.stat_models import pairwise_distances_no_broadcast
+    from ..utils.dataset import TSDataset
+    from ..utils.utility import get_activation_by_name   
 
 class InnerAutoencoder(nn.Module):
     def __init__(self,

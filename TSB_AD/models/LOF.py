@@ -16,7 +16,10 @@ from .feature import Window
 
 import sys
 sys.path.append('..')
-from utils.utility import invert_order
+try:
+    from utils.utility import invert_order
+except:
+    from ..utils.utility import invert_order
 
 # noinspection PyProtectedMember
 class LOF(BaseDetector):

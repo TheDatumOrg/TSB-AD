@@ -18,7 +18,10 @@ from sklearn.utils.validation import check_is_fitted
 
 import sys
 sys.path.append('..')
-from utils.utility import precision_n_scores, _pprint
+try:
+    from utils.utility import precision_n_scores, _pprint
+except:
+    from ..utils.utility import precision_n_scores, _pprint
 
 
 class BaseDetector(metaclass=abc.ABCMeta):
