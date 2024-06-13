@@ -1,37 +1,71 @@
 import numpy as np
 import math
-from utils.slidingWindows import find_length_rank
+try:
+    from utils.slidingWindows import find_length_rank
+except:
+    from .utils.slidingWindows import find_length_rank
 from sklearn.preprocessing import MinMaxScaler
 
-# from models.NormA import NORMA
-from models.LOF import LOF
-from models.IForest import IForest
-from models.MCD import MCD
-from models.POLY import POLY
-from models.MatrixProfile import MatrixProfile
-from models.PCA import PCA
-from models.HBOS import HBOS
-from models.OCSVM import OCSVM
-from models.KNN import KNN
-from models.KMeansAD import KMeansAD
-from models.COPOD import COPOD
-from models.CBLOF import CBLOF
-from models.COF import COF
-from models.EIF import EIF
-from models.RobustPCA import RobustPCA
-from models.AE import AutoEncoder
-from models.CNN import CNN
-from models.LSTMAD import LSTMAD
-from models.TranAD import TranAD
-from models.USAD import USAD
-from models.OmniAnomaly import OmniAnomaly
-from models.AnomalyTransformer import AnomalyTransformer
-from models.TimesNet import TimesNet
-from models.FITS import FITS
-from models.Donut import Donut
-from models.OFA import OFA
-from models.Lag_Llama import Lag_Llama
-# from models.Chronos import Chronos
+try:
+    # from models.NormA import NORMA
+    from models.LOF import LOF
+    from models.IForest import IForest
+    from models.MCD import MCD
+    from models.POLY import POLY
+    from models.MatrixProfile import MatrixProfile
+    from models.PCA import PCA
+    from models.HBOS import HBOS
+    from models.OCSVM import OCSVM
+    from models.KNN import KNN
+    from models.KMeansAD import KMeansAD
+    from models.COPOD import COPOD
+    from models.CBLOF import CBLOF
+    from models.COF import COF
+    from models.EIF import EIF
+    from models.RobustPCA import RobustPCA
+    from models.AE import AutoEncoder
+    from models.CNN import CNN
+    from models.LSTMAD import LSTMAD
+    from models.TranAD import TranAD
+    from models.USAD import USAD
+    from models.OmniAnomaly import OmniAnomaly
+    from models.AnomalyTransformer import AnomalyTransformer
+    from models.TimesNet import TimesNet
+    from models.FITS import FITS
+    from models.Donut import Donut
+    from models.OFA import OFA
+    from models.Lag_Llama import Lag_Llama
+    # from models.Chronos import Chronos
+except:
+    # from .models.NormA import NORMA
+    from .models.LOF import LOF
+    from .models.IForest import IForest
+    from .models.MCD import MCD
+    from .models.POLY import POLY
+    from .models.MatrixProfile import MatrixProfile
+    from .models.PCA import PCA
+    from .models.HBOS import HBOS
+    from .models.OCSVM import OCSVM
+    from .models.KNN import KNN
+    from .models.KMeansAD import KMeansAD
+    from .models.COPOD import COPOD
+    from .models.CBLOF import CBLOF
+    from .models.COF import COF
+    from .models.EIF import EIF
+    from .models.RobustPCA import RobustPCA
+    from .models.AE import AutoEncoder
+    from .models.CNN import CNN
+    from .models.LSTMAD import LSTMAD
+    from .models.TranAD import TranAD
+    from .models.USAD import USAD
+    from .models.OmniAnomaly import OmniAnomaly
+    from .models.AnomalyTransformer import AnomalyTransformer
+    from .models.TimesNet import TimesNet
+    from .models.FITS import FITS
+    from .models.Donut import Donut
+    from .models.OFA import OFA
+    from .models.Lag_Llama import Lag_Llama
+    # from .models.Chronos import Chronos    
 
 Unsupervise_AD_Pool = ['NORMA', 'IForest', 'IForest1', 'LOF', 'POLY', 'MatrixProfile', 'PCA', 'HBOS', 'KNN', 'KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
 Semisupervise_AD_Pool = ['MCD', 'OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA']

@@ -62,10 +62,12 @@ See Example in `TSB_AD/main.py`
 Or the following example on how to evaluate TSAD in 10 lines of code:
 ```bash
 import pandas as pd
-from from TSB_AD.models.IForest import IForest
+from TSB_AD.model_wrapper import run_Unsupervise_AD
 from TSB_AD.evaluation.metrics import get_metrics
 
-data_direc = '../Datasets/TSB-AD-U/001_NAB_data_Traffic_4_624_2087.csv'
+# Specify Anomaly Detector to use and data directory
+AD_Name = 'IForest'   # It can be replaced with any anomaly detector availale in TSB-AD
+data_direc = 'Datasets/TSB-AD-U/001_NAB_data_Traffic_4_624_2087.csv'
 
 # Loading Data
 df = pd.read_csv(data_direc).dropna()
@@ -73,12 +75,10 @@ data = df.iloc[:, 0:-1].values.astype(float)
 label = df['Label'].astype(int).to_numpy()
 
 # Applying Anomaly Detector
-clf = IForest()
-clf.fit(data)
-score = clf.decision_scores_
+output = run_Unsupervise_AD(AD_Name, data)
 
 # Evaluation
-evaluation_result = get_metrics(score, label)
+evaluation_result = get_metrics(output, label)
 ```
 
 <h2 id="tsb"> 3. Dive into TSB-AD </h2>
