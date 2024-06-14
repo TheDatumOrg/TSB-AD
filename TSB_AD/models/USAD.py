@@ -28,14 +28,14 @@ except:
     from ..utils.torch_utility import EarlyStoppingTorch
 
 class USADModel(nn.Module):
-    def __init__(self, feats):
+    def __init__(self, feats, n_window=5):
         super(USADModel, self).__init__()
         self.name = 'USAD'
         self.lr = 0.0001
         self.n_feats = feats
         self.n_hidden = 16
         self.n_latent = 5
-        self.n_window = 5 # USAD w_size = 5
+        self.n_window = n_window # USAD w_size = 5
         self.n = self.n_feats * self.n_window
         self.encoder = nn.Sequential(
             nn.Flatten(),
@@ -98,7 +98,7 @@ class USAD(BaseDetector):
         self.feats = feats
         self.validation_size = validation_size
 
-        self.model = USADModel(feats=self.feats).to(self.device)
+        self.model = USADModel(feats=self.feats, n_window=self.win_size).to(self.device)
         self.optimizer = torch.optim.AdamW(
             self.model.parameters(), lr=lr, weight_decay=1e-5
         )
