@@ -32,11 +32,12 @@ To install TSB-AD from source, you will need the following tools:
 git clone https://github.com/TheDatumOrg/TSB-AD.git
 ```
 
-**Step 2:** Create and activate a `conda` environment named `TSBAD`.
+**Step 2:** Create and activate a `conda` environment named `TSB-AD`.
 
 ```bash
-conda env create --file environment.yml
-conda activate TSBAD
+conda create -n TSB-AD    # Currently we support python>=3.8, up to 3.12
+conda activate TSB-AD
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
 
 **Step 3:** Install the dependencies from requirements.txt:
@@ -48,6 +49,11 @@ If you want to use Chronos, please install the following
 ```bash
 git clone https://github.com/autogluon/autogluon
 cd autogluon && pip install -e timeseries/[TimeSeriesDataFrame,TimeSeriesPredictor]
+```
+
+If you want to use MOMENT, please install the following
+```bash
+pip install momentfm   # only support Python 3.11 for now
 ```
 
 **Step 4:** Install the package:

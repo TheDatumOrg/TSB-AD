@@ -141,12 +141,13 @@ class LOF(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, slidingWindow=100, n_neighbors=20, algorithm='auto', leaf_size=30,
+    def __init__(self, slidingWindow=100, sub=True, n_neighbors=20, algorithm='auto', leaf_size=30,
                  metric='minkowski', p=2, metric_params=None,
                  contamination=0.1, n_jobs=1, novelty=True):
         super(LOF, self).__init__(contamination=contamination)
 
         self.slidingWindow = slidingWindow
+        self.sub = sub
         self.n_neighbors = n_neighbors
         self.algorithm = algorithm
         self.leaf_size = leaf_size
@@ -177,7 +178,7 @@ class LOF(BaseDetector):
 
         # print('self.slidingWindow: ', self.slidingWindow)
 
-        if n_features == 1: 
+        if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
 

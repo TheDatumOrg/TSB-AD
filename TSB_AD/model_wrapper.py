@@ -8,6 +8,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 try:
     # from models.NormA import NORMA
+    from models.SAND import SAND
+    # from models.Series2Graph import Series2Graph
     from models.LOF import LOF
     from models.IForest import IForest
     from models.MCD import MCD
@@ -38,6 +40,8 @@ try:
     # from models.Chronos import Chronos
 except:
     # from .models.NormA import NORMA
+    from .models.SAND import SAND
+    # from .models.Series2Graph import Series2Graph
     from .models.LOF import LOF
     from .models.IForest import IForest
     from .models.MCD import MCD
@@ -67,8 +71,8 @@ except:
     from .models.Lag_Llama import Lag_Llama
     # from .models.Chronos import Chronos    
 
-Unsupervise_AD_Pool = ['NORMA', 'IForest', 'IForest1', 'LOF', 'POLY', 'MatrixProfile', 'PCA', 'HBOS', 'KNN', 'KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
-Semisupervise_AD_Pool = ['MCD', 'OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA']
+Unsupervise_AD_Pool = ['NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
+Semisupervise_AD_Pool = ['MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
     try:
@@ -100,7 +104,7 @@ def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
         print(error_message)
         return error_message
 
-def run_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
+def run_Sub_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = IForest(slidingWindow=slidingWindow, n_estimators=n_estimators, max_features=max_features, n_jobs=n_jobs)
     clf.fit(data)
@@ -108,7 +112,7 @@ def run_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_IForest1(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
+def run_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = IForest(slidingWindow=slidingWindow, sub=False, n_estimators=n_estimators, max_features=max_features, n_jobs=n_jobs)
     clf.fit(data)
@@ -116,9 +120,17 @@ def run_IForest1(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=1):
+def run_Sub_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = LOF(slidingWindow=slidingWindow, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=1):
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = LOF(slidingWindow=slidingWindow, sub=False, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
@@ -140,9 +152,39 @@ def run_MatrixProfile(data, periodicity=1, n_jobs=1):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_PCA(data, periodicity=1, n_components=None, n_jobs=1):
+def run_SAND(data, periodicity=1):
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = SAND(pattern_length=slidingWindow, subsequence_length=4*(slidingWindow))
+    clf.fit(data.squeeze(), overlaping_rate=int(1.5*slidingWindow))
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+# def run_Series2Graph(data, periodicity=1):
+#     slidingWindow = find_length_rank(data, rank=periodicity)
+
+#     data = data.squeeze()
+#     s2g = Series2Graph(pattern_length=slidingWindow)
+#     s2g.fit(data)
+#     query_length = 2*slidingWindow
+#     s2g.score(query_length=query_length,dataset=data)
+
+#     score = s2g.decision_scores_
+#     score = np.array([score[0]]*math.ceil(query_length//2) + list(score) + [score[-1]]*(query_length//2))
+#     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+#     return score
+
+def run_Sub_PCA(data, periodicity=1, n_components=None, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = PCA(slidingWindow = slidingWindow, n_components=n_components)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_PCA(data, periodicity=1, n_components=None, n_jobs=1):
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = PCA(slidingWindow = slidingWindow, sub=False, n_components=n_components)
     clf.fit(data)
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
@@ -160,7 +202,7 @@ def run_PCA(data, periodicity=1, n_components=None, n_jobs=1):
 #         score = score[start:]
 #     return score
 
-def run_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
+def run_Sub_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = HBOS(slidingWindow=slidingWindow, n_bins=n_bins, tol=tol)
     clf.fit(data)
@@ -168,7 +210,15 @@ def run_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_OCSVM(data_train, data_test, kernel='rbf', nu='0.5', periodicity=1, n_jobs=1):
+def run_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = HBOS(slidingWindow=slidingWindow, sub=False, n_bins=n_bins, tol=tol)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_Sub_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_jobs=1):
     slidingWindow = find_length_rank(data_test, rank=periodicity)
     clf = OCSVM(slidingWindow=slidingWindow, kernel=kernel, nu=nu)
     clf.fit(data_train)
@@ -176,7 +226,15 @@ def run_OCSVM(data_train, data_test, kernel='rbf', nu='0.5', periodicity=1, n_jo
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_jobs=1):
+def run_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_jobs=1):
+    slidingWindow = find_length_rank(data_test, rank=periodicity)
+    clf = OCSVM(slidingWindow=slidingWindow, sub=False, kernel=kernel, nu=nu)
+    clf.fit(data_train)
+    score = clf.decision_function(data_test)
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_Sub_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_jobs=1):
     slidingWindow = find_length_rank(data_test, rank=periodicity)
     clf = MCD(slidingWindow=slidingWindow, support_fraction=support_fraction)
     clf.fit(data_train)
@@ -184,8 +242,17 @@ def run_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_jobs=
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_KNN(data, n_neighbors=10, method='largest', n_jobs=1):
-    clf = KNN(n_neighbors=n_neighbors, method=method, n_jobs=n_jobs)
+def run_Sub_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1):
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = KNN(slidingWindow=slidingWindow, n_neighbors=n_neighbors,method=method, n_jobs=n_jobs)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1):
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = KNN(slidingWindow=slidingWindow, n_neighbors=n_neighbors, sub=False, method=method, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
@@ -260,8 +327,8 @@ def run_TranAD(data_train, data_test, win_size=10, lr=1e-3):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_AnomalyTransformer(data_train, data_test, win_size=100, lr=1e-4):
-    clf = AnomalyTransformer(win_size=win_size, input_c=data_test.shape[1], lr=lr)
+def run_AnomalyTransformer(data_train, data_test, win_size=100, lr=1e-4, batch_size=128):
+    clf = AnomalyTransformer(win_size=win_size, input_c=data_test.shape[1], lr=lr, batch_size=batch_size)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
@@ -281,8 +348,8 @@ def run_USAD(data_train, data_test, win_size=5, lr=1e-4):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_Donut(data_train, data_test, win_size=120, lr=1e-4):
-    clf = Donut(win_size=win_size, input_c=data_test.shape[1], lr=lr)
+def run_Donut(data_train, data_test, win_size=120, lr=1e-4, batch_size=128):
+    clf = Donut(win_size=win_size, input_c=data_test.shape[1], lr=lr, batch_size=batch_size)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
@@ -302,22 +369,22 @@ def run_FITS(data_train, data_test, win_size=100, lr=1e-3):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_OFA(data_train, data_test, win_size=100):
-    clf = OFA(win_size=win_size, enc_in=data_test.shape[1], epochs=10)
+def run_OFA(data_train, data_test, win_size=100, batch_size = 64):
+    clf = OFA(win_size=win_size, enc_in=data_test.shape[1], epochs=10, batch_size=batch_size)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_Lag_Llama(data, win_size=96):
-    clf = Lag_Llama(win_size=win_size, input_c=data.shape[1], batch_size=128)
+def run_Lag_Llama(data, win_size=96, batch_size=64):
+    clf = Lag_Llama(win_size=win_size, input_c=data.shape[1], batch_size=batch_size)
     clf.fit(data)
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-# def run_Chronos(data, win_size):
-#     clf = Chronos(win_size=win_size, prediction_length=1, input_c=data.shape[1], model_size='base')
+# def run_Chronos(data, win_size=50, batch_size=64):
+#     clf = Chronos(win_size=win_size, prediction_length=1, input_c=data.shape[1], model_size='base', batch_size=batch_size)
 #     clf.fit(data)
 #     score = clf.decision_scores_
 #     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()

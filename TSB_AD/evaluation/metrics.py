@@ -3,7 +3,7 @@ from .affiliation.generics import convert_vector_to_events
 from .affiliation.metrics import pr_from_events
 from .basic_metrics import basic_metricor, generate_curve, generate_curve_numba, EventF1PA_metricor, PointF1PA_metricor
 
-def get_metrics(score, labels, slidingWindow=100, pred=None):
+def get_metrics(score, labels, slidingWindow=100, pred=None, version='opt', thre=250):
     metrics = {}
 
     grader = basic_metricor()
@@ -26,7 +26,7 @@ def get_metrics(score, labels, slidingWindow=100, pred=None):
     Affiliation_F = 2*Affiliation_Precision*Affiliation_Recall / (Affiliation_Precision+Affiliation_Recall+0.00001)
 
     # R_AUC_ROC, R_AUC_PR, _, _, _ = grader.RangeAUC(labels=labels, score=score, window=slidingWindow, plot_ROC=True)
-    _, _, _, _, _, _,VUS_ROC, VUS_PR = generate_curve(labels, score, 2*slidingWindow)
+    _, _, _, _, _, _,VUS_ROC, VUS_PR = generate_curve(labels, score, slidingWindow, version, thre)
     # _, _, _, _, _, _,VUS_ROC, VUS_PR = generate_curve_numba(labels, score, 2*slidingWindow)
 
 

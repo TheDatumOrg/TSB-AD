@@ -78,9 +78,10 @@ class HBOS(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, slidingWindow=100, n_bins=10, alpha=0.1, tol=0.5, contamination=0.1):
+    def __init__(self, slidingWindow=100, sub=True, n_bins=10, alpha=0.1, tol=0.5, contamination=0.1):
         super(HBOS, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
+        self.sub = sub
         self.n_bins = n_bins
         self.alpha = alpha
         self.tol = tol
@@ -106,7 +107,7 @@ class HBOS(BaseDetector):
         """
         n_samples, n_features = X.shape
 
-        if n_features == 1: 
+        if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
 

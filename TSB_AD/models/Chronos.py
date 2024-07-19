@@ -7,6 +7,7 @@ from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
+import tempfile
 
 from .base import BaseDetector
 
@@ -17,7 +18,7 @@ class Chronos(BaseDetector):
                  model_size = 'small',  # [tiny, small, base]
                  prediction_length=1, 
                  input_c=1, 
-                 batch_size=256):
+                 batch_size=128):
 
         self.model_name = 'Chronos'
         self.model_size = model_size
@@ -44,22 +45,24 @@ class Chronos(BaseDetector):
                     count += 1
             train_data = pd.DataFrame(train_data, columns=['item_id', 'timestamp', 'target'])
 
-            predictor = TimeSeriesPredictor(prediction_length=self.prediction_length, path=f'AutogluonModels/chronos_{self.model_size}').fit(
-                    train_data, 
-                    hyperparameters={
-                    "Chronos": {
-                    "model_path": self.model_size,   # base
-                    "device": "cuda",
-                    "batch_size": self.batch_size}},
-                    skip_model_selection=True,
-                    verbosity=0)
+            with tempfile.TemporaryDirectory() as temp_dir:
 
-            predictions = predictor.predict(train_data)['mean'].to_numpy().reshape(-1, self.prediction_length)
-            print('predictions: ', predictions.shape)
+                predictor = TimeSeriesPredictor(prediction_length=self.prediction_length, path=temp_dir).fit(
+                        train_data, 
+                        hyperparameters={
+                        "Chronos": {
+                        "model_path": self.model_size,   # base
+                        "device": "cuda",
+                        "batch_size": self.batch_size}},
+                        skip_model_selection=True,
+                        verbosity=0)
 
-            ### using mse as the anomaly score
-            scores = (data_target.squeeze() - predictions.squeeze()) ** 2
-            self.score_list.append(scores)
+                predictions = predictor.predict(train_data)['mean'].to_numpy().reshape(-1, self.prediction_length)
+                print('predictions: ', predictions.shape)
+
+                ### using mse as the anomaly score
+                scores = (data_target.squeeze() - predictions.squeeze()) ** 2
+                self.score_list.append(scores)
 
         scores_merge = np.mean(np.array(self.score_list), axis=0)
         # print('scores_merge: ', scores_merge.shape)

@@ -65,11 +65,12 @@ def generate_curve_numba(label,score,slidingWindow):
     
     return Y, Z, X, X_ap, W, Z_ap,avg_auc_3d, avg_ap_3d
 
-def generate_curve(label,score,slidingWindow):
-    tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = basic_metricor().RangeAUC_volume(labels_original=label, score=score, windowSize=1*slidingWindow)
-    
-    ## Numba version
-    # tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = RangeAUC_volume(labels_original=label, score=score, windowSize=1*slidingWindow)
+def generate_curve(label, score, slidingWindow, version='opt', thre=250):
+    if version =='opt_mem':
+        tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = basic_metricor().RangeAUC_volume_opt_mem(labels_original=label, score=score, windowSize=slidingWindow, thre=thre)
+    else:
+        tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = basic_metricor().RangeAUC_volume_opt(labels_original=label, score=score, windowSize=slidingWindow, thre=thre)
+
 
     X = np.array(tpr_3d).reshape(1,-1).ravel()
     X_ap = np.array(tpr_3d)[:,:-1].reshape(1,-1).ravel()
@@ -465,65 +466,206 @@ class basic_metricor:
         
         return AUC_range
         
+    def new_sequence(self, label, sequence_original, window): 
+        a = max(sequence_original[0][0] - window//2, 0)
+        sequence_new = []
+        for i in range (len(sequence_original) - 1):
+            if sequence_original[i][1] + window//2 < sequence_original[i+1][0] - window//2:
+                sequence_new.append((a, sequence_original[i][1] + window//2))
+                a = sequence_original[i+1][0] - window//2
+        sequence_new.append((a, min(sequence_original[len(sequence_original)-1][1] + window//2, len(label)-1)))
+        return sequence_new
+
+    def sequencing(self, x, L, window=5):
+        label = x.copy().astype(float)
+        length = len(label)
+        
+        for k in range(len(L)):
+            s = L[k][0] 
+            e = L[k][1] 
+            
+            x1 = np.arange(e+1,min(e+window//2+1,length))
+            label[x1] += np.sqrt(1 - (x1-e)/(window))
+            
+            x2 = np.arange(max(s-window//2,0),s)
+            label[x2] += np.sqrt(1 - (s-x2)/(window))
+            
+        label = np.minimum(np.ones(length), label)
+        return label
 
     # TPR_FPR_window
-    def RangeAUC_volume(self, labels_original, score, windowSize):
-        score_sorted = -np.sort(-score)
-        
-        tpr_3d=[]
-        fpr_3d=[]
-        prec_3d=[]
-        
-        auc_3d=[]
-        ap_3d=[]
-        
+    def RangeAUC_volume_opt(self, labels_original, score, windowSize, thre=250):
         window_3d = np.arange(0, windowSize+1, 1)
         P = np.sum(labels_original)
-       
-        for window in window_3d:
-            labels = self.extend_postive_range(labels_original, window)
-            
-            # print(np.sum(labels))
-            L = self.range_convers_new(labels)
-            TPR_list = [0]
-            FPR_list = [0]
-            Precision_list = [1]
-            
-            for i in np.linspace(0, len(score)-1, 250).astype(int):
-                threshold = score_sorted[i]
-                # print('thre='+str(threshold))
-                pred = score>= threshold
-                TPR, FPR, Precision = self.TPR_FPR_RangeAUC(labels, pred, P,L)
-                
-                TPR_list.append(TPR)
-                FPR_list.append(FPR)
-                Precision_list.append(Precision)
-                
-            TPR_list.append(1)
-            FPR_list.append(1)   # otherwise, range-AUC will stop earlier than (1,1)
-            
-            
-            tpr = np.array(TPR_list)
-            fpr = np.array(FPR_list)
-            prec = np.array(Precision_list)
-            
-            tpr_3d.append(tpr)
-            fpr_3d.append(fpr)
-            prec_3d.append(prec)
-            
-            width = fpr[1:] - fpr[:-1]
-            height = (tpr[1:] + tpr[:-1])/2
-            AUC_range = np.sum(width*height)
-            auc_3d.append(AUC_range)
-            
-            width_PR = tpr[1:-1] - tpr[:-2]
-            height_PR = (prec[1:] + prec[:-1])/2
-            AP_range = np.sum(width_PR*height_PR)
-            ap_3d.append(AP_range)
+        seq = self.range_convers_new(labels_original)
+        l = self.new_sequence(labels_original, seq, windowSize)
+        
+        score_sorted = -np.sort(-score)
 
-        
+        tpr_3d=np.zeros((windowSize+1,thre+2))
+        fpr_3d=np.zeros((windowSize+1,thre+2))
+        prec_3d=np.zeros((windowSize+1,thre+1))
+
+        auc_3d=np.zeros(windowSize+1)
+        ap_3d=np.zeros(windowSize+1)
+
+        tp = np.zeros(thre)
+        N_pred = np.zeros(thre)
+
+        for k,i in enumerate(np.linspace(0, len(score)-1, thre).astype(int)):
+            threshold = score_sorted[i]
+            pred = score>= threshold
+            N_pred[k]=np.sum(pred)
+
+        for window in window_3d:
+
+            labels = self.sequencing(labels_original, seq, window)
+            L = self.new_sequence(labels, seq, window)      
+
+            TF_list = np.zeros((thre+2,2))
+            Precision_list = np.ones(thre+1)
+            j=0
+            N_labels = 0
+
+            for seg in l:
+                N_labels += np.sum(labels[seg[0]:seg[1]+1])
+
+            for i in np.linspace(0, len(score)-1, thre).astype(int):
+                threshold = score_sorted[i]
+                pred = score>= threshold
+                
+                TP = 0
+                for seg in l:
+                    TP += np.dot(labels[seg[0]:seg[1]+1], pred[seg[0]:seg[1]+1])
+
+                TP += tp[j]
+                FP = N_pred[j] - TP
+
+                existence = 0
+                for seg in L:
+                    if np.dot(labels[seg[0]:(seg[1]+1)],pred[seg[0]:(seg[1]+1)])>0:
+                        existence += 1
+
+                existence_ratio = existence/len(L)
+
+                P_new = (P+N_labels)/2
+                recall = min(TP/P_new,1)
+
+                TPR = recall*existence_ratio
+                N_new = len(labels) - P_new
+                FPR = FP/N_new
+                
+                Precision = TP/N_pred[j]
+                
+                j+=1
+                TF_list[j]=[TPR,FPR]
+                Precision_list[j]=Precision
+                
+                
+            TF_list[j+1]=[1,1]   # otherwise, range-AUC will stop earlier than (1,1)
+            
+            tpr_3d[window]=TF_list[:,0]
+            fpr_3d[window]=TF_list[:,1]
+            prec_3d[window]=Precision_list
+            
+            width = TF_list[1:,1] - TF_list[:-1,1]
+            height = (TF_list[1:,0] + TF_list[:-1,0])/2
+            AUC_range = np.dot(width,height)
+            auc_3d[window]=(AUC_range)
+            
+            width_PR = TF_list[1:-1,0] - TF_list[:-2,0]
+            height_PR = (Precision_list[1:] + Precision_list[:-1])/2
+
+            AP_range = np.dot(width_PR,height_PR)
+            ap_3d[window]=AP_range
+
         return tpr_3d, fpr_3d, prec_3d, window_3d, sum(auc_3d)/len(window_3d), sum(ap_3d)/len(window_3d)
-        
+
+    def RangeAUC_volume_opt_mem(self, labels_original, score, windowSize, thre=250):
+        window_3d = np.arange(0, windowSize+1, 1)
+        P = np.sum(labels_original)
+        seq = self.range_convers_new(labels_original)
+        l = self.new_sequence(labels_original, seq, windowSize)
+
+        score_sorted = -np.sort(-score)
+
+        tpr_3d=np.zeros((windowSize+1,thre+2))
+        fpr_3d=np.zeros((windowSize+1,thre+2))
+        prec_3d=np.zeros((windowSize+1,thre+1))
+
+        auc_3d=np.zeros(windowSize+1)
+        ap_3d=np.zeros(windowSize+1)
+
+        tp = np.zeros(thre)
+        N_pred = np.zeros(thre)
+        p = np.zeros((thre,len(score)))
+
+        for k,i in enumerate(np.linspace(0, len(score)-1, thre).astype(int)):
+            threshold = score_sorted[i]
+            pred = score>= threshold
+            p[k]=pred
+            N_pred[k]=np.sum(pred)
+
+        for window in window_3d:
+
+            labels = self.sequencing(labels_original, seq, window)
+            L = self.new_sequence(labels, seq, window)
+
+            TF_list = np.zeros((thre+2,2))
+            Precision_list = np.ones(thre+1)
+            j=0
+            N_labels = 0
+
+            for seg in l:
+                N_labels += np.sum(labels[seg[0]:seg[1]+1])
+
+            for i in np.linspace(0, len(score)-1, thre).astype(int):
+                
+                TP = 0
+                for seg in l:
+                    TP += np.dot(labels[seg[0]:seg[1]+1], p[j][seg[0]:seg[1]+1])
+
+                TP += tp[j]
+                FP = N_pred[j] - TP
+
+                existence = 0
+                for seg in L:
+                    if np.dot(labels[seg[0]:(seg[1]+1)],p[j][seg[0]:(seg[1]+1)])>0:
+                        existence += 1
+
+                existence_ratio = existence/len(L)
+
+                P_new = (P+N_labels)/2
+                recall = min(TP/P_new,1)
+
+                TPR = recall*existence_ratio
+                N_new = len(labels) - P_new
+                FPR = FP/N_new
+                
+                Precision = TP/N_pred[j]
+                j+=1
+                
+                TF_list[j]=[TPR,FPR]
+                Precision_list[j]=Precision
+
+            TF_list[j+1]=[1,1]
+            
+
+            tpr_3d[window]=TF_list[:,0]
+            fpr_3d[window]=TF_list[:,1]
+            prec_3d[window]=Precision_list
+            
+            width = TF_list[1:,1] - TF_list[:-1,1]
+            height = (TF_list[1:,0] + TF_list[:-1,0])/2
+            AUC_range = np.dot(width,height)
+            auc_3d[window]=(AUC_range)
+            
+            width_PR = TF_list[1:-1,0] - TF_list[:-2,0]
+            height_PR = (Precision_list[1:] + Precision_list[:-1])/2
+            AP_range = np.dot(width_PR,height_PR)
+            ap_3d[window]=(AP_range)
+
+        return tpr_3d, fpr_3d, prec_3d, window_3d, sum(auc_3d)/len(window_3d), sum(ap_3d)/len(window_3d)        
         
 class EventF1PA_metricor():
     def __init__(self, mode="log", base=3) -> None:

@@ -191,13 +191,14 @@ class PCA(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, slidingWindow=100, n_components=None, n_selected_components=None,
+    def __init__(self, slidingWindow=100, sub = True, n_components=None, n_selected_components=None,
                  contamination=0.1, copy=True, whiten=False, svd_solver='auto',
                  tol=0.0, iterated_power='auto', random_state=0,
                  weighted=True, standardization=True, zero_pruning=True):
 
         super(PCA, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
+        self.sub = sub
         self.n_components = n_components
         self.n_selected_components = n_selected_components
         self.copy = copy
@@ -229,7 +230,7 @@ class PCA(BaseDetector):
         """
         n_samples, n_features = X.shape
 
-        if n_features == 1: 
+        if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
 

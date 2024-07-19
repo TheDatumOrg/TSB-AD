@@ -122,11 +122,12 @@ class OCSVM(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, slidingWindow=100, kernel='rbf', degree=3, gamma='auto', coef0=0.0,
+    def __init__(self, slidingWindow=100, kernel='rbf', sub=True, degree=3, gamma='auto', coef0=0.0,
                  tol=1e-3, nu=0.5, shrinking=True, cache_size=200,
                  verbose=False, max_iter=-1, contamination=0.1):
         super(OCSVM, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
+        self.sub = sub
         self.kernel = kernel
         self.degree = degree
         self.gamma = gamma
@@ -160,7 +161,7 @@ class OCSVM(BaseDetector):
         """
         n_samples, n_features = X.shape
 
-        if n_features == 1: 
+        if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
 

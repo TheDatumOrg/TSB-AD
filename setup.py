@@ -28,7 +28,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.9'
     ],
-    python_requires='>=3.9',  # Minimum version requirement of the package
+    python_requires='>=3.8',  # Minimum version requirement of the package
     entry_points={},
     include_package_data=True,  # Whether to include non-code files in the package
     zip_safe=False,  # Whether the package can be run out of a zip file

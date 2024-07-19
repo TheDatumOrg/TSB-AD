@@ -110,11 +110,12 @@ class MCD(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, slidingWindow=100, contamination=0.1, store_precision=True,
+    def __init__(self, slidingWindow=100, sub=True, contamination=0.1, store_precision=True,
                  assume_centered=False, support_fraction=None,
                  random_state=2024):
         super(MCD, self).__init__(contamination=contamination)
         self.store_precision = store_precision
+        self.sub = sub
         self.assume_centered = assume_centered
         self.support_fraction = support_fraction
         self.random_state = random_state
@@ -139,7 +140,7 @@ class MCD(BaseDetector):
         """
         n_samples, n_features = X.shape
 
-        if n_features == 1: 
+        if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
 
