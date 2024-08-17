@@ -101,7 +101,7 @@ if __name__ == '__main__':
     ## ArgumentParser
     parser = argparse.ArgumentParser(description='Generating Anomaly Scores and Saving Evaluation Results')
     parser.add_argument('--dataset_dir', type=str, help='path to the dataset', default='TSB-AD-U/')
-    parser.add_argument('--file_lsit', type=str, help='path to the file list', default='TSB-AD-U-Eval-List.csv')
+    parser.add_argument('--file_list', type=str, help='path to the file list', default='TSB-AD-U-Eval-List.csv')
     parser.add_argument('--score_dir', type=str, help='path to save the anomaly score', default='.../score/uni/')
     parser.add_argument('--save_dir', type=str, help='path to save the evaluation result', default='.../eval/uni/')
     parser.add_argument('--save', type=bool, help='whether to save the evaluation result',  default=True)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     os.makedirs(target_dir, exist_ok = True)
     logger = configure_logger(filename=f'{target_dir}/000_run_{args.AD_Name}.log')
 
-    file_list = pd.read_csv(args.file_lsit)['file_name'].values
+    file_list = pd.read_csv(args.file_list)['file_name'].values
     Optimal_Det_HP = Optimal_Uni_algo_HP_dict[args.AD_Name]
     print('Optimal_Det_HP: ', Optimal_Det_HP)
 
