@@ -36,7 +36,6 @@ try:
     from models.FITS import FITS
     from models.Donut import Donut
     from models.OFA import OFA
-    from models.Lag_Llama import Lag_Llama
     # from models.Chronos import Chronos
 except:
     # from .models.NormA import NORMA
@@ -68,7 +67,6 @@ except:
     from .models.FITS import FITS
     from .models.Donut import Donut
     from .models.OFA import OFA
-    from .models.Lag_Llama import Lag_Llama
     # from .models.Chronos import Chronos    
 
 Unsupervise_AD_Pool = ['NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
@@ -377,6 +375,10 @@ def run_OFA(data_train, data_test, win_size=100, batch_size = 64):
     return score
 
 def run_Lag_Llama(data, win_size=96, batch_size=64):
+    try:
+        from .models.Lag_Llama import Lag_Llama
+    except:
+        from models.Lag_Llama import Lag_Llama
     clf = Lag_Llama(win_size=win_size, input_c=data.shape[1], batch_size=batch_size)
     clf.fit(data)
     score = clf.decision_scores_
