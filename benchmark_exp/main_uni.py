@@ -101,6 +101,10 @@ def main():
     parser.add_argument('--n_jobs', type=int, help='number of jobs', default=1)
 
     args = parser.parse_args()
+    results_file = f'{args.save_dir}/{args.AD_Name}.csv'
+    if os.path.exists(results_file):
+        print(f"Results file {results_file} already exists.")
+        return
 
     target_dir = os.path.join(args.score_dir, args.AD_Name)
     os.makedirs(target_dir, exist_ok = True)
@@ -111,9 +115,8 @@ def main():
     print('Optimal_Det_HP: ', Optimal_Det_HP)
 
     results = Parallel(n_jobs=args.n_jobs)(delayed(eval_one)(filename, args, Optimal_Det_HP, logger, target_dir) for filename in file_list)
-    import pdb; pdb.set_trace()
     df = pd.DataFrame(results)
-    df.to_csv(f'{args.save_dir}/{args.AD_Name}.csv', index=False)
+    df.to_csv(results_file, index=False)
 
 if __name__ == '__main__':
     main()

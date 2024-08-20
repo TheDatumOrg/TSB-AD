@@ -327,7 +327,7 @@ class AnomalyTransformer():
         self.cuda = True
         if self.cuda == True and torch.cuda.is_available():
             self.device = torch.device("cuda")
-            print("----- Using GPU -----")
+            print(f"----- Using GPU {torch.cuda.get_device_name()} -----")
         else:
             if self.cuda == True and not torch.cuda.is_available():
                 print("----- GPU is unavailable -----")
