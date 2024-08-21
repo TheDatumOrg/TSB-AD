@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from torch import nn
+import subprocess as sp
 import os, math
 
 class EarlyStoppingTorch:
@@ -184,7 +185,7 @@ def adjust_learning_rate(optimizer, epoch, lradj, learning_rate):
 
 def min_memory_id():
     output = sp.check_output(["/usr/bin/nvidia-smi", "--query-gpu=memory.used", "--format=csv"])
-    memory = [int(s.split(" ")[0]) for s in output.decode.split("\n")[1:-1]]
+    memory = [int(s.split(" ")[0]) for s in output.decode().split("\n")[1:-1]]
     assert len(memory) == torch.cuda.device_count()
     return np.argmin(memory)
 
