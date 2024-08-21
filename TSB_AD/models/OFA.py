@@ -20,10 +20,10 @@ from transformers.models.gpt2.modeling_gpt2 import GPT2Model
 from einops import rearrange
 
 try:
-    from utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, FixedEmbedding, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
+    from utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, get_gpu, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
     from utils.dataset import ReconstructDataset
 except:
-    from ..utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, FixedEmbedding, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
+    from ..utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, get_gpu, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
     from ..utils.dataset import ReconstructDataset    
 
 class DataEmbedding_wo_pos(nn.Module):
@@ -225,14 +225,8 @@ class OFA():
         self.y_hats = None
         
         self.cuda = cuda
-        if self.cuda == True and torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            print("----- Using GPU -----")
-        else:
-            if self.cuda == True and not torch.cuda.is_available():
-                print("----- GPU is unavailable -----")
-            self.device = torch.device("cpu")
-            print("----- Using CPU -----")
+        self.device = get_gpu(self.cuda)
+
             
         self.model = Model(seq_len=self.win_size, enc_in=self.enc_in).float().to(self.device)
         self.model_optim = optim.Adam(self.model.parameters(), lr=self.learning_rate)

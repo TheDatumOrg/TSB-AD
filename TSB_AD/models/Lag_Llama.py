@@ -19,6 +19,11 @@ import sys
 sys.path.append('/data/liuqinghua/code/ts/TSAD-AutoML/lag-llama')
 from lag_llama.gluon.estimator import LagLlamaEstimator
 
+try:
+    from utils.torch_utility import get_gpu
+except:
+    from ..utils.torch_utility import get_gpu
+
 class Lag_Llama():
     def __init__(self, 
                  win_size=96, 
@@ -40,14 +45,8 @@ class Lag_Llama():
         self.score_list = []
 
         self.cuda = True
-        if self.cuda == True and torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            print("----- Using GPU -----")
-        else:
-            if self.cuda == True and not torch.cuda.is_available():
-                print("----- GPU is unavailable -----")
-            self.device = torch.device("cpu")
-            print("----- Using CPU -----")
+        self.device = get_gpu(self.cuda)
+
 
     def fit(self, data):
 

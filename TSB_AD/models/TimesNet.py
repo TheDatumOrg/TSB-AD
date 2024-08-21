@@ -19,10 +19,10 @@ import tqdm
 import os
 
 try:
-    from utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate
+    from utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate, get_gpu
     from utils.dataset import ReconstructDataset
 except:
-    from ..utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate
+    from ..utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate, get_gpu
     from ..utils.dataset import ReconstructDataset    
  
 class Inception_Block_V1(nn.Module):
@@ -207,14 +207,7 @@ class TimesNet():
         self.y_hats = None
         
         self.cuda = cuda
-        if self.cuda == True and torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            print("----- Using GPU -----")
-        else:
-            if self.cuda == True and not torch.cuda.is_available():
-                print("----- GPU is unavailable -----")
-            self.device = torch.device("cpu")
-            print("----- Using CPU -----")
+        self.device = get_gpu(self.cuda)
             
         self.model = Model(seq_len=self.win_size, enc_in=self.enc_in).float().to(self.device)
         self.model_optim = optim.Adam(self.model.parameters(), lr=self.lr)

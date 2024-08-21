@@ -12,10 +12,10 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 
 try:
-    from utils.torch_utility import EarlyStoppingTorch
+    from utils.torch_utility import EarlyStoppingTorch, get_gpu
     from utils.dataset import ForecastDataset
 except:
-    from ..utils.torch_utility import EarlyStoppingTorch
+    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
     from ..utils.dataset import ForecastDataset    
 
 class LSTMModel(nn.Module):
@@ -67,14 +67,8 @@ class LSTMAD():
         self.y_hats = None
         
         self.cuda = cuda
-        if self.cuda == True and torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            print("----- Using GPU -----")
-        else:
-            if self.cuda == True and not torch.cuda.is_available():
-                print("----- GPU is unavailable -----")
-            self.device = torch.device("cpu")
-            print("----- Using CPU -----")
+        self.device = get_gpu(self.cuda)
+
         
         self.window_size = window_size
         self.pred_len = pred_len
