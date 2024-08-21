@@ -137,7 +137,7 @@ def run_POLY(data, periodicity=1, power=3, n_jobs=1):
 
 def run_MatrixProfile(data, periodicity=1, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = MatrixProfile(slidingWindow = slidingWindow, n_jobs=n_jobs)
+    clf = MatrixProfile(window=slidingWindow)
     clf.fit(data)
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()

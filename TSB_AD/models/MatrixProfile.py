@@ -38,7 +38,10 @@ class MatrixProfile():
         self : object
             Fitted estimator.
         """
-        self.profile = stumpy.stump(X,m=self.window)
+        self.profile = stumpy.stump(X.ravel(),m=self.window)
         #self.profile = mp.compute(X, windows=self.window)
-        self.decision_scores_ = self.profile[:,0]#['mp']
+        res = np.zeros(len(X))
+        res.fill(self.profile[:, 0].min())
+        res[self.window//2:-self.window//2+1] = self.profile[:, 0]
+        self.decision_scores_ = res
         return self
