@@ -193,7 +193,7 @@ def min_memory_id():
 def get_gpu(cuda):
     if cuda == True and torch.cuda.is_available():
         device = torch.device(f"cuda:{min_memory_id()}")
-
+        torch.cuda.set_device(device)
         print(f"----- Using GPU {torch.cuda.current_device()} -----")
     else:
         if cuda == True and not torch.cuda.is_available():
