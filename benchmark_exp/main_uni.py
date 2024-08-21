@@ -81,7 +81,6 @@ def eval_one(filename, args, Optimal_Det_HP, logger, target_dir):
             print(output)
             logger.error(f'At {filename}: '+output)
 
-    ### whether to save the evaluation result
     evaluation_result = get_metrics(output, label, slidingWindow=slidingWindow)
     print('evaluation_result: ', evaluation_result)
     evaluation_result['Time'] = run_time
