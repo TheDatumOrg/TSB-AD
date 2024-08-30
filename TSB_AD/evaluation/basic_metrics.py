@@ -279,7 +279,7 @@ class basic_metricor:
         
         Nr = len(range_label)    # total # of real anomaly segments
 
-        ExistenceReward = self.existence_reward(range_label, p)
+        ExistenceReward = self.existence_reward(range_label, preds)
 
 
         OverlapReward = 0
@@ -292,38 +292,24 @@ class basic_metricor:
             return score/Nr, ExistenceReward/Nr, OverlapReward/Nr
         else:
             return 0,0,0
+    
 
     def range_convers_new(self, label):
         '''
         input: arrays of binary values 
         output: list of ordered pair [[a0,b0], [a1,b1]... ] of the inputs
         '''
-        L = []
-        i = 0
-        j = 0 
-        while j < len(label):
-            # print(i)
-            while label[i] == 0:
-                i+=1
-                if i >= len(label):
-                    break
-            j = i+1
-            # print('j'+str(j))
-            if j >= len(label):
-                if j==len(label):
-                    L.append((i,j-1))
-    
-                break
-            while label[j] != 0:
-                j+=1
-                if j >= len(label):
-                    L.append((i,j-1))
-                    break
-            if j >= len(label):
-                break
-            L.append((i, j-1))
-            i = j
-        return L
+        anomaly_starts = np.where(np.diff(label) == 1)[0] + 1
+        anomaly_ends, = np.where(np.diff(label) == -1)
+        if len(anomaly_ends):
+            if not len(anomaly_starts) or anomaly_ends[0] < anomaly_starts[0]:
+                # we started with an anomaly, so the start of the first anomaly is the start of the labels
+                anomaly_starts = np.concatenate([[0], anomaly_starts])
+        if len(anomaly_starts):
+            if not len(anomaly_ends) or anomaly_ends[-1] < anomaly_starts[-1]:
+                # we ended on an anomaly, so the end of the last anomaly is the end of the labels
+                anomaly_ends = np.concatenate([anomaly_ends, [len(label) - 1]])
+        return list(zip(anomaly_starts, anomaly_ends))
         
     def existence_reward(self, labels, preds):
         '''
@@ -333,7 +319,7 @@ class basic_metricor:
 
         score = 0
         for i in labels:
-            if np.sum(np.multiply(preds <= i[1], preds >= i[0])) > 0:
+            if preds[i[0]:i[1]+1].any():
                 score += 1
         return score
     

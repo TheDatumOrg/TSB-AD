@@ -148,11 +148,20 @@ class MCD(BaseDetector):
         X = check_array(X)
         self._set_n_classes(y)
 
-        self.detector_ = MinCovDet(store_precision=self.store_precision,
-                                   assume_centered=self.assume_centered,
-                                   support_fraction=self.support_fraction,
-                                   random_state=self.random_state)
-        self.detector_.fit(X=X, y=y)
+        support_fraction = self.support_fraction
+        while True:
+            try:
+                self.detector_ = MinCovDet(store_precision=self.store_precision,
+                                        assume_centered=self.assume_centered,
+                                        support_fraction=support_fraction,
+                                        random_state=self.random_state)
+                self.detector_.fit(X=X, y=y)
+                break
+            except ValueError:
+                support_fraction = 1.5 * support_fraction
+                if support_fraction >= 1:
+                    support_fraction = None
+                    
 
         # Use mahalanabis distance as the outlier score
         self.decision_scores_ = self.detector_.dist_

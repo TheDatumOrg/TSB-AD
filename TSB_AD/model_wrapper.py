@@ -36,7 +36,6 @@ try:
     from models.FITS import FITS
     from models.Donut import Donut
     from models.OFA import OFA
-    from models.Lag_Llama import Lag_Llama
     # from models.Chronos import Chronos
 except:
     # from .models.NormA import NORMA
@@ -68,7 +67,6 @@ except:
     from .models.FITS import FITS
     from .models.Donut import Donut
     from .models.OFA import OFA
-    from .models.Lag_Llama import Lag_Llama
     # from .models.Chronos import Chronos    
 
 Unsupervise_AD_Pool = ['NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
@@ -84,10 +82,7 @@ def run_Unsupervise_AD(model_name, data, **kwargs):
         error_message = f"Model function '{function_name}' is not defined."
         print(error_message)
         return error_message
-    except Exception as e:
-        error_message = f"An error occurred while running the model '{function_name}': {str(e)}"
-        print(error_message)
-        return error_message
+
 
 def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
     try:
@@ -97,10 +92,6 @@ def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
         return results
     except KeyError:
         error_message = f"Model function '{function_name}' is not defined."
-        print(error_message)
-        return error_message
-    except Exception as e:
-        error_message = f"An error occurred while running the model '{function_name}': {str(e)}"
         print(error_message)
         return error_message
 
@@ -146,7 +137,7 @@ def run_POLY(data, periodicity=1, power=3, n_jobs=1):
 
 def run_MatrixProfile(data, periodicity=1, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = MatrixProfile(slidingWindow = slidingWindow, n_jobs=n_jobs)
+    clf = MatrixProfile(window=slidingWindow)
     clf.fit(data)
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
@@ -377,6 +368,10 @@ def run_OFA(data_train, data_test, win_size=100, batch_size = 64):
     return score
 
 def run_Lag_Llama(data, win_size=96, batch_size=64):
+    try:
+        from .models.Lag_Llama import Lag_Llama
+    except:
+        from models.Lag_Llama import Lag_Llama
     clf = Lag_Llama(win_size=win_size, input_c=data.shape[1], batch_size=batch_size)
     clf.fit(data)
     score = clf.decision_scores_

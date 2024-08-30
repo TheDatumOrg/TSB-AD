@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from torch import nn
+import subprocess as sp
 import os, math
 
 class EarlyStoppingTorch:
@@ -180,3 +181,23 @@ def adjust_learning_rate(optimizer, epoch, lradj, learning_rate):
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
         print('Updating learning rate to {}'.format(lr))
+
+
+def min_memory_id():
+    output = sp.check_output(["/usr/bin/nvidia-smi", "--query-gpu=memory.used", "--format=csv"])
+    memory = [int(s.split(" ")[0]) for s in output.decode().split("\n")[1:-1]]
+    assert len(memory) == torch.cuda.device_count()
+    return np.argmin(memory)
+
+
+def get_gpu(cuda):
+    if cuda == True and torch.cuda.is_available():
+        device = torch.device(f"cuda:{min_memory_id()}")
+        torch.cuda.set_device(device)
+        print(f"----- Using GPU {torch.cuda.current_device()} -----")
+    else:
+        if cuda == True and not torch.cuda.is_available():
+            print("----- GPU is unavailable -----")
+        device = torch.device("cpu")
+        print("----- Using CPU -----")
+    return device

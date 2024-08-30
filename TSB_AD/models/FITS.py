@@ -17,10 +17,10 @@ from torch.utils.data import DataLoader
 import math
 
 try:
-    from utils.torch_utility import EarlyStoppingTorch
+    from utils.torch_utility import EarlyStoppingTorch, get_gpu
     from utils.dataset import ReconstructDataset
 except:
-    from ..utils.torch_utility import EarlyStoppingTorch
+    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
     from ..utils.dataset import ReconstructDataset    
 
 class Model(nn.Module):
@@ -96,14 +96,8 @@ class FITS():
         self.__anomaly_score = None
         
         self.cuda = True
-        if self.cuda == True and torch.cuda.is_available():
-            self.device = torch.device("cuda")
-            print("----- Using GPU -----")
-        else:
-            if self.cuda == True and not torch.cuda.is_available():
-                print("----- GPU is unavailable -----")
-            self.device = torch.device("cpu")
-            print("----- Using CPU -----")
+        self.device = get_gpu(self.cuda)
+
             
         self.win_size = win_size        
         self.DSR = DSR
