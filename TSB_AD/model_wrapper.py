@@ -7,9 +7,7 @@ except:
 from sklearn.preprocessing import MinMaxScaler
 
 try:
-    # from models.NormA import NORMA
     from models.SAND import SAND
-    # from models.Series2Graph import Series2Graph
     from models.LOF import LOF
     from models.IForest import IForest
     from models.MCD import MCD
@@ -36,11 +34,8 @@ try:
     from models.FITS import FITS
     from models.Donut import Donut
     from models.OFA import OFA
-    # from models.Chronos import Chronos
 except:
-    # from .models.NormA import NORMA
     from .models.SAND import SAND
-    # from .models.Series2Graph import Series2Graph
     from .models.LOF import LOF
     from .models.IForest import IForest
     from .models.MCD import MCD
@@ -67,7 +62,6 @@ except:
     from .models.FITS import FITS
     from .models.Donut import Donut
     from .models.OFA import OFA
-    # from .models.Chronos import Chronos    
 
 Unsupervise_AD_Pool = ['NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
 Semisupervise_AD_Pool = ['MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA']
@@ -151,19 +145,23 @@ def run_SAND(data, periodicity=1):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-# def run_Series2Graph(data, periodicity=1):
-#     slidingWindow = find_length_rank(data, rank=periodicity)
+def run_Series2Graph(data, periodicity=1):
+    try:
+        from .models.Series2Graph import Series2Graph
+    except:
+        from models.Series2Graph import Series2Graph
+    slidingWindow = find_length_rank(data, rank=periodicity)
 
-#     data = data.squeeze()
-#     s2g = Series2Graph(pattern_length=slidingWindow)
-#     s2g.fit(data)
-#     query_length = 2*slidingWindow
-#     s2g.score(query_length=query_length,dataset=data)
+    data = data.squeeze()
+    s2g = Series2Graph(pattern_length=slidingWindow)
+    s2g.fit(data)
+    query_length = 2*slidingWindow
+    s2g.score(query_length=query_length,dataset=data)
 
-#     score = s2g.decision_scores_
-#     score = np.array([score[0]]*math.ceil(query_length//2) + list(score) + [score[-1]]*(query_length//2))
-#     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
-#     return score
+    score = s2g.decision_scores_
+    score = np.array([score[0]]*math.ceil(query_length//2) + list(score) + [score[-1]]*(query_length//2))
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
 
 def run_Sub_PCA(data, periodicity=1, n_components=None, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
@@ -181,17 +179,21 @@ def run_PCA(data, periodicity=1, n_components=None, n_jobs=1):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-# def run_NORMA(data, periodicity=1, clustering='hierarchical', n_jobs=1):
-#     slidingWindow = find_length_rank(data, rank=periodicity)
-#     clf = NORMA(pattern_length=slidingWindow, nm_size=3*slidingWindow, clustering=clustering)
-#     clf.fit(data)
-#     score = clf.decision_scores_
-#     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
-#     score = np.array([score[0]]*math.ceil((slidingWindow-1)/2) + list(score) + [score[-1]]*((slidingWindow-1)//2))
-#     if len(score) > len(data):
-#         start = len(score) - len(data)
-#         score = score[start:]
-#     return score
+def run_NORMA(data, periodicity=1, clustering='hierarchical', n_jobs=1):
+    try:
+        from .models.NormA import NORMA
+    except:
+        from models.NormA import NormA
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = NORMA(pattern_length=slidingWindow, nm_size=3*slidingWindow, clustering=clustering)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    score = np.array([score[0]]*math.ceil((slidingWindow-1)/2) + list(score) + [score[-1]]*((slidingWindow-1)//2))
+    if len(score) > len(data):
+        start = len(score) - len(data)
+        score = score[start:]
+    return score
 
 def run_Sub_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
     slidingWindow = find_length_rank(data, rank=periodicity)
@@ -378,9 +380,43 @@ def run_Lag_Llama(data, win_size=96, batch_size=64):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-# def run_Chronos(data, win_size=50, batch_size=64):
-#     clf = Chronos(win_size=win_size, prediction_length=1, input_c=data.shape[1], model_size='base', batch_size=batch_size)
-#     clf.fit(data)
-#     score = clf.decision_scores_
-#     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
-#     return score
+def run_Chronos(data, win_size=50, batch_size=64):
+    try:
+        from .models.Chronos import Chronos
+    except:
+        from models.Chronos import Chronos
+    clf = Chronos(win_size=win_size, prediction_length=1, input_c=data.shape[1], model_size='base', batch_size=batch_size)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_TimesFM(data, win_size=96):
+    try:
+        from .models.TimesFM import TimesFM
+    except:
+        from models.TimesFM import TimesFM
+    clf = TimesFM(win_size=win_size)
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_MOMENT(data_train, data_test, win_size=256, type='ZS'):
+    try:
+        from .models.MOMENT import MOMENT
+    except:
+        from models.MOMENT import MOMENT
+    clf = MOMENT(win_size=win_size, input_c=data_test.shape[1])
+
+    if type == 'ZS':
+        # Zero shot
+        clf.zero_shot(data_test)
+        score = clf.decision_scores_
+    else:
+        # Finetune
+        clf.fit(data_train)
+        score = clf.decision_function(data_test)
+
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
