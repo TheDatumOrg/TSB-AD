@@ -15,14 +15,11 @@ from gluonts.dataset.repository.datasets import get_dataset
 from gluonts.dataset.pandas import PandasDataset
 import pandas as pd
 import numpy as np
+from ..utils.torch_utility import get_gpu
+
 import sys
 sys.path.append('/data/liuqinghua/code/ts/TSAD-AutoML/lag-llama')
 from lag_llama.gluon.estimator import LagLlamaEstimator
-
-try:
-    from utils.torch_utility import get_gpu
-except:
-    from ..utils.torch_utility import get_gpu
 
 class Lag_Llama():
     def __init__(self, 

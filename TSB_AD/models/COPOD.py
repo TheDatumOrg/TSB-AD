@@ -15,13 +15,8 @@ from sklearn.utils.validation import check_is_fitted
 from sklearn.utils import check_array
 
 from .base import BaseDetector
-
-try:
-    from utils.stat_models import column_ecdf
-    from utils.utility import _partition_estimators
-except:
-    from ..utils.stat_models import column_ecdf
-    from ..utils.utility import _partition_estimators
+from ..utils.stat_models import column_ecdf
+from ..utils.utility import _partition_estimators
 
 def skew(X, axis=0):
     return np.nan_to_num(skew_sp(X, axis=axis))

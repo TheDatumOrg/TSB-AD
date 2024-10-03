@@ -14,12 +14,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from typing import Tuple, Sequence, Union, Callable
 
-try:
-    from utils.torch_utility import EarlyStoppingTorch, get_gpu
-    from utils.dataset import ReconstructDataset
-except:
-    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
-    from ..utils.dataset import ReconstructDataset    
+from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
+from ..utils.dataset import ReconstructDataset    
 
 class DonutModel(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim, mask_prob) -> None:

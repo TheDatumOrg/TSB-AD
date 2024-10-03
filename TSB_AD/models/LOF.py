@@ -13,13 +13,7 @@ from sklearn.utils.validation import check_is_fitted
 
 from .base import BaseDetector
 from .feature import Window
-
-import sys
-sys.path.append('..')
-try:
-    from utils.utility import invert_order
-except:
-    from ..utils.utility import invert_order
+from ..utils.utility import invert_order
 
 # noinspection PyProtectedMember
 class LOF(BaseDetector):

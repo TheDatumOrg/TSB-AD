@@ -1,5 +1,6 @@
-benchmark_exp/TSB-AD
 __pycache__
 *.egg-info
-benchmark_exp/score
-benchmark_exp/eval
+build
+TSB_AD/models/NormA.py
+TSB_AD/models/Series2Graph.py
+TSB_AD/utils/thresh

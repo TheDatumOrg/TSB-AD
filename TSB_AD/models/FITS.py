@@ -16,12 +16,8 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 import math
 
-try:
-    from utils.torch_utility import EarlyStoppingTorch, get_gpu
-    from utils.dataset import ReconstructDataset
-except:
-    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
-    from ..utils.dataset import ReconstructDataset    
+from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
+from ..utils.dataset import ReconstructDataset    
 
 class Model(nn.Module):
 

@@ -17,12 +17,8 @@ from torch import nn
 import math
 
 from .base import BaseDetector
-try:
-    from utils.dataset import ReconstructDataset_Moment
-    from utils.torch_utility import EarlyStoppingTorch, get_gpu
-except:
-    from ..utils.dataset import ReconstructDataset_Moment
-    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
+from ..utils.dataset import ReconstructDataset_Moment
+from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
 
 class MOMENT(BaseDetector):
     def __init__(self, 

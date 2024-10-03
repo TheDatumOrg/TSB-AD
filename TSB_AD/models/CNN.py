@@ -6,14 +6,9 @@ import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
-try:
-    from utils.utility import get_activation_by_name
-    from utils.torch_utility import EarlyStoppingTorch, get_gpu
-    from utils.dataset import ForecastDataset
-except:
-    from ..utils.utility import get_activation_by_name
-    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
-    from ..utils.dataset import ForecastDataset
+from ..utils.utility import get_activation_by_name
+from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
+from ..utils.dataset import ForecastDataset
 
 class AdaptiveConcatPool1d(nn.Module):
     def __init__(self):

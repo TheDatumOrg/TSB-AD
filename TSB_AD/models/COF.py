@@ -16,12 +16,7 @@ from scipy.spatial import minkowski_distance
 from sklearn.utils import check_array
 
 from .base import BaseDetector
-import sys
-sys.path.append('..')
-try:
-    from utils.utility import check_parameter
-except:
-    from ..utils.utility import check_parameter
+from ..utils.utility import check_parameter
 
 
 class COF(BaseDetector):

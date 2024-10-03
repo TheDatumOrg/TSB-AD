@@ -15,13 +15,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import deprecated
 from sklearn.utils.multiclass import check_classification_targets
 from sklearn.utils.validation import check_is_fitted
-
-import sys
-sys.path.append('..')
-try:
-    from utils.utility import precision_n_scores, _pprint
-except:
-    from ..utils.utility import precision_n_scores, _pprint
+from ..utils.utility import precision_n_scores, _pprint
 
 
 class BaseDetector(metaclass=abc.ABCMeta):

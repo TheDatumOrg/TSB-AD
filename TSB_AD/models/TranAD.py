@@ -17,17 +17,11 @@ from torch.nn import TransformerEncoder
 from torch.nn import TransformerDecoder
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import MinMaxScaler
-from .base import BaseDetector
 import tqdm
 
-import sys
-sys.path.append('..')
-try:
-    from utils.dataset import ReconstructDataset
-    from utils.torch_utility import EarlyStoppingTorch, get_gpu
-except:
-    from ..utils.dataset import ReconstructDataset
-    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
+from .base import BaseDetector
+from ..utils.dataset import ReconstructDataset
+from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, dropout=0.1, max_len=5000):

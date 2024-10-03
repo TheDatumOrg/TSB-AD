@@ -15,15 +15,8 @@ from sklearn.utils.validation import check_is_fitted
 
 from .feature import Window
 from .base import BaseDetector
-
-import sys
-sys.path.append('..')
-try:
-    from utils.utility import check_parameter
-    from utils.utility import standardizer
-except:
-    from ..utils.utility import check_parameter
-    from ..utils.utility import standardizer    
+from ..utils.utility import check_parameter
+from ..utils.utility import standardizer    
 
 class PCA(BaseDetector):
     """Principal component analysis (PCA) can be used in detecting outliers.

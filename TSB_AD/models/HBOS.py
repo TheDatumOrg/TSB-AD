@@ -14,13 +14,7 @@ from sklearn.utils.validation import check_is_fitted
 
 from .feature import Window
 from .base import BaseDetector
-
-import sys
-sys.path.append('..')
-try:
-    from utils.utility import check_parameter, get_optimal_n_bins, invert_order
-except:
-    from ..utils.utility import check_parameter, get_optimal_n_bins, invert_order
+from ..utils.utility import check_parameter, get_optimal_n_bins, invert_order
 
 
 class HBOS(BaseDetector):

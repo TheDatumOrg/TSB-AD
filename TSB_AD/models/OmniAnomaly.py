@@ -15,17 +15,11 @@ from sklearn.utils.validation import check_is_fitted
 from torch import nn
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import MinMaxScaler
-from .base import BaseDetector
 import tqdm
 
-import sys
-sys.path.append('..')
-try:
-    from utils.dataset import ReconstructDataset
-    from utils.torch_utility import EarlyStoppingTorch, get_gpu
-except:
-    from ..utils.dataset import ReconstructDataset
-    from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
+from .base import BaseDetector
+from ..utils.dataset import ReconstructDataset
+from ..utils.torch_utility import EarlyStoppingTorch, get_gpu
 
 class OmniAnomalyModel(nn.Module):
     def __init__(self, feats, device):

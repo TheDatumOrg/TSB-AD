@@ -16,13 +16,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from .feature import Window
 from .base import BaseDetector
-
-import sys
-sys.path.append('..')
-try:
-    from utils.utility import invert_order
-except:
-    from ..utils.utility import invert_order
+from ..utils.utility import invert_order
 
 class OCSVM(BaseDetector):
     """Wrapper of scikit-learn one-class SVM Class with more functionalities.

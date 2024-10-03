@@ -3,24 +3,29 @@
 </p>
 
 <h1 align="center">TSB-AD</h1>
-<h2 align="center">The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
+<h2 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
 
-## 📄 Contents
-1. [Overview](#overview)
-2. [Get Started](#start)
-3. [Dive into TSB-AD](#tsb)
+## Table of Contents
+
+- [📄 Overview](#overview)
+- [⚙️ Get Started](#start)
+    * [🗄️ Dataset](#dataset)
+    * [💻 TSAD Algorithm](#tsad)
+    * [🧑‍💻 Basic Usage](#usage)  
+- [🏄‍♂️ Dive into TSB-AD](#tsb)
 
 
-<h2 id="overview"> 1. Overview </h2>
+<h2 id="overview"> 📄 Overview </h2>
 
 Time-series anomaly detection is a fundamental task across scientific fields and industries. However, the field has long faced the "elephant in the room:" critical issues including flawed datasets, biased evaluation metrics, and inconsistent benchmarking practices that have remained largely ignored and unaddressed.  We introduce the TSB-AD to systematically tackle these issues in the following three aspects: (i) Dataset Integrity: with 1020 high-quality time series refined from an initial collection of 4k spanning 33 diverse domains, we provide the first large-scale, heterogeneous, meticulously curated dataset that combines the effort of human perception and model interpretation; (ii) Metric Reliability: by revealing bias in evaluation metrics, we perform ranking aggregation on a set of reliable evaluation metrics for comprehensive capturing of model performance and robustness to address concerns from the community; (iii) Comprehensive Benchmarking: with a broad spectrum of 35 detection algorithms, from statistical methods to the latest foundation models, we perform systematic hyperparameter tuning for a fair and complete comparison. Our findings challenge the conventional wisdom regarding the superiority of advanced neural network architectures, revealing that simpler architectures and statistical methods often yield better performance. While foundation models demonstrate promise, we need to proceed with caution in terms of data contamination.
 
-<h2 id="start"> 2. Get Started </h2>
+<h2 id="start"> ⚙️ Get Started </h2>
 
-### 2.1 Dataset Download
+<h3 id="dataset">🗄️ Dataset</h3>
+
 Due to limitations in the upload size on GitHub, we host the datasets at [Link](https://drive.google.com/file/d/1jC_DLhFk8ytinRbucEPleH4Rdy2EF0t9/view?usp=sharing).
 
-### 2.2 Detection Algorithm Implementation
+<h3 id="tsad">💻 TSAD Algorithm</h3>
 
 To install TSB-AD from source, you will need the following tools:
 - `git`
@@ -35,9 +40,8 @@ git clone https://github.com/TheDatumOrg/TSB-AD.git
 **Step 2:** Create and activate a `conda` environment named `TSB-AD`.
 
 ```bash
-conda create -n TSB-AD    # Currently we support python>=3.8, up to 3.12
+conda create -n TSB-AD python=3.11    # Currently we support python>=3.8, up to 3.12
 conda activate TSB-AD
-conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
 
 **Step 3:** Install the dependencies from requirements.txt:
@@ -45,13 +49,18 @@ conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvi
 pip install -r requirements.txt
 ```
 
-If you want to use Chronos, please install the following
+If you have problem installing `torch` using pip, try the following:
+```bash
+conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=12.1 -c pytorch -c nvidia
+```
+
+> If you want to use Chronos, please install the following
 ```bash
 git clone https://github.com/autogluon/autogluon
 cd autogluon && pip install -e timeseries/[TimeSeriesDataFrame,TimeSeriesPredictor]
 ```
 
-If you want to use MOMENT, please install the following
+> If you want to use MOMENT, please install the following
 ```bash
 pip install momentfm   # only support Python 3.11 for now
 ```
@@ -61,9 +70,13 @@ pip install momentfm   # only support Python 3.11 for now
 pip install .
 ```
 
-#### 🧑‍💻 Basic Usage
+<h3 id="usage">🧑‍💻 Basic Usage</h3>
 
 See Example in `TSB_AD/main.py`
+
+```bash
+python -m TSB_AD.main --AD_Name IForest
+```
 
 Or the following example on how to evaluate TSAD in 10 lines of code:
 ```bash
@@ -87,7 +100,7 @@ output = run_Unsupervise_AD(AD_Name, data)
 evaluation_result = get_metrics(output, label)
 ```
 
-<h2 id="tsb"> 3. Dive into TSB-AD </h2>
+<h2 id="tsb"> 🏄‍♂️ Dive into TSB-AD </h2>
 
 ### Dataset Overview 
 
@@ -249,7 +262,7 @@ The methods are sorted from top to bottom based on their Aggregated Mean Value R
 | AnomalyTransformer   | 0.06   | 0.51    | 0.20   | 0.52    | 0.11        | 0.63  | 0.31           | 0.10       | 0.46           |
 
 
-### Contact
+### ✉️ Contact
 
 If you have any questions or suggestions, feel free to contact:
 * Qinghua Liu (liu.11085@osu.edu)
@@ -258,7 +271,7 @@ If you have any questions or suggestions, feel free to contact:
 Or describe it in Issues.
 
 
-### Acknowledgement
+### 🎉 Acknowledgement
 We appreciate the following github repos a lot for their valuable code base:
 * https://github.com/yzhao062/pyod
 * https://github.com/TimeEval/TimeEval-algorithms

@@ -18,16 +18,8 @@ import os
 import tqdm
 
 import torchinfo
-import sys
-sys.path.append('..')
-try:
-    from utils.dataset import ReconstructDataset
-    from utils.torch_utility import get_gpu
-
-except:
-    from ..utils.dataset import ReconstructDataset
-    from ..utils.torch_utility import get_gpu
-
+from ..utils.dataset import ReconstructDataset
+from ..utils.torch_utility import get_gpu
 
 class EarlyStopping:
     def __init__(self, patience=7, verbose=False, delta=0):

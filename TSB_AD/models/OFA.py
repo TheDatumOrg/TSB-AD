@@ -19,12 +19,9 @@ import torch.nn.functional as F
 from transformers.models.gpt2.modeling_gpt2 import GPT2Model
 from einops import rearrange
 
-try:
-    from utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, get_gpu, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
-    from utils.dataset import ReconstructDataset
-except:
-    from ..utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, get_gpu, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
-    from ..utils.dataset import ReconstructDataset    
+
+from ..utils.torch_utility import EarlyStoppingTorch, PositionalEmbedding, TokenEmbedding, TemporalEmbedding, get_gpu, TimeFeatureEmbedding, DataEmbedding, adjust_learning_rate
+from ..utils.dataset import ReconstructDataset    
 
 class DataEmbedding_wo_pos(nn.Module):
     def __init__(self, c_in, d_model, embed_type='fixed', freq='h', dropout=0.1):
@@ -226,7 +223,6 @@ class OFA():
         
         self.cuda = cuda
         self.device = get_gpu(self.cuda)
-
             
         self.model = Model(seq_len=self.win_size, enc_in=self.enc_in).float().to(self.device)
         self.model_optim = optim.Adam(self.model.parameters(), lr=self.learning_rate)

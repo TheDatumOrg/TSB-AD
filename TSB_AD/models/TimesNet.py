@@ -18,12 +18,8 @@ import math
 import tqdm
 import os
 
-try:
-    from utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate, get_gpu
-    from utils.dataset import ReconstructDataset
-except:
-    from ..utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate, get_gpu
-    from ..utils.dataset import ReconstructDataset    
+from ..utils.torch_utility import EarlyStoppingTorch, DataEmbedding, adjust_learning_rate, get_gpu
+from ..utils.dataset import ReconstructDataset    
  
 class Inception_Block_V1(nn.Module):
     def __init__(self, in_channels, out_channels, num_kernels=6, init_weight=True):

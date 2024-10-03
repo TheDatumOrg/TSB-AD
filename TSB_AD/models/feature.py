@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import math
-from tsfresh import extract_features
 from statsmodels.tsa.seasonal import seasonal_decompose
 import warnings
 from builtins import range
@@ -65,6 +64,7 @@ class tf_Stat:
         Xd['id'] = 1
         Xd['time'] = Xd.index
         
+        from tsfresh import extract_features
         test = np.array(extract_features(Xd.iloc[0+pos-math.ceil(window/2):0+pos + math.floor(window/2)], column_id="id", column_sort="time", column_kind=None, column_value=None).fillna(0))
         M = np.zeros((length - window, test.shape[1]+1 ))
 
