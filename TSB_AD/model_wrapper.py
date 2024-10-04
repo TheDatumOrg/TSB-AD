@@ -3,7 +3,7 @@ import math
 from sklearn.preprocessing import MinMaxScaler
 from .utils.slidingWindows import find_length_rank
 
-Unsupervise_AD_Pool = ['NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
+Unsupervise_AD_Pool = ['SR', 'NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
                         'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
 Semisupervise_AD_Pool = ['MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
                         'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA']
@@ -257,6 +257,11 @@ def run_RobustPCA(data, max_iter=1000):
     score = clf.decision_scores_
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
+
+def run_SR(data, periodicity=1):
+    from .models.SR import SR
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    return SR(data, window_size=slidingWindow)
 
 def run_AutoEncoder(data_train, data_test, window_size=100, hidden_neurons=[64, 32], n_jobs=1):
     from .models.AE import AutoEncoder
