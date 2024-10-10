@@ -110,6 +110,7 @@ def run_Series2Graph(data, periodicity=1):
     return score
 
 def run_Sub_PCA(data, periodicity=1, n_components=None, n_jobs=1):
+    from .models.PCA import PCA
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = PCA(slidingWindow = slidingWindow, n_components=n_components)
     clf.fit(data)

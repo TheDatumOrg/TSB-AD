@@ -5,6 +5,10 @@
 <h1 align="center">TSB-AD</h1>
 <h2 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
 
+
+Main Recent Update:
+- [Sep. 26, 2024] Paper accepted to NeurIPS 2024 D&B Track!
+
 ## Table of Contents
 
 - [📄 Overview](#overview)
@@ -23,7 +27,7 @@ Time-series anomaly detection is a fundamental task across scientific fields and
 
 <h3 id="dataset">🗄️ Dataset</h3>
 
-Due to limitations in the upload size on GitHub, we host the datasets at [Link](https://drive.google.com/file/d/1jC_DLhFk8ytinRbucEPleH4Rdy2EF0t9/view?usp=sharing).
+Due to limitations in the upload size on GitHub, we host the datasets at [Link] (Will be available along with the camera ready version).
 
 <h3 id="tsad">💻 TSAD Algorithm</h3>
 
