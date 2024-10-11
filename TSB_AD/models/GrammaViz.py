@@ -1,53 +1,51 @@
+"""
+This function is adapted from [grammarviz2_src] by [GrammarViz2]
+Original source: [https://github.com/GrammarViz2/grammarviz2_src]
+"""
+
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
-class AnomalyDetection:
-    def __init__(self, data, window_size=12, word_size=4, alphabet_size=4):
-        self.data = data
-        self.length = len(self.data)
+class GrammaViz():
+    def __init__(self, window_size=12, word_size=4, alphabet_size=4):
         self.window_size = window_size
         self.word_size = word_size
         self.alphabet_size = alphabet_size
         self.digrams = {}
         self.numRules = 0
 
+    def fit(self, X, y=None):
+
+        self.data = X
+        self.length = len(self.data)
 
         # Z-normalization
         self.z_normalized_ts = self.z_normalize(self.data)
 
-
         # Extract subsequences
         self.subsequences, self.sliding_window_indices = self.sliding_window(self.z_normalized_ts, self.window_size)
-
 
         # Apply SAX to subsequences
         self.sax_words = self.sax_transform(self.subsequences, self.word_size, self.alphabet_size)
 
-
         # Apply Numerosity Reduction
         self.reduced_sax_words = self.numerosity_reduction(self.sax_words)
-
 
         # Apply the updated Sequitur to reduced SAX words
         self.sequitur_output = self.run_sequitur(self.reduced_sax_words)
 
-
         # Create occurrences array
         self.occurrences = np.zeros_like(self.z_normalized_ts)
 
-
         # Stack both arrays together as columns
-        self.result = np.column_stack((self.z_normalized_ts, self.occurrences))
-
+        self.decision_scores_ = np.column_stack((self.z_normalized_ts, self.occurrences))
 
         # Map SAX words to original subsequences
         self.mapped_subsequences = self.map_sax_to_subsequences(self.reduced_sax_words, self.z_normalized_ts)
 
-
         # Count occurrences
         self.count_occurrences()
-
 
         # Find discord
         self.find_discord()
@@ -126,15 +124,15 @@ class AnomalyDetection:
     def count_occurrences(self):
         all_floats = np.concatenate([tup[1] for tup in self.mapped_subsequences])
         for element in all_floats:
-            match_index = np.where(self.result[:, 0] == element)[0]
+            match_index = np.where(self.decision_scores_[:, 0] == element)[0]
             if match_index.size > 0:
-                self.result[match_index[0], 1] += 1
+                self.decision_scores_[match_index[0], 1] += 1
 
 
     def print_result(self):
         np.set_printoptions(precision=8, suppress=True)
         print("-----------------Density Rule Curve results-----------------")
-        print(self.result)  # Results of counting
+        print(self.decision_scores_)  # Results of counting
 
 
     # Distance Calculation: Normalize and calculate the distance
@@ -409,30 +407,27 @@ class Guard(Symbol):
         return False
 
 
-def run_grammarviz(data=None, window_size=12, alphabet_size=4, word_size=4):
-    # Initialize the anomaly detection with specified parameters
-    anomaly_detector = AnomalyDetection(data=data,
-                                        window_size=window_size,
-                                        alphabet_size=alphabet_size,
-                                        word_size=word_size)
-   
-    # Run the anomaly detection process
-    anomaly_detector.print_result()
-   
-    # Return results
-    return anomaly_detector.result
+if __name__ == '__main__':
 
+    def run_GrammaViz(data=None, window_size=12, alphabet_size=4, word_size=4):
+        # Initialize the anomaly detection with specified parameters
+        clf = GrammaViz(window_size=window_size,
+                        alphabet_size=alphabet_size,
+                        word_size=word_size)
+        clf.fit(data)
+        score = clf.decision_scores_
+        return score
 
-length = 100
-anomaly_positions = [49]
-anomaly_value = 5
+    length = 100
+    anomaly_positions = [49]
+    anomaly_value = 5
 
+    #Generate a custom time series with an anomaly, uncomment the next 3 lines for custom data (optional)
+    custom_data = np.sin(np.linspace(0, 4 * np.pi, length)) + 0.1 * np.random.randn(length)
+    for position in anomaly_positions:
+        custom_data[position] += anomaly_value
+    print('custom_data: ', custom_data.shape)
 
-#Generate a custom time series with an anomaly, uncomment the next 3 lines for custom data (optional)
-#custom_data = np.sin(np.linspace(0, 4 * np.pi, length)) + 0.1 * np.random.randn(length)
-#for position in anomaly_positions:
-    #custom_data[position] += anomaly_value
-
-
-# Call the function with the custom data
-results = run_grammarviz(data=custom_data, window_size=10, alphabet_size=5, word_size=3)
+    # Call the function with the custom data
+    results = run_GrammaViz(data=custom_data, window_size=10, alphabet_size=5, word_size=3)
+    print('results: ', results.shape)
