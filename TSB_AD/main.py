@@ -51,7 +51,7 @@ if __name__ == '__main__':
         raise Exception(f"{args.AD_Name} is not defined")
 
     if isinstance(output, np.ndarray):
-        evaluation_result = get_metrics(output, label, slidingWindow=slidingWindow)
+        evaluation_result = get_metrics(output, label, slidingWindow=slidingWindow, pred=output > (np.mean(output)+3*np.std(output)))
         print('Evaluation Result: ', evaluation_result)
     else:
         print(f'At {args.filename}: '+output)

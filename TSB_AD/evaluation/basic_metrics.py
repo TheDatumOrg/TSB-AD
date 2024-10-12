@@ -2,69 +2,6 @@ from sklearn import metrics
 import numpy as np
 import math
 
-def adjust_predicts(score, label, threshold=None, pred=None, calc_latency=False):
-    """
-    Calculate adjusted predict labels using given `score`, `threshold` (or given `pred`) and `label`.
-
-    Args:
-        score (np.ndarray): The anomaly score
-        label (np.ndarray): The ground-truth label
-        threshold (float): The threshold of anomaly score.
-            A point is labeled as "anomaly" if its score is higher than the threshold.
-        pred (np.ndarray or None): if not None, adjust `pred` and ignore `score` and `threshold`,
-        calc_latency (bool):
-
-    Returns:
-        np.ndarray: predict labels
-    """
-    if len(score) != len(label):
-        raise ValueError("score and label must have the same length")
-    score = np.asarray(score)
-    label = np.asarray(label)
-    latency = 0
-    if pred is None:
-        predict = score > threshold
-    else:
-        predict = pred
-    actual = label > 0.1
-    anomaly_state = False
-    anomaly_count = 0
-    for i in range(len(score)):
-        if actual[i] and predict[i] and not anomaly_state:
-                anomaly_state = True
-                anomaly_count += 1
-                for j in range(i, 0, -1):
-                    if not actual[j]:
-                        break
-                    else:
-                        if not predict[j]:
-                            predict[j] = True
-                            latency += 1
-        elif not actual[i]:
-            anomaly_state = False
-        if anomaly_state:
-            predict[i] = True
-    if calc_latency:
-        return predict, latency / (anomaly_count + 1e-4)
-    else:
-        return predict
-
-from .cal_vus import RangeAUC_volume
-def generate_curve_numba(label,score,slidingWindow):
-    # tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = basic_metricor().RangeAUC_volume(labels_original=label, score=score, windowSize=1*slidingWindow)
-    
-    ## Numba version
-    tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = RangeAUC_volume(labels_original=label, score=score, windowSize=1*slidingWindow)
-
-    X = np.array(tpr_3d).reshape(1,-1).ravel()
-    X_ap = np.array(tpr_3d)[:,:-1].reshape(1,-1).ravel()
-    Y = np.array(fpr_3d).reshape(1,-1).ravel()
-    W = np.array(prec_3d).reshape(1,-1).ravel()
-    Z = np.repeat(window_3d, len(tpr_3d[0]))
-    Z_ap = np.repeat(window_3d, len(tpr_3d[0])-1)
-    
-    return Y, Z, X, X_ap, W, Z_ap,avg_auc_3d, avg_ap_3d
-
 def generate_curve(label, score, slidingWindow, version='opt', thre=250):
     if version =='opt_mem':
         tpr_3d, fpr_3d, prec_3d, window_3d, avg_auc_3d, avg_ap_3d = basic_metricor().RangeAUC_volume_opt_mem(labels_original=label, score=score, windowSize=slidingWindow, thre=thre)
@@ -81,11 +18,12 @@ def generate_curve(label, score, slidingWindow, version='opt', thre=250):
     
     return Y, Z, X, X_ap, W, Z_ap,avg_auc_3d, avg_ap_3d
 
-class basic_metricor:
+class basic_metricor():
     def __init__(self, a = 1, probability = True, bias = 'flat', ):
         self.a = a
         self.probability = probability
         self.bias = bias 
+        self.eps = 1e-15
     
     def detect_model(self, model, label, contamination = 0.1, window = 100, is_A = False, is_threshold = True):
         if is_threshold:
@@ -101,23 +39,6 @@ class basic_metricor:
         self.score_=scoreX
         L = self.metric(label, scoreX)
         return L
-
-        
-    def labels_conv(self, preds):
-        '''return indices of predicted anomaly
-        '''
-
-        index = np.where(preds >= 0.5)
-        return index[0]
-    
-    def labels_conv_binary(self, preds):
-        '''return predicted label
-        '''
-        p = np.zeros(len(preds))
-        index = np.where(preds >= 0.5)
-        p[index[0]] = 1
-        return p 
-
 
     def w(self, AnomalyRange, p):
         MyValue = 0
@@ -163,11 +84,56 @@ class basic_metricor:
             else:
                 return length - i + 1
 
-
     def scale_threshold(self, score, score_mu, score_sigma):
         return (score >= (score_mu + 3*score_sigma)).astype(int)
-    
-    
+
+    def _adjust_predicts(self, score, label, threshold=None, pred=None, calc_latency=False):
+        """
+        Calculate adjusted predict labels using given `score`, `threshold` (or given `pred`) and `label`.
+
+        Args:
+            score (np.ndarray): The anomaly score
+            label (np.ndarray): The ground-truth label
+            threshold (float): The threshold of anomaly score.
+                A point is labeled as "anomaly" if its score is higher than the threshold.
+            pred (np.ndarray or None): if not None, adjust `pred` and ignore `score` and `threshold`,
+            calc_latency (bool):
+
+        Returns:
+            np.ndarray: predict labels
+        """
+        if len(score) != len(label):
+            raise ValueError("score and label must have the same length")
+        score = np.asarray(score)
+        label = np.asarray(label)
+        latency = 0
+        if pred is None:
+            predict = score > threshold
+        else:
+            predict = pred
+        actual = label > 0.1
+        anomaly_state = False
+        anomaly_count = 0
+        for i in range(len(score)):
+            if actual[i] and predict[i] and not anomaly_state:
+                    anomaly_state = True
+                    anomaly_count += 1
+                    for j in range(i, 0, -1):
+                        if not actual[j]:
+                            break
+                        else:
+                            if not predict[j]:
+                                predict[j] = True
+                                latency += 1
+            elif not actual[i]:
+                anomaly_state = False
+            if anomaly_state:
+                predict[i] = True
+        if calc_latency:
+            return predict, latency / (anomaly_count + 1e-4)
+        else:
+            return predict
+
     def metric_new(self, label, score, preds, plot_ROC=False, alpha=0.2):
         '''input:
                Real labels and anomaly score in prediction
@@ -209,7 +175,7 @@ class basic_metricor:
         f = F[1]
 
         #point-adjust
-        adjust_preds = adjust_predicts(score, label, pred=preds)
+        adjust_preds = self._adjust_predicts(score, label, pred=preds)
         PointF1PA = metrics.f1_score(label, adjust_preds)
 
         #range anomaly 
@@ -235,42 +201,162 @@ class basic_metricor:
             return L, fpr, tpr
         return L
 
+    def metric_ROC(self, label, score):
+        return metrics.roc_auc_score(label, score)
+
     def metric_PR(self, label, score):
-        precision, recall, thresholds = metrics.precision_recall_curve(label, score)
-        # plt.figure()
-        # disp = metrics.PrecisionRecallDisplay(precision=precision, recall=recall)
-        # disp.plot()
-        AP = metrics.average_precision_score(label, score)
-        return precision, recall, AP
+        return metrics.average_precision_score(label, score)
 
-    def metric_best_F(self, label, score):
-        precision, recall, thresholds = metrics.precision_recall_curve(label, score)
-        f1_scores = 2 * (precision * recall) / (precision + recall + 0.00001)
-        best_f1 = np.max(f1_scores)
-        best_threshold = thresholds[np.argmax(f1_scores)]
-        return best_f1, best_threshold
+    def metric_PointF1(self, label, score, preds=None):
+        if preds is None:
+            precision, recall, thresholds = metrics.precision_recall_curve(label, score)
+            f1_scores = 2 * (precision * recall) / (precision + recall + 0.00001)
+            F1 = np.max(f1_scores)
+            threshold = thresholds[np.argmax(f1_scores)]
+        else:
+            Precision, Recall, F, Support = metrics.precision_recall_fscore_support(label, preds, zero_division=0)
+            F1 = F[1]
+        return F1
 
-    def metric_best_RF(self, label, score):
+    def metric_Affiliation(self, label, score, preds=None):
+        from .affiliation.generics import convert_vector_to_events
+        from .affiliation.metrics import pr_from_events
 
-        thresholds = np.linspace(score.min(), score.max(), 100)
-        Rf1_scores = []
+        if preds is None:
+            thresholds = np.linspace(score.min(), score.max(), 100)
+            Affiliation_scores = []
 
-        for threshold in thresholds:
-            preds = (score > threshold).astype(int)
+            for threshold in thresholds:
+                preds = (score > threshold).astype(int)
 
+                events_pred = convert_vector_to_events(preds)
+                events_gt = convert_vector_to_events(label)
+                Trange = (0, len(preds))
+                affiliation_metrics = pr_from_events(events_pred, events_gt, Trange)
+                Affiliation_Precision = affiliation_metrics['Affiliation_Precision']
+                Affiliation_Recall = affiliation_metrics['Affiliation_Recall']
+                Affiliation_F = 2*Affiliation_Precision*Affiliation_Recall / (Affiliation_Precision+Affiliation_Recall+self.eps)
+                
+                Affiliation_scores.append(Affiliation_F)
+
+            Affiliation_F1_Threshold = thresholds[np.argmax(Affiliation_scores)]
+            Affiliation_F1 = max(Affiliation_scores)
+
+        else:
+            events_pred = convert_vector_to_events(preds)
+            events_gt = convert_vector_to_events(label)
+            Trange = (0, len(preds))
+            affiliation_metrics = pr_from_events(events_pred, events_gt, Trange)
+            Affiliation_Precision = affiliation_metrics['Affiliation_Precision']
+            Affiliation_Recall = affiliation_metrics['Affiliation_Recall']
+            Affiliation_F1 = 2*Affiliation_Precision*Affiliation_Recall / (Affiliation_Precision+Affiliation_Recall+self.eps)            
+        
+        return Affiliation_F1
+
+    def metric_RF1(self, label, score, preds=None):
+
+        if preds is None:
+            thresholds = np.linspace(score.min(), score.max(), 100)
+            Rf1_scores = []
+
+            for threshold in thresholds:
+                preds = (score > threshold).astype(int)
+
+                Rrecall, ExistenceReward, OverlapReward = self.range_recall_new(label, preds, alpha=0.2)
+                Rprecision = self.range_recall_new(preds, label, 0)[0]
+                if Rprecision + Rrecall==0:
+                    Rf=0
+                else:
+                    Rf = 2 * Rrecall * Rprecision / (Rprecision + Rrecall)            
+                
+                Rf1_scores.append(Rf)
+
+            RF1_Threshold = thresholds[np.argmax(Rf1_scores)]
+            RF1 = max(Rf1_scores)
+        else:
             Rrecall, ExistenceReward, OverlapReward = self.range_recall_new(label, preds, alpha=0.2)
             Rprecision = self.range_recall_new(preds, label, 0)[0]
             if Rprecision + Rrecall==0:
-                Rf=0
+                RF1=0
             else:
-                Rf = 2 * Rrecall * Rprecision / (Rprecision + Rrecall)            
-            
-            Rf1_scores.append(Rf)
+                RF1 = 2 * Rrecall * Rprecision / (Rprecision + Rrecall)                 
+        return RF1
 
-        Best_RF1_Threshold = thresholds[np.argmax(Rf1_scores)]
-        Best_RF1 = max(Rf1_scores)
-        return Best_RF1, Best_RF1_Threshold
+    def metric_PointF1PA(self, label, score, preds=None):
 
+        if preds is None:
+            thresholds = np.linspace(score.min(), score.max(), 100)
+            PointF1PA_scores = []
+
+            for threshold in thresholds:
+                preds = (score > threshold).astype(int)
+
+                adjust_preds = self._adjust_predicts(score, label, pred=preds)
+                PointF1PA = metrics.f1_score(label, adjust_preds)  
+                
+                PointF1PA_scores.append(PointF1PA)
+
+            PointF1PA_Threshold = thresholds[np.argmax(PointF1PA_scores)]
+            PointF1PA1 = max(PointF1PA_scores)
+
+        else:
+            adjust_preds = self._adjust_predicts(score, label, pred=preds)
+            PointF1PA1 = metrics.f1_score(label, adjust_preds)           
+
+        return PointF1PA1
+
+    def _get_events(self, y_test, outlier=1, normal=0):
+        events = dict()
+        label_prev = normal
+        event = 0  # corresponds to no event
+        event_start = 0
+        for tim, label in enumerate(y_test):
+            if label == outlier:
+                if label_prev == normal:
+                    event += 1
+                    event_start = tim
+            else:
+                if label_prev == outlier:
+                    event_end = tim - 1
+                    events[event] = (event_start, event_end)
+            label_prev = label
+
+        if label_prev == outlier:
+            event_end = tim - 1
+            events[event] = (event_start, event_end)
+        return events
+
+    def metric_EventF1PA(self, label, score, preds=None):
+        from sklearn.metrics import precision_score
+        true_events = self._get_events(label)
+        
+        if preds is None:
+            thresholds = np.linspace(score.min(), score.max(), 100)
+            EventF1PA_scores = []
+
+            for threshold in thresholds:
+                preds = (score > threshold).astype(int)
+
+                tp = np.sum([preds[start:end + 1].any() for start, end in true_events.values()])
+                fn = len(true_events) - tp
+                rec_e = tp/(tp + fn)
+                prec_t = precision_score(label, preds)
+                EventF1PA = 2 * rec_e * prec_t / (rec_e + prec_t + self.eps)
+
+                EventF1PA_scores.append(EventF1PA)
+
+            EventF1PA_Threshold = thresholds[np.argmax(EventF1PA_scores)]
+            EventF1PA1 = max(EventF1PA_scores)
+
+        else:
+
+            tp = np.sum([preds[start:end + 1].any() for start, end in true_events.values()])
+            fn = len(true_events) - tp
+            rec_e = tp/(tp + fn)
+            prec_t = precision_score(label, preds)
+            EventF1PA1 = 2 * rec_e * prec_t / (rec_e + prec_t + self.eps)
+        
+        return EventF1PA1
 
     def range_recall_new(self, labels, preds, alpha):   
         p = np.where(preds == 1)[0]    # positions of predicted label==1
@@ -293,7 +379,6 @@ class basic_metricor:
         else:
             return 0,0,0
     
-
     def range_convers_new(self, label):
         '''
         input: arrays of binary values 
@@ -651,187 +736,4 @@ class basic_metricor:
             AP_range = np.dot(width_PR,height_PR)
             ap_3d[window]=(AP_range)
 
-        return tpr_3d, fpr_3d, prec_3d, window_3d, sum(auc_3d)/len(window_3d), sum(ap_3d)/len(window_3d)        
-        
-class EventF1PA_metricor():
-    def __init__(self, mode="log", base=3) -> None:
-        """
-        Using the Event-based point-adjustment F1 score to evaluate the models.
-        
-        Parameters:
-            mode (str): Defines the scale at which the anomaly segment is processed. \n
-                One of:\n
-                    - 'squeeze': View an anomaly event lasting t timestamps as one timepoint.
-                    - 'log': View an anomaly event lasting t timestamps as log(t) timepoint.
-                    - 'sqrt': View an anomaly event lasting t timestamps as sqrt(t) timepoint.
-                    - 'raw': View an anomaly event lasting t timestamps as t timepoint.
-                If using 'log', you can specify the param "base" to return the logarithm of x to the given base, 
-                calculated as log(x) / log(base).
-            base (int): Default is 3.
-        """
-        super().__init__()
-        
-        self.eps = 1e-15
-        self.name = "event-based f1 under pa with mode %s"%(mode)
-        if mode == "squeeze":
-            self.func = lambda x: 1
-        elif mode == "log":
-            self.func = lambda x: math.floor(math.log(x+base, base))
-        elif mode == "sqrt":
-            self.func = lambda x: math.floor(math.sqrt(x))
-        elif mode == "raw":
-            self.func = lambda x: x
-        else:
-            raise ValueError("please select correct mode.")
-        
-    def calc(self, scores, labels):
-        '''
-        Returns:
-         A F1class (Evaluations.Metrics.F1class), including:\n
-            best_f1: the value of best f1 score;\n
-            precision: corresponding precision value;\n
-            recall: corresponding recall value;\n
-            threshold: the value of threshold when getting best f1.
-        '''
-        
-        search_set = []
-        tot_anomaly = 0
-        ano_flag = 0
-        ll = len(labels)
-        for i in range(labels.shape[0]):
-            if labels[i] > 0.5 and ano_flag == 0:
-                ano_flag = 1
-                start = i
-            
-            # alleviation
-            elif labels[i] <= 0.5 and ano_flag == 1:
-                ano_flag = 0
-                end = i
-                tot_anomaly += self.func(end - start)
-                
-            # marked anomaly at the end of the list
-            if ano_flag == 1 and i == ll - 1:
-                ano_flag = 0
-                end = i + 1
-                tot_anomaly += self.func(end - start)
-
-        flag = 0
-        cur_anomaly_len = 0
-        cur_max_anomaly_score = 0
-        for i in range(labels.shape[0]):
-            if labels[i] > 0.5:
-                # record the highest score in an anomaly segment
-                if flag == 1:
-                    cur_anomaly_len += 1
-                    cur_max_anomaly_score = scores[i] if scores[i] > cur_max_anomaly_score else cur_max_anomaly_score  # noqa: E501
-                else:
-                    flag = 1
-                    cur_anomaly_len = 1
-                    cur_max_anomaly_score = scores[i]
-            else:
-                # reconstruct the score using the highest score
-                if flag == 1:
-                    flag = 0
-                    search_set.append((cur_max_anomaly_score, self.func(cur_anomaly_len), True))
-                    search_set.append((scores[i], 1, False))
-                else:
-                    search_set.append((scores[i], 1, False))
-        if flag == 1:
-            search_set.append((cur_max_anomaly_score, self.func(cur_anomaly_len), True))
-            
-        search_set.sort(key=lambda x: x[0], reverse=True)
-        best_f1 = 0
-        threshold = 0
-        P = 0
-        TP = 0
-        best_P = 0
-        best_TP = 0
-        for i in range(len(search_set)):
-            P += search_set[i][1]
-            if search_set[i][2]:  # for an anomaly point
-                TP += search_set[i][1]
-            precision = TP / (P + self.eps)
-            recall = TP / (tot_anomaly + self.eps)
-            f1 = 2 * precision * recall / (precision + recall + self.eps)
-            if f1 > best_f1:
-                best_f1 = f1
-                threshold = search_set[i][0]
-                best_P = P
-                best_TP = TP
-
-        precision = best_TP / (best_P + self.eps)
-        recall = best_TP / (tot_anomaly + self.eps)
-
-        return float(precision), float(recall), float(best_f1), float(threshold)
-
-
-class PointF1PA_metricor():
-    """
-    Using Point-based point-adjustment F1 score to evaluate the models.
-    """
-    def __init__(self) -> None:
-        super().__init__()
-        self.eps = 1e-15
-        self.name = "best f1 under pa"
-        
-    def calc(self, scores, labels):
-        '''
-        Returns:
-         A F1class (Evaluations.Metrics.F1class), including:\n
-            best_f1: the value of best f1 score;\n
-            precision: corresponding precision value;\n
-            recall: corresponding recall value;\n
-            threshold: the value of threshold when getting best f1.
-        '''
-        search_set = []
-        tot_anomaly = 0
-        for i in range(labels.shape[0]):
-            tot_anomaly += (labels[i] > 0.5)
-        flag = 0
-        cur_anomaly_len = 0
-        cur_max_anomaly_score = 0
-        for i in range(labels.shape[0]):
-            if labels[i] > 0.5:
-                # record the highest score in an anomaly segment
-                if flag == 1:
-                    cur_anomaly_len += 1
-                    cur_max_anomaly_score = scores[i] if scores[i] > cur_max_anomaly_score else cur_max_anomaly_score  # noqa: E501
-                else:
-                    flag = 1
-                    cur_anomaly_len = 1
-                    cur_max_anomaly_score = scores[i]
-            else:
-                # reconstruct the score using the highest score
-                if flag == 1:
-                    flag = 0
-                    search_set.append((cur_max_anomaly_score, cur_anomaly_len, True))
-                    search_set.append((scores[i], 1, False))
-                else:
-                    search_set.append((scores[i], 1, False))
-        if flag == 1:
-            search_set.append((cur_max_anomaly_score, cur_anomaly_len, True))
-            
-        search_set.sort(key=lambda x: x[0], reverse=True)
-        best_f1 = 0
-        threshold = 0
-        P = 0
-        TP = 0
-        best_P = 0
-        best_TP = 0
-        for i in range(len(search_set)):
-            P += search_set[i][1]
-            if search_set[i][2]:  # for an anomaly point
-                TP += search_set[i][1]
-            precision = TP / (P + self.eps)
-            recall = TP / (tot_anomaly + self.eps)
-            f1 = 2 * precision * recall / (precision + recall + self.eps)
-            if f1 > best_f1:
-                best_f1 = f1
-                threshold = search_set[i][0]
-                best_P = P
-                best_TP = TP
-
-        precision = best_TP / (best_P + self.eps)
-        recall = best_TP / (tot_anomaly + self.eps)
-
-        return float(precision), float(recall), float(best_f1), float(threshold)
+        return tpr_3d, fpr_3d, prec_3d, window_3d, sum(auc_3d)/len(window_3d), sum(ap_3d)/len(window_3d)
