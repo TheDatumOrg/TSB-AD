@@ -4,9 +4,9 @@ from sklearn.preprocessing import MinMaxScaler
 from .utils.slidingWindows import find_length_rank
 
 Unsupervise_AD_Pool = ['SR', 'NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
-                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'Chronos']
+                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
 Semisupervise_AD_Pool = ['MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
-                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA']
+                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
     try:
@@ -376,18 +376,22 @@ def run_TimesFM(data, win_size=96):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_MOMENT(data_train, data_test, win_size=256, type='ZS'):
+def run_MOMENT_ZS(data, win_size=256):
+    from .models.MOMENT import MOMENT
+    clf = MOMENT(win_size=win_size, input_c=data.shape[1])
+
+    # Zero shot
+    clf.zero_shot(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_MOMENT_FT(data_train, data_test, win_size=256):
     from .models.MOMENT import MOMENT
     clf = MOMENT(win_size=win_size, input_c=data_test.shape[1])
 
-    if type == 'ZS':
-        # Zero shot
-        clf.zero_shot(data_test)
-        score = clf.decision_scores_
-    else:
-        # Finetune
-        clf.fit(data_train)
-        score = clf.decision_function(data_test)
-
+    # Finetune
+    clf.fit(data_train)
+    score = clf.decision_function(data_test)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score

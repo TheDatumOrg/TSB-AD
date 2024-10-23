@@ -1,12 +1,10 @@
 """
 This function is adapted from [moment] by [mononitogoswami]
 Original source: [https://github.com/moment-timeseries-foundation-model/moment]
-Usage: conda activate moment
 """
 
-from moment import MOMENTPipeline
-from moment.data.anomaly_detection_dataset import AnomalyDetectionDataset
-from moment.utils.masking import Masking
+from momentfm import MOMENTPipeline
+from momentfm.utils.masking import Masking
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
@@ -44,7 +42,7 @@ class MOMENT(BaseDetector):
 
 
         self.model = MOMENTPipeline.from_pretrained(
-            "AutonLab/MOMENT-1-large", 
+            "AutonLab/MOMENT-1-base", 
             model_kwargs={"task_name": "reconstruction"}, # For anomaly detection, we will load MOMENT in `reconstruction` mode
         )
         self.model.init()
@@ -74,7 +72,7 @@ class MOMENT(BaseDetector):
                 # print('batch_x: ', batch_x.shape)             # [batch_size, n_channels, window_size]
                 # print('batch_masks: ', batch_masks.shape)     # [batch_size, window_size]
 
-                output = self.model(batch_x, input_mask=batch_masks) 
+                output = self.model(x_enc=batch_x, input_mask=batch_masks) # [batch_size, n_channels, window_size]
                 score = torch.mean(self.anomaly_criterion(batch_x, output.reconstruction), dim=-1).detach().cpu().numpy()[:, -1]
                 self.score_list.append(score)
 

@@ -27,15 +27,26 @@ class TimesFM():
             # print('data_win: ', data_win.shape)         # (2330, 100)
             # print('data_target: ', data_target.shape)   # (2330, 1)
 
+            # tfm = timesfm.TimesFm(
+            #     context_len=self.win_size,
+            #     horizon_len=self.prediction_length,
+            #     input_patch_len=32,
+            #     output_patch_len=128,
+            #     num_layers=20,
+            #     model_dims=1280,
+            #     backend="gpu")
+            # tfm.load_from_checkpoint(repo_id="google/timesfm-1.0-200m")
+
             tfm = timesfm.TimesFm(
-                context_len=self.win_size,
-                horizon_len=self.prediction_length,
-                input_patch_len=32,
-                output_patch_len=128,
-                num_layers=20,
-                model_dims=1280,
-                backend="gpu")
-            tfm.load_from_checkpoint(repo_id="google/timesfm-1.0-200m")
+                hparams=timesfm.TimesFmHparams(
+                    backend="gpu",
+                    per_core_batch_size=32,
+                    horizon_len=self.prediction_length,
+                ),
+                checkpoint=timesfm.TimesFmCheckpoint(
+                    huggingface_repo_id="google/timesfm-1.0-200m-pytorch"),
+            )
+
             forecast_input = [data_win[i, :] for i in range(data_win.shape[0])]
             point_forecast, _ = tfm.forecast(forecast_input)
 

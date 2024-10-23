@@ -71,7 +71,7 @@ pip install momentfm   # only support Python 3.11 for now
 
 **Step 4:** Install the package:
 ```bash
-pip install .
+pip install -e .
 ```
 
 <h3 id="usage">🧑‍💻 Basic Usage</h3>

@@ -3,7 +3,7 @@ This function is adapted from [chronos-forecasting] by [lostella et al.]
 Original source: [https://github.com/amazon-science/chronos-forecasting]
 """
 
-from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
+from autogluon.timeseries import TimeSeriesPredictor
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
@@ -15,7 +15,7 @@ from .base import BaseDetector
 class Chronos(BaseDetector):
     def __init__(self, 
                  win_size=100,
-                 model_size = 'small',  # [tiny, small, base]
+                 model_size = 'base',  # [tiny, small, base]
                  prediction_length=1, 
                  input_c=1, 
                  batch_size=128):

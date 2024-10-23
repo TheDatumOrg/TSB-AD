@@ -1,7 +1,6 @@
 tqdm
 torchinfo
 h5py
-einops
 numpy>=1.24.3,<2.0
 matplotlib>=3.7.5
 pandas>=2.0.3
@@ -14,3 +13,9 @@ stumpy>=1.12.0
 networkx>=3.1
 transformers>=4.38.0
 torch==2.3.0
+
+## OFA
+einops
+
+## Lag-Llama
+gluonts[torch]<=0.14.4
