@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     ## ArgumentParser
     parser = argparse.ArgumentParser(description='Running TSB-AD')
-    parser.add_argument('--filename', type=str, default='001_NAB_data_Traffic_4_624_2087.csv')
+    parser.add_argument('--filename', type=str, default='001_NAB_id_1_Facility_tr_1007_1st_2014.csv')
     parser.add_argument('--data_direc', type=str, default='Datasets/TSB-AD-U/')
     parser.add_argument('--save', type=bool, default=False)
     parser.add_argument('--AD_Name', type=str, default='IForest')
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     label = df['Label'].astype(int).to_numpy()
 
     slidingWindow = find_length_rank(data, rank=1)
-    train_index = args.filename.split('.')[0].split('_')[-2]
+    train_index = args.filename.split('.')[0].split('_')[-3]
     data_train = data[:int(train_index), :]
     Optimal_Det_HP = Optimal_Uni_algo_HP_dict[args.AD_Name]
 
