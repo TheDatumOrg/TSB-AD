@@ -7,7 +7,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-from .PCA import PCA
+from sklearn.decomposition import PCA
 from typing import Optional
 
 from .base import BaseDetector
@@ -91,19 +91,19 @@ class RobustPCA(BaseDetector):
         L, S = rpca.fit(max_iter=self.max_iter)
         self.detector_ = PCA(n_components=L.shape[1])
         self.detector_.fit(L)
-        self.decision_scores_ = self.detector_.decision_function(L)
+        self.decision_scores_ = self.decision_function(L)
         return self
 
+    # def decision_function(self, X):
+    #     check_is_fitted(self, ['detector_'])
+    #     X_transformed = self.detector_.transform(X)  # Transform the data into the PCA space
+    #     X_reconstructed = self.detector_.inverse_transform(X_transformed)  # Reconstruct the data from the PCA space
+    #     anomaly_scores = np.linalg.norm(X - X_reconstructed, axis=1)  # Compute the Euclidean norm between original and reconstructed data
+    #     return anomaly_scores
+
     def decision_function(self, X):
-        check_is_fitted(self, ['detector_'])
-        X_transformed = self.detector_.transform(X)  # Transform the data into the PCA space
-        X_reconstructed = self.detector_.inverse_transform(X_transformed)  # Reconstruct the data from the PCA space
-        anomaly_scores = np.linalg.norm(X - X_reconstructed, axis=1)  # Compute the Euclidean norm between original and reconstructed data
-        return anomaly_scores
+        assert self.detector_, "Please train PCA before running the detection!"
 
-    def detect(self, X) -> np.ndarray:
-        assert self.pca, "Please train PCA before running the detection!"
-
-        L = self.pca.transform(X)
+        L = self.detector_.transform(X)
         S = np.absolute(X - L)
         return S.sum(axis=1)
