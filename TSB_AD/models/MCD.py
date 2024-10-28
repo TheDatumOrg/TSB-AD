@@ -158,7 +158,7 @@ class MCD(BaseDetector):
                 self.detector_.fit(X=X, y=y)
                 break
             except ValueError:
-                support_fraction = 1.5 * support_fraction
+                support_fraction = support_fraction + 0.1
                 if support_fraction >= 1:
                     support_fraction = None
                     
