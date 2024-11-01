@@ -30,6 +30,10 @@ Multi_algo_HP_dict = {
         'n_clusters': [10, 20, 30, 40],
         'window_size': [10, 20, 30, 40]
     },   
+    'KShapeAD': {
+        'n_clusters': [10, 20, 30, 40],
+        'window_size': [10, 20, 30, 40]
+    },
     'COPOD': {
         'HP': [None]
     },    
@@ -97,6 +101,7 @@ Optimal_Multi_algo_HP_dict = {
     'MCD': {'support_fraction': 0.8},
     'KNN': {'n_neighbors': 50, 'method': 'largest'},        
     'KMeansAD': {'n_clusters': 10, 'window_size': 40},
+    'KShapeAD': {'n_clusters': 20, 'window_size': 40},
     'COPOD': {'n_jobs':1},    
     'CBLOF': {'n_clusters': 4, 'alpha': 0.6},
     'EIF': {'n_trees': 25},   
@@ -144,6 +149,9 @@ Uni_algo_HP_dict = {
     'SAND': {
         'periodicity': [1, 2, 3]
     }, 
+    'Series2Graph': {
+        'periodicity': [1, 2, 3]
+    },
     'Sub_PCA': {
         'periodicity': [1, 2, 3],
         'n_components': [0.25, 0.5, 0.75, None]
@@ -165,6 +173,10 @@ Uni_algo_HP_dict = {
         'n_neighbors': [10, 20, 30, 40, 50],
     },
     'KMeansAD': {
+        'n_clusters': [10, 20, 30, 40],
+        'window_size': [10, 20, 30, 40]
+    },
+    'KShapeAD': {
         'n_clusters': [10, 20, 30, 40],
         'window_size': [10, 20, 30, 40]
     },
@@ -237,16 +249,19 @@ Optimal_Uni_algo_HP_dict = {
     'MatrixProfile': {'periodicity': 1},
     'NORMA': {'periodicity': 1, 'clustering': 'kshape'},
     'SAND': {'periodicity': 1},
+    'Series2Graph': {'periodicity': 1},
+    'SR': {'periodicity': 1},
     'Sub_PCA': {'periodicity': 1, 'n_components': None},        
     'Sub_HBOS': {'periodicity': 1, 'n_bins': 5},
     'Sub_OCSVM': {'periodicity': 1, 'kernel': 'rbf'},        
     'Sub_MCD': {'periodicity': 1, 'support_fraction': 0.2},
     'Sub_KNN': {'periodicity': 1, 'n_neighbors': 50}, 
     'KMeansAD': {'n_clusters': 30, 'window_size': 40},
+    'KShapeAD': {'n_clusters': 30, 'window_size': 40},
     'AutoEncoder': {'window_size': 150, 'hidden_neurons': [64, 32]},
     'CNN': {'window_size': 50, 'num_channel': [32, 32, 40]},
     'LSTMAD': {'window_size': 150, 'lr': 0.0008},  
-    'TranAD': {'win_size': 10, 'lr': 0.0001},  
+    'TranAD': {'win_size': 10, 'lr': 0.0001},
     'AnomalyTransformer': {'win_size': 50, 'lr': 1e-05},  
     'OmniAnomaly': {'win_size': 5, 'lr': 0.002},
     'USAD': {'win_size': 5, 'lr': 0.001},  
