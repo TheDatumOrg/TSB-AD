@@ -1,6 +1,7 @@
 from sklearn import metrics
 import numpy as np
 import math
+import copy
 
 def generate_curve(label, score, slidingWindow, version='opt', thre=250):
     if version =='opt_mem':
@@ -110,7 +111,7 @@ class basic_metricor():
         if pred is None:
             predict = score > threshold
         else:
-            predict = pred
+            predict = copy.deepcopy(pred)
         actual = label > 0.1
         anomaly_state = False
         anomaly_count = 0
