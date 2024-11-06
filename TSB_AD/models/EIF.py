@@ -10,6 +10,7 @@ import math
 import random as rn
 import os
 import warnings
+from ..utils.utility import zscore
 
 def c_factor(n) :
     """
@@ -378,12 +379,13 @@ class EIF(BaseDetector):
     """
     Extenstion to the basic isolation forest. Implementation of https://doi.org/10.1109/TKDE.2019.2947676. Code from https://github.com/sahandha/eif
     """
-    def __init__(self, n_trees = 100, max_samples=None, extension_level=None, n_jobs=1):
+    def __init__(self, n_trees = 100, max_samples=None, extension_level=None, n_jobs=1, normalize=True):
         self.model_name = 'EIF'
         self.n_trees = n_trees
         self.max_samples = max_samples
         self.extension_level = extension_level
         self.n_jobs = n_jobs
+        self.normalize = normalize
 
     def fit(self, X, y=None):
         """Fit detector. y is ignored in unsupervised methods.
@@ -416,6 +418,8 @@ class EIF(BaseDetector):
         #     limit=self.limit,
         #     ExtensionLevel=self.extension_level,
         # )
+
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         eif = iForest(
             X,

@@ -11,6 +11,7 @@ from sklearn.utils.validation import check_array
 from sklearn.utils.validation import check_is_fitted
 from .feature import Window
 from .base import BaseDetector
+from ..utils.utility import zscore
 import numpy as np
 import math
 __all__ = ['MCD']
@@ -112,7 +113,7 @@ class MCD(BaseDetector):
 
     def __init__(self, slidingWindow=100, sub=True, contamination=0.1, store_precision=True,
                  assume_centered=False, support_fraction=None,
-                 random_state=2024):
+                 random_state=2024, normalize=True):
         super(MCD, self).__init__(contamination=contamination)
         self.store_precision = store_precision
         self.sub = sub
@@ -120,6 +121,7 @@ class MCD(BaseDetector):
         self.support_fraction = support_fraction
         self.random_state = random_state
         self.slidingWindow = slidingWindow
+        self.normalize = normalize
 
     # noinspection PyIncorrectDocstring
     def fit(self, X, y=None):
@@ -143,6 +145,7 @@ class MCD(BaseDetector):
         if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # Validate inputs X and y (optional)
         X = check_array(X)
@@ -196,6 +199,7 @@ class MCD(BaseDetector):
         if n_features == 1: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         X = check_array(X)
 

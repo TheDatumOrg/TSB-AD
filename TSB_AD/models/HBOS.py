@@ -15,6 +15,7 @@ from sklearn.utils.validation import check_is_fitted
 from .feature import Window
 from .base import BaseDetector
 from ..utils.utility import check_parameter, get_optimal_n_bins, invert_order
+from ..utils.utility import zscore
 
 
 class HBOS(BaseDetector):
@@ -72,13 +73,14 @@ class HBOS(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, slidingWindow=100, sub=True, n_bins=10, alpha=0.1, tol=0.5, contamination=0.1):
+    def __init__(self, slidingWindow=100, sub=True, n_bins=10, alpha=0.1, tol=0.5, contamination=0.1, normalize=True):
         super(HBOS, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
         self.sub = sub
         self.n_bins = n_bins
         self.alpha = alpha
         self.tol = tol
+        self.normalize = normalize
 
         check_parameter(alpha, 0, 1, param_name='alpha')
         check_parameter(tol, 0, 1, param_name='tol')
@@ -104,6 +106,7 @@ class HBOS(BaseDetector):
         if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # validate inputs X and y (optional)
         X = check_array(X)
@@ -184,7 +187,8 @@ class HBOS(BaseDetector):
         if n_features == 1: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
-
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
+        
         X = check_array(X)
 
         if isinstance(self.n_bins, str) and self.n_bins.lower() == "auto":

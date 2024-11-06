@@ -7,21 +7,23 @@ from sklearn.base import BaseEstimator, OutlierMixin
 from sklearn.cluster import KMeans
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
-
+from ..utils.utility import zscore
 
 class KMeansAD(BaseEstimator, OutlierMixin):
-    def __init__(self, k: int, window_size: int, stride: int, n_jobs: int):
+    def __init__(self, k, window_size, stride, n_jobs=1, normalize=True):
         self.k = k
         self.window_size = window_size
         self.stride = stride
         self.model = KMeans(n_clusters=k)
         self.padding_length = 0
+        self.normalize = normalize
 
     def _preprocess_data(self, X: np.ndarray) -> np.ndarray:
         flat_shape = (X.shape[0] - (self.window_size - 1), -1)  # in case we have a multivariate TS
         slides = sliding_window_view(X, window_shape=self.window_size, axis=0).reshape(flat_shape)[::self.stride, :]
         self.padding_length = X.shape[0] - (slides.shape[0] * self.stride + self.window_size - self.stride)
         print(f"Required padding_length={self.padding_length}")
+        if self.normalize: slides = zscore(slides, axis=1, ddof=1)
         return slides
 
     def _custom_reverse_windowing(self, scores: np.ndarray) -> np.ndarray:

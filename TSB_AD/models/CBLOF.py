@@ -17,6 +17,7 @@ from sklearn.utils.estimator_checks import check_estimator
 from ..utils.stat_models import pairwise_distances_no_broadcast
 from ..utils.utility import check_parameter    
 from .base import BaseDetector
+from ..utils.utility import zscore
 
 
 class CBLOF(BaseDetector):
@@ -132,7 +133,7 @@ class CBLOF(BaseDetector):
     def __init__(self, n_clusters=8, contamination=0.1,
                  clustering_estimator=None, alpha=0.9, beta=5,
                  use_weights=False, check_estimator=False, random_state=0,
-                 n_jobs=1):
+                 n_jobs=1, normalize=True):
         super(CBLOF, self).__init__(contamination=contamination)
         self.n_clusters = n_clusters
         self.clustering_estimator = clustering_estimator
@@ -141,6 +142,7 @@ class CBLOF(BaseDetector):
         self.use_weights = use_weights
         self.check_estimator = check_estimator
         self.random_state = random_state
+        self.normalize = normalize
 
     # noinspection PyIncorrectDocstring
     def fit(self, X, y=None):
@@ -164,6 +166,7 @@ class CBLOF(BaseDetector):
         X = check_array(X)
         self._set_n_classes(y)
         n_samples, n_features = X.shape
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # check parameters
         # number of clusters are default to 8

@@ -17,6 +17,7 @@ from sklearn.utils import check_array
 from .base import BaseDetector
 from ..utils.stat_models import column_ecdf
 from ..utils.utility import _partition_estimators
+from ..utils.utility import zscore
 
 def skew(X, axis=0):
     return np.nan_to_num(skew_sp(X, axis=axis))
@@ -83,11 +84,12 @@ class COPOD(BaseDetector):
         ``threshold_`` on ``decision_scores_``.
     """
 
-    def __init__(self, contamination=0.1, n_jobs=1):
+    def __init__(self, contamination=0.1, n_jobs=1, normalize=True):
         super(COPOD, self).__init__(contamination=contamination)
 
         #TODO: Make it parameterized for n_jobs
         self.n_jobs = n_jobs
+        self.normalize = normalize
 
     def fit(self, X, y=None):
         """Fit detector. y is ignored in unsupervised methods.
@@ -103,6 +105,8 @@ class COPOD(BaseDetector):
             Fitted estimator.
         """
         X = check_array(X)
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
+
         self._set_n_classes(y)
         self.decision_scores_ = self.decision_function(X)
         self.X_train = X

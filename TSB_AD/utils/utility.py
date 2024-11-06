@@ -21,7 +21,18 @@ import torch.nn as nn
 MAX_INT = np.iinfo(np.int32).max
 MIN_INT = -1 * MAX_INT
 
+def zscore(a, axis=0, ddof=0):
+    a = np.asanyarray(a)
+    mns = a.mean(axis=axis)
+    sstd = a.std(axis=axis, ddof=ddof)
 
+    if axis and mns.ndim < a.ndim:
+        res = ((a - np.expand_dims(mns, axis=axis)) /
+               np.expand_dims(sstd, axis=axis))
+    else:
+        res = (a - mns) / sstd
+
+    return np.nan_to_num(res)
 
 def pairwise_distances_no_broadcast(X, Y):
     """Utility function to calculate row-wise euclidean distance of two matrix.

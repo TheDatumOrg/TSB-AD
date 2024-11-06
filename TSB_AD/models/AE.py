@@ -217,7 +217,7 @@ class AutoEncoder(BaseDetector):
                  dropout_rate=0.2,
                  weight_decay=1e-5,
                  # validation_size=0.1,
-                 preprocessing=False,
+                 preprocessing=True,
                  loss_fn=None,
                  verbose=False,
                  # random_state=None,
@@ -286,6 +286,7 @@ class AutoEncoder(BaseDetector):
         # conduct standardization if needed
         if self.preprocessing:
             self.mean, self.std = np.mean(X, axis=0), np.std(X, axis=0)
+            self.std = np.where(self.std == 0, 1e-8, self.std)
             train_set = TSDataset(X=X, mean=self.mean, std=self.std)
         else:
             train_set = TSDataset(X=X)

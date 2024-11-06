@@ -17,7 +17,7 @@ import math
 
 from .base import BaseDetector
 from .feature import Window
-
+from ..utils.utility import zscore
 
 class KNN(BaseDetector):
     # noinspection PyPep8
@@ -138,7 +138,7 @@ class KNN(BaseDetector):
     """
     def __init__(self, slidingWindow=100, sub=True, contamination=0.1, n_neighbors=10, method='largest',
                  radius=1.0, algorithm='auto', leaf_size=30,
-                 metric='minkowski', p=2, metric_params=None, n_jobs=1,
+                 metric='minkowski', p=2, metric_params=None, n_jobs=1, normalize=True,
                  **kwargs):
                 
         self.slidingWindow = slidingWindow
@@ -151,6 +151,7 @@ class KNN(BaseDetector):
         self.metric = metric
         self.p = p
         self.metric_params = metric_params
+        self.normalize = normalize
         self.n_jobs = n_jobs
 
         if self.algorithm != 'auto' and self.algorithm != 'ball_tree':
@@ -189,6 +190,7 @@ class KNN(BaseDetector):
         if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # validate inputs X and y (optional)
         X = check_array(X)

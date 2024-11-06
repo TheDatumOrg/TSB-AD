@@ -1,6 +1,7 @@
 import torch
 import torch.utils.data
 import numpy as np
+epsilon = 1e-8
 
 class TSDataset(torch.utils.data.Dataset):
 
@@ -27,9 +28,18 @@ class TSDataset(torch.utils.data.Dataset):
 
 class ReconstructDataset(torch.utils.data.Dataset):
 
-    def __init__(self, data, window_size, step=1):
+    def __init__(self, data, window_size, step=1, normalize=True):
         super().__init__()
-        self.data = data
+        self.normalize = normalize
+
+        if self.normalize:
+            data_mean = np.mean(data, axis=0)
+            data_std = np.std(data, axis=0)
+            data_std = np.where(data_std == 0, epsilon, data_std)
+            self.data = (data - data_mean) / data_std
+        else:
+            self.data = data
+
         self.window_size = window_size
         self.step = step
         
@@ -70,9 +80,18 @@ class ReconstructDataset(torch.utils.data.Dataset):
 
 
 class ForecastDataset(torch.utils.data.Dataset):
-    def __init__(self, data: np.array, window_size: int, pred_len: int) -> None:
+    def __init__(self, data, window_size, pred_len, normalize=True):
         super().__init__()
-        self.data = data
+        self.normalize = normalize
+
+        if self.normalize:
+            data_mean = np.mean(data, axis=0)
+            data_std = np.std(data, axis=0)
+            data_std = np.where(data_std == 0, epsilon, data_std)
+            self.data = (data - data_mean) / data_std
+        else:
+            self.data = data
+
         self.window_size = window_size
         
         if data.shape[1] == 1:
@@ -112,9 +131,17 @@ class ForecastDataset(torch.utils.data.Dataset):
 
 class ReconstructDataset_Moment(torch.utils.data.Dataset):
 
-    def __init__(self, data, window_size, step=1):
+    def __init__(self, data, window_size, step=1, normalize=True):
         super().__init__()
-        self.data = data
+        self.normalize = normalize
+
+        if self.normalize:
+            data_mean = np.mean(data, axis=0)
+            data_std = np.std(data, axis=0)
+            data_std = np.where(data_std == 0, epsilon, data_std)
+            self.data = (data - data_mean) / data_std
+        else:
+            self.data = data
         self.window_size = window_size
         self.step = step
         

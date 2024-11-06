@@ -14,6 +14,7 @@ from sklearn.utils.validation import check_is_fitted
 from .base import BaseDetector
 from .feature import Window
 from ..utils.utility import invert_order
+from ..utils.utility import zscore
 
 # noinspection PyProtectedMember
 class LOF(BaseDetector):
@@ -137,7 +138,7 @@ class LOF(BaseDetector):
 
     def __init__(self, slidingWindow=100, sub=True, n_neighbors=20, algorithm='auto', leaf_size=30,
                  metric='minkowski', p=2, metric_params=None,
-                 contamination=0.1, n_jobs=1, novelty=True):
+                 contamination=0.1, n_jobs=1, novelty=True, normalize=True):
         super(LOF, self).__init__(contamination=contamination)
 
         self.slidingWindow = slidingWindow
@@ -150,6 +151,7 @@ class LOF(BaseDetector):
         self.metric_params = metric_params
         self.n_jobs = n_jobs
         self.novelty = novelty
+        self.normalize = normalize
 
     # noinspection PyIncorrectDocstring
     def fit(self, X, y=None):
@@ -175,6 +177,7 @@ class LOF(BaseDetector):
         if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # validate inputs X and y (optional)
         X = check_array(X)

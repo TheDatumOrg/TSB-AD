@@ -17,6 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 from .feature import Window
 from .base import BaseDetector
 from ..utils.utility import invert_order
+from ..utils.utility import zscore
 
 class OCSVM(BaseDetector):
     """Wrapper of scikit-learn one-class SVM Class with more functionalities.
@@ -118,7 +119,7 @@ class OCSVM(BaseDetector):
 
     def __init__(self, slidingWindow=100, kernel='rbf', sub=True, degree=3, gamma='auto', coef0=0.0,
                  tol=1e-3, nu=0.5, shrinking=True, cache_size=200,
-                 verbose=False, max_iter=-1, contamination=0.1):
+                 verbose=False, max_iter=-1, contamination=0.1, normalize=True):
         super(OCSVM, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
         self.sub = sub
@@ -132,6 +133,7 @@ class OCSVM(BaseDetector):
         self.cache_size = cache_size
         self.verbose = verbose
         self.max_iter = max_iter
+        self.normalize = normalize
 
     def fit(self, X, y=None, sample_weight=None, **params):
         """Fit detector. y is ignored in unsupervised methods.
@@ -158,6 +160,7 @@ class OCSVM(BaseDetector):
         if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # validate inputs X and y (optional)
         X = check_array(X)
@@ -209,7 +212,7 @@ class OCSVM(BaseDetector):
         if n_features == 1: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
-        X = MinMaxScaler(feature_range=(0,1)).fit_transform(X.T).T
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # invert outlier scores. Outliers comes with higher outlier scores
         decision_scores_ = invert_order(self.detector_.decision_function(X))

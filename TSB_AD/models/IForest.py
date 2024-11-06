@@ -18,6 +18,7 @@ from .feature import Window
 from .base import BaseDetector
 # noinspection PyProtectedMember
 from ..utils.utility import invert_order
+from ..utils.utility import zscore
 
 class IForest(BaseDetector):
     """Wrapper of scikit-learn Isolation Forest with more functionalities.
@@ -146,7 +147,8 @@ class IForest(BaseDetector):
                  n_jobs=1,
                  behaviour='old',
                  random_state=0,         # set the random state
-                 verbose=0):
+                 verbose=0, 
+                 normalize=True):
         super(IForest, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
         self.sub = sub
@@ -158,6 +160,7 @@ class IForest(BaseDetector):
         self.behaviour = behaviour
         self.random_state = random_state
         self.verbose = verbose
+        self.normalize = normalize
 
     def fit(self, X, y=None):
         """Fit detector. y is ignored in unsupervised methods.
@@ -180,6 +183,7 @@ class IForest(BaseDetector):
         if n_features == 1 and self.sub: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         print('X: ', X.shape)
 

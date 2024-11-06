@@ -3,9 +3,9 @@ import math
 from sklearn.preprocessing import MinMaxScaler
 from .utils.slidingWindows import find_length_rank
 
-Unsupervise_AD_Pool = ['SR', 'NORMA', 'SAND', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
-                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
-Semisupervise_AD_Pool = ['MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
+Unsupervise_AD_Pool = ['SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
+                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
+Semisupervise_AD_Pool = ['SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
                         'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
@@ -85,7 +85,16 @@ def run_MatrixProfile(data, periodicity=1, n_jobs=1):
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_SAND(data, periodicity=1):
+def run_SAND(data_train, data_test, periodicity=1):
+    from .models.SAND import SAND
+    slidingWindow = find_length_rank(data_test, rank=periodicity)
+    clf = SAND(pattern_length=slidingWindow, subsequence_length=4*(slidingWindow))
+    clf.fit(data_test.squeeze(), online=True, overlaping_rate=int(1.5*slidingWindow), init_length=len(data_train), alpha=0.5, batch_size=max(5*(slidingWindow), int(0.1*len(data_test))))
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_KShapeAD(data, periodicity=1):
     from .models.SAND import SAND
     slidingWindow = find_length_rank(data, rank=periodicity)
     clf = SAND(pattern_length=slidingWindow, subsequence_length=4*(slidingWindow))
@@ -215,6 +224,14 @@ def run_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1):
 def run_KMeansAD(data, n_clusters=20, window_size=20, n_jobs=1):
     from .models.KMeansAD import KMeansAD
     clf = KMeansAD(k=n_clusters, window_size=window_size, stride=1, n_jobs=n_jobs)
+    score = clf.fit_predict(data)
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_KMeansAD_U(data, n_clusters=20, periodicity=1,n_jobs=1):
+    from .models.KMeansAD import KMeansAD
+    slidingWindow = find_length_rank(data, rank=periodicity)
+    clf = KMeansAD(k=n_clusters, window_size=slidingWindow, stride=1, n_jobs=n_jobs)
     score = clf.fit_predict(data)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
