@@ -1,9 +1,9 @@
 <p align="center">
-<img width="300" src="doc/fig/readme_title.png"/>
+<img width="300" src="assets/fig/readme_title.png"/>
 </p>
 
 <h1 align="center">TSB-AD</h1>
-<h3 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h3>
+<h2 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
 
 
 Main Recent Update:
@@ -43,7 +43,7 @@ Due to limitations in the upload size on GitHub, we host the datasets at [Link] 
 
 <h3 id="tsad">💻 Installation</h3>
 
-You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/1.0/)
+You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/1.0/):
 
 ```bash
 pip install TSB-AD==1.0
@@ -122,7 +122,7 @@ evaluation_result = get_metrics(output, label)
 ### Dataset Overview 
 
 <p align="center">
-<img width="600" src="doc/fig/tsb_overview.png"/>
+<img width="600" src="assets/fig/tsb_overview.png"/>
 </p>
 
 > Example time series from TSB-AD, with anomalies highlighted in red. TSB-AD features high-quality labeled time series from a variety of domains, characterized by high variability in length and types of anomalies. Only one channel in a multivariate time series is visualized for brevity.
