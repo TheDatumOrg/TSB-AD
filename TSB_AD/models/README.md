@@ -20,4 +20,4 @@ If you want to use [Lag-Llama](https://github.com/time-series-foundation-models/
 ```bash
 gluonts[torch]<=0.14.4
 ```
-and download the checkpoint from [Link](https://github.com/time-series-foundation-models/lag-llama) and add the path to [Lag_Llama.py](https://github.com/TheDatumOrg/TSB-AD/tree/main/TSB_AD/models/models/Lag_Llama.py).
+and download the checkpoint from [Link](https://github.com/time-series-foundation-models/lag-llama) and add the path to [Lag_Llama.py](https://github.com/TheDatumOrg/TSB-AD/blob/main/TSB_AD/models/Lag_Llama.py).
