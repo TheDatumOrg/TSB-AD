@@ -3,25 +3,37 @@
 </p>
 
 <h1 align="center">TSB-AD</h1>
-<h2 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
+<h3 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h3>
 
 
 Main Recent Update:
+- [Nov. 6, 2024] Pip-installable package released.
 - [Sep. 26, 2024] Paper accepted to NeurIPS 2024 D&B Track!
+
+If you find our work helpful, please consider citing it:
+
+```bibtex
+@inproceedings{liu2024elephant,
+  title={The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark},
+  author={Liu, Qinghua and Paparrizos, John},
+  booktitle={NeurIPS 2024},
+  year={2024}
+}
+```
 
 ## Table of Contents
 
 - [📄 Overview](#overview)
 - [⚙️ Get Started](#start)
     * [🗄️ Dataset](#dataset)
-    * [💻 TSAD Algorithm](#tsad)
+    * [💻 Installation](#tsad)
     * [🧑‍💻 Basic Usage](#usage)  
 - [🏄‍♂️ Dive into TSB-AD](#tsb)
 
 
 <h2 id="overview"> 📄 Overview </h2>
 
-Time-series anomaly detection is a fundamental task across scientific fields and industries. However, the field has long faced the ``elephant in the room:'' critical issues including flawed datasets, biased evaluation measures, and inconsistent benchmarking practices that have remained largely ignored and unaddressed. We introduce the TSB-AD to systematically tackle these issues in the following three aspects: (i) Dataset Integrity: with 1070 high-quality time series from a diverse collection of 40 datasets (doubling the size of the largest collection and four times the number of existing curated datasets), we provide the first large-scale, heterogeneous, meticulously curated dataset that combines the effort of human perception and model interpretation; (ii) Measure Reliability: by revealing issues and biases in evaluation measures, we identify the most reliable and accurate measure, namely, VUS-PR for anomaly detection in time series to address concerns from the community; and (iii) Comprehensive Benchmarking: with a broad spectrum of 40 detection algorithms, from statistical methods to the latest foundation models, we perform a comprehensive evaluation that includes a thorough hyperparameter tuning and a unified setup for a fair and reproducible comparison. Our findings challenge the conventional wisdom regarding the superiority of advanced neural network architectures, revealing that simpler architectures and statistical methods often yield better performance. The promising performance of neural networks on multivariate cases and foundation models on point anomalies highlights the need for further advancements in these methods.
+Time-series anomaly detection is a fundamental task across scientific fields and industries. However, the field has long faced the ''🐘 elephant in the room:'' critical issues including flawed datasets, biased evaluation measures, and inconsistent benchmarking practices that have remained largely ignored and unaddressed. We introduce the TSB-AD to systematically tackle these issues in the following three aspects: (i) Dataset Integrity: with 1070 high-quality time series from a diverse collection of 40 datasets (doubling the size of the largest collection and four times the number of existing curated datasets), we provide the first large-scale, heterogeneous, meticulously curated dataset that combines the effort of human perception and model interpretation; (ii) Measure Reliability: by revealing issues and biases in evaluation measures, we identify the most reliable and accurate measure, namely, VUS-PR for anomaly detection in time series to address concerns from the community; and (iii) Comprehensive Benchmarking: with a broad spectrum of 40 detection algorithms, from statistical methods to the latest foundation models, we perform a comprehensive evaluation that includes a thorough hyperparameter tuning and a unified setup for a fair and reproducible comparison. Our findings challenge the conventional wisdom regarding the superiority of advanced neural network architectures, revealing that simpler architectures and statistical methods often yield better performance. The promising performance of neural networks on multivariate cases and foundation models on point anomalies highlights the need for further advancements in these methods.
 
 <h2 id="start"> ⚙️ Get Started </h2>
 
@@ -29,7 +41,13 @@ Time-series anomaly detection is a fundamental task across scientific fields and
 
 Due to limitations in the upload size on GitHub, we host the datasets at [Link] (Will be available along with the camera ready version).
 
-<h3 id="tsad">💻 TSAD Algorithm</h3>
+<h3 id="tsad">💻 Installation</h3>
+
+You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/1.0/)
+
+```bash
+pip install TSB-AD==1.0
+```
 
 To install TSB-AD from source, you will need the following tools:
 - `git`
@@ -121,9 +139,7 @@ Specifically, TSB-AD includes the following datasets:
 |WSD|is a web service dataset, which contains real-world KPIs collected from large Internet companies.|
 |SED|a simulated engine disk data from the NASA Rotary Dynamics Laboratory representing disk revolutions recorded over several runs (3K rpm speed).|
 |Stock|is a stock trading traces dataset, containing one million transaction records throughout the trading hours of a day.|
-|Taxi|is a real-world dataset collected by the NYC Taxi and Limousine Commission, which represents the number of passengers over time. Five anomalies are the NYC Marathon, Thanksgiving, Christmas, New Year’s Day, and a snowstorm.|
 |TODS|is a synthetic dataset that comprises global, contextual, shapelet, seasonal, and trend anomalies.|
-|ECG|is a standard electrocardiogram dataset and the anomalies represent ventricular premature contractions.|
 |GHL|contains the status of 3 reservoirs such as the temperature and level. Anomalies indicate changes in max temperature or pump frequency.|
 |Daphnet|contains the annotated readings of 3 acceleration sensors at the hip and leg of Parkinson’s disease patients that experience freezing of gait (FoG) during walking tasks.|
 |Exathlon|is based on real data traces collected from a Spark cluster over 2.5 months. For each of these anomalies, ground truth labels are provided for both the root cause interval and the corresponding effect interval.|
@@ -139,6 +155,9 @@ Specifically, TSB-AD includes the following datasets:
 |MITDB|contains 48 half-hour excerpts of two-channel ambulatory ECG recordings, obtained from 47 subjects studied by the BIH Arrhythmia Laboratory between 1975 and 1979.|
 |SVDB|includes 78 half-hour ECG recordings chosen to supplement the examples of supraventricular arrhythmias in the MIT-BIH Arrhythmia Database.|
 |CATSv2|is the second version of the Controlled Anomalies Time Series (CATS) Dataset, which consists of commands, external stimuli, and telemetry readings of a simulated complex dynamical system with 200 injected anomalies.|
+|LTDB| is a collection of 7 long-duration ECG recordings (14 to 22 hours each), with manually reviewed beat annotations.|
+|TAO| contains 575, 648 records with 3 attributes which are collected from the Tropical Atmosphere Ocean project.|
+|NEK| is collected from real production network equipment.|
 
 
 ### Detection Algorithm
@@ -151,21 +170,24 @@ We organize the detection algorithms in TSB-AD in the following three categories
 
 | Algorithm    | Description|
 |:--|:---------|
-|MCD|is based on minimum covariance determinant, which seeks to find a subset of all the sequences to estimate the mean and covariance matrix of the subset with minimal determinant. Subsequently, Mahalanobis distance is utilized to calculate the distance from sub-sequences to the mean, which is regarded as the anomaly score.|
-|OCSVM|fits the dataset to find the normal data's boundary by maximizing the margin between the origin and the normal samples.|
-|LOF|calculates the anomaly score by comparing local density with that of its neighbors.|
-|KNN|produces the anomaly score of the input instance as the distance to its $k$-th nearest neighbor.|
+|(Sub)-MCD|is based on minimum covariance determinant, which seeks to find a subset of all the sequences to estimate the mean and covariance matrix of the subset with minimal determinant. Subsequently, Mahalanobis distance is utilized to calculate the distance from sub-sequences to the mean, which is regarded as the anomaly score.|
+|(Sub)-OCSVM|fits the dataset to find the normal data's boundary by maximizing the margin between the origin and the normal samples.|
+|(Sub)-LOF|calculates the anomaly score by comparing local density with that of its neighbors.|
+|(Sub)-KNN|produces the anomaly score of the input instance as the distance to its $k$-th nearest neighbor.|
 |KMeansAD|calculates the anomaly scores for each sub-sequence by measuring the distance to the centroid of its assigned cluster, as determined by the k-means algorithm.|
 |CBLOF|is clluster-based LOF, which calculates the anomaly score by first assigning samples to clusters, and then using the distance among clusters as anomaly scores.|
 |POLY|detect pointwise anomolies using polynomial approximation. A GARCH method is run on the difference between the approximation and the true value of the dataset to estimate the volatility of each point.|
-|IForest|constructs the binary tree, wherein the path length from the root to a node serves as an indicator of anomaly likelihood; shorter paths suggest higher anomaly probability.|
-|HBOS|constructs a histogram for the data and uses the inverse of the height of the bin as the anomaly score of the data point.|
+|(Sub)-IForest|constructs the binary tree, wherein the path length from the root to a node serves as an indicator of anomaly likelihood; shorter paths suggest higher anomaly probability.|
+|(Sub)-HBOS|constructs a histogram for the data and uses the inverse of the height of the bin as the anomaly score of the data point.|
+|KShapeAD| identifies the normal pattern based on the k-Shape clustering algorithm and computes anomaly scores based on the distance between each sub-sequence and the normal pattern. KShapeAD improves KMeansAD as it relies on a more robust time-series clustering method and corresponds to an offline version of the streaming SAND method.|
 |MatrixProfile|identifies anomalies by pinpointing the subsequence exhibiting the most substantial nearest neighbor distance.|
-|PCA|projects data to a lower-dimensional hyperplane, with significant deviation from this plane indicating potential outliers.|
+|(Sub)-PCA|projects data to a lower-dimensional hyperplane, with significant deviation from this plane indicating potential outliers.|
 |RobustPCA|is built upon PCA and identifies anomalies by recovering the principal matrix.|
 |EIF|is an extension of the traditional Isolation Forest algorithm, which removes the branching bias using hyperplanes with random slopes.|
+|SR| begins by computing the Fourier Transform of the data, followed by the spectral residual of the log amplitude. The Inverse Fourier Transform then maps the sequence back to the time domain, creating a saliency map. The anomaly score is calculated as the relative difference between saliency map values and their moving averages.|
 |COPOD|is a copula-based parameter-free detection algorithm, which first constructs an empirical copula, and then uses it to predict tail probabilities of each given data point to determine its level of extremeness.|
-|NORMA|identifies the normal state based on clustering and calculates each point's effective distance to the normal state representation.|
+|Series2Graph| converts the time series into a directed graph representing the evolution of subsequences in time. The anomalies are detected using the weight and the degree of the nodes and edges respectively.|
+|SAND| identifies the normal pattern based on clustering updated through arriving batches (i.e., subsequences) and calculates each point's effective distance to the normal pattern.|
 
 
 #### (ii) Neural Network-based Method
