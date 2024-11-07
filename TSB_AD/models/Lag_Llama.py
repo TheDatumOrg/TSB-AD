@@ -15,8 +15,6 @@ import pandas as pd
 import numpy as np
 from ..utils.torch_utility import get_gpu
 
-import sys
-sys.path.append('/data/liuqinghua/code/ts/TSAD-AutoML/lag-llama')
 from lag_llama.gluon.estimator import LagLlamaEstimator
 
 class Lag_Llama():
@@ -27,7 +25,7 @@ class Lag_Llama():
                  use_rope_scaling=False,
                  batch_size=64,
                  num_samples=100,
-                 ckpt_path='/data/liuqinghua/code/ts/TSAD-AutoML/lag-llama/lag-llama.ckpt'):
+                 ckpt_path='lag-llama.ckpt'):
 
         self.model_name = 'Lag_Llama'
         self.context_length = win_size

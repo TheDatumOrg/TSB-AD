@@ -11,10 +11,10 @@ with open(path.join(this_directory, 'requirements.txt'),
 
 setup(
     name='TSB_AD',  # Replace with your own package name
-    version='0.1.0',  # The version of your package
+    version='1.0',  # The version of your package
     author='The Datum Lab',  # Your name
     description='Time-Series Anomaly Detection Benchmark',  # A short description
-    long_description=open('README.md').read(),  # Long description read from the README.md
+    long_description=open('README.md', encoding='utf-8').read(),  # Long description read from the README.md
     long_description_content_type='text/markdown',  # Type of the long description, typically text/markdown or text/x-rst
     url='https://github.com/TheDatumOrg/TSB-AD',  # Link to the repository or website
     packages=find_packages(),  # List of all Python import packages that should be included in the Distribution Package

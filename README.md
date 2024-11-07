@@ -21,7 +21,7 @@ Main Recent Update:
 
 <h2 id="overview"> 📄 Overview </h2>
 
-Time-series anomaly detection is a fundamental task across scientific fields and industries. However, the field has long faced the "elephant in the room:" critical issues including flawed datasets, biased evaluation metrics, and inconsistent benchmarking practices that have remained largely ignored and unaddressed.  We introduce the TSB-AD to systematically tackle these issues in the following three aspects: (i) Dataset Integrity: with 1020 high-quality time series refined from an initial collection of 4k spanning 33 diverse domains, we provide the first large-scale, heterogeneous, meticulously curated dataset that combines the effort of human perception and model interpretation; (ii) Metric Reliability: by revealing bias in evaluation metrics, we perform ranking aggregation on a set of reliable evaluation metrics for comprehensive capturing of model performance and robustness to address concerns from the community; (iii) Comprehensive Benchmarking: with a broad spectrum of 35 detection algorithms, from statistical methods to the latest foundation models, we perform systematic hyperparameter tuning for a fair and complete comparison. Our findings challenge the conventional wisdom regarding the superiority of advanced neural network architectures, revealing that simpler architectures and statistical methods often yield better performance. While foundation models demonstrate promise, we need to proceed with caution in terms of data contamination.
+Time-series anomaly detection is a fundamental task across scientific fields and industries. However, the field has long faced the ``elephant in the room:'' critical issues including flawed datasets, biased evaluation measures, and inconsistent benchmarking practices that have remained largely ignored and unaddressed. We introduce the TSB-AD to systematically tackle these issues in the following three aspects: (i) Dataset Integrity: with 1070 high-quality time series from a diverse collection of 40 datasets (doubling the size of the largest collection and four times the number of existing curated datasets), we provide the first large-scale, heterogeneous, meticulously curated dataset that combines the effort of human perception and model interpretation; (ii) Measure Reliability: by revealing issues and biases in evaluation measures, we identify the most reliable and accurate measure, namely, VUS-PR for anomaly detection in time series to address concerns from the community; and (iii) Comprehensive Benchmarking: with a broad spectrum of 40 detection algorithms, from statistical methods to the latest foundation models, we perform a comprehensive evaluation that includes a thorough hyperparameter tuning and a unified setup for a fair and reproducible comparison. Our findings challenge the conventional wisdom regarding the superiority of advanced neural network architectures, revealing that simpler architectures and statistical methods often yield better performance. The promising performance of neural networks on multivariate cases and foundation models on point anomalies highlights the need for further advancements in these methods.
 
 <h2 id="start"> ⚙️ Get Started </h2>
 
@@ -58,16 +58,7 @@ If you have problem installing `torch` using pip, try the following:
 conda install pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
 
-> If you want to use Chronos, please install the following
-```bash
-git clone https://github.com/autogluon/autogluon
-cd autogluon && pip install -e timeseries/[TimeSeriesDataFrame,TimeSeriesPredictor]
-```
-
-> If you want to use MOMENT, please install the following
-```bash
-pip install momentfm   # only support Python 3.11 for now
-```
+For instructions on the installation of Foundation Models, please refer to [link](https://github.com/TheDatumOrg/TSB-AD/tree/main/TSB_AD/models/README.md).
 
 **Step 4:** Install the package:
 ```bash
@@ -90,7 +81,7 @@ from TSB_AD.evaluation.metrics import get_metrics
 
 # Specify Anomaly Detector to use and data directory
 AD_Name = 'IForest'   # It can be replaced with any anomaly detector availale in TSB-AD
-data_direc = 'Datasets/TSB-AD-U/001_NAB_data_Traffic_4_624_2087.csv'
+data_direc = 'Datasets/TSB-AD-U/001_NAB_id_1_Facility_tr_1007_1st_2014.csv'
 
 # Loading Data
 df = pd.read_csv(data_direc).dropna()
@@ -105,6 +96,10 @@ evaluation_result = get_metrics(output, label)
 ```
 
 <h2 id="tsb"> 🏄‍♂️ Dive into TSB-AD </h2>
+
+### TSAD Leaderboard
+
+> [🔧 Coming Soon!]
 
 ### Dataset Overview 
 
@@ -199,73 +194,6 @@ We organize the detection algorithms in TSB-AD in the following three categories
 |MOMENT|is pre-trained T5 encoder based on a masked time-series modeling approach.|
 
 
-### TSAD Leaderboard
-
-> Summary accuracy comparison of mean value on TSB-AD-U and TSB-AD-M
-
-## Summary accuracy comparison of mean value on TSB-AD-U and TSB-AD-M
-
-The methods are sorted from top to bottom based on their Aggregated Mean Value Ranking. The best-performing method as per each metric is marked in **bold** and the second best is marked in _underline_.
-
-> TSB-AD-U
-
-| Method               | AUC-PR | AUC-ROC | VUS-PR | VUS-ROC | Standard-F1 | PA-F1 | Event-based-F1 | R-based-F1 | Affiliation-F1 |
-|----------------------|--------|---------|--------|---------|-------------|-------|----------------|------------|----------------|
-| NORMA                | **0.38** | _0.79_ | 0.46   | 0.81    | **0.42**    | 0.63  | 0.42           | **0.41**   | **0.73**       |
-| MOMENT (FT)          | 0.32   | 0.76    | **0.48** | _0.81_ | 0.39        | 0.72  | 0.52           | 0.33       | 0.62           |
-| Sub-PCA              | _0.37_ | 0.71    | 0.45   | 0.76    | _0.41_      | 0.55  | 0.41           | _0.40_     | 0.68           |
-| CNN                  | 0.31   | 0.71    | 0.30   | 0.75    | 0.37        | 0.79  | _0.64_         | 0.35       | 0.67           |
-| Sub-MCD              | 0.31   | **0.79** | _0.48_ | **0.85** | 0.37        | 0.64  | 0.44           | 0.33       | 0.70           |
-| TimesFM              | 0.27   | 0.67    | 0.25   | 0.70    | 0.32        | **0.84** | **0.64**     | 0.35       | 0.65           |
-| Lag-Llama            | 0.27   | 0.64    | 0.25   | 0.69    | 0.32        | 0.77  | 0.57           | 0.34       | 0.63           |
-| LSTMAD               | 0.29   | 0.66    | 0.29   | 0.72    | 0.35        | 0.70  | 0.55           | 0.32       | 0.64           |
-| OmniAnomaly          | 0.31   | 0.65    | 0.38   | 0.70    | 0.35        | 0.47  | 0.32           | 0.38       | 0.63           |
-| Sub-IForest          | 0.32   | 0.72    | 0.39   | 0.77    | 0.36        | 0.54  | 0.37           | 0.31       | 0.66           |
-| IForest              | 0.30   | 0.72    | 0.28   | 0.74    | 0.37        | 0.74  | 0.54           | 0.31       | _0.73_         |
-| MOMENT (ZS)          | 0.25   | 0.68    | 0.40   | 0.75    | 0.32        | 0.65  | 0.44           | 0.31       | 0.67           |
-| Chronos              | 0.26   | 0.65    | 0.22   | 0.69    | 0.31        | _0.84_ | 0.63           | 0.33       | 0.63           |
-| Sub-LOF              | 0.23   | 0.71    | 0.39   | 0.78    | 0.32        | 0.64  | 0.40           | 0.33       | 0.64           |
-| Sub-HBOS             | 0.30   | 0.70    | 0.37   | 0.74    | 0.36        | 0.50  | 0.32           | 0.33       | 0.66           |
-| POLY                 | 0.28   | 0.69    | 0.40   | 0.73    | 0.34        | 0.52  | 0.30           | 0.32       | 0.70           |
-| USAD                 | 0.25   | 0.63    | 0.29   | 0.70    | 0.30        | 0.57  | 0.41           | 0.29       | 0.66           |
-| MatrixProfile        | 0.25   | 0.73    | 0.38   | 0.77    | 0.31        | 0.58  | 0.33           | 0.29       | 0.65           |
-| AutoEncoder          | 0.25   | 0.75    | 0.36   | 0.79    | 0.31        | 0.60  | 0.35           | 0.29       | 0.71           |
-| TranAD               | 0.19   | 0.59    | 0.26   | 0.68    | 0.25        | 0.57  | 0.39           | 0.23       | 0.65           |
-| OFA                  | 0.13   | 0.58    | 0.22   | 0.68    | 0.19        | 0.65  | 0.41           | 0.17       | 0.61           |
-| FITS                 | 0.14   | 0.58    | 0.24   | 0.70    | 0.19        | 0.62  | 0.36           | 0.17       | 0.62           |
-| Donut                | 0.14   | 0.57    | 0.22   | 0.68    | 0.20        | 0.56  | 0.34           | 0.18       | 0.58           |
-| TimesNet             | 0.13   | 0.59    | 0.22   | 0.70    | 0.19        | 0.59  | 0.32           | 0.16       | 0.62           |
-| AnomalyTransformer   | 0.06   | 0.50    | 0.15   | 0.54    | 0.10        | 0.57  | 0.34           | 0.12       | 0.53           |
-
-> TSB-AD-M
-
-| Method               | AUC-PR | AUC-ROC | VUS-PR | VUS-ROC | Standard-F1 | PA-F1 | Event-based-F1 | R-based-F1 | Affiliation-F1 |
-|----------------------|--------|---------|--------|---------|-------------|-------|----------------|------------|----------------|
-| KMeansAD             | **0.32** | **0.73** | **0.31** | **0.75** | **0.37**    | 0.78  | 0.44           | **0.38**   | 0.47           |
-| LSTMAD               | 0.28   | 0.67    | 0.27   | 0.70    | 0.33        | 0.81  | _0.57_         | 0.34       | 0.59           |
-| CNN                  | 0.26   | 0.72    | 0.27   | _0.74_ | 0.33        | 0.80  | 0.55           | 0.32       | 0.57           |
-| IForest              | _0.29_ | _0.72_  | _0.29_ | 0.74    | _0.34_      | 0.79  | 0.53           | 0.23       | **0.72**       |
-| PCA                  | 0.27   | 0.69    | 0.28   | 0.72    | 0.34        | 0.80  | 0.54           | 0.25       | 0.59           |
-| COPOD                | 0.28   | 0.71    | 0.28   | 0.73    | 0.33        | 0.78  | 0.51           | 0.23       | 0.68           |
-| CBLOF                | 0.26   | 0.71    | 0.26   | 0.73    | 0.31        | 0.76  | 0.51           | 0.30       | 0.60           |
-| OmniAnomaly          | 0.27   | 0.63    | 0.29   | 0.66    | 0.33        | 0.56  | 0.31           | _0.38_     | 0.54           |
-| MCD                  | 0.27   | 0.68    | 0.27   | 0.70    | 0.32        | 0.70  | 0.46           | 0.23       | 0.50           |
-| AutoEncoder          | 0.23   | 0.65    | 0.25   | 0.68    | 0.28        | 0.77  | 0.46           | 0.27       | 0.67           |
-| HBOS                 | 0.23   | 0.67    | 0.23   | 0.69    | 0.29        | 0.77  | 0.54           | 0.23       | 0.68           |
-| KNN                  | 0.21   | 0.62    | 0.22   | 0.64    | 0.26        | _0.84_ | **0.59**      | 0.26       | 0.43           |
-| USAD                 | 0.22   | 0.59    | 0.23   | 0.63    | 0.27        | 0.70  | 0.43           | 0.34       | 0.59           |
-| OCSVM                | 0.24   | 0.64    | 0.26   | 0.66    | 0.28        | 0.71  | 0.43           | 0.26       | 0.58           |
-| EIF                  | 0.21   | 0.71    | 0.22   | 0.74    | 0.28        | 0.80  | 0.50           | 0.26       | _0.71_         |
-| RobustPCA            | 0.22   | 0.64    | 0.22   | 0.68    | 0.28        | 0.72  | 0.43           | 0.22       | 0.61           |
-| TranAD               | 0.17   | 0.56    | 0.18   | 0.59    | 0.24        | 0.74  | 0.43           | 0.26       | 0.57           |
-| Donut                | 0.22   | 0.63    | 0.24   | 0.68    | 0.28        | 0.71  | 0.33           | 0.23       | 0.52           |
-| TimesNet             | 0.17   | 0.60    | 0.20   | 0.65    | 0.24        | **0.85** | 0.49        | 0.20       | 0.57           |
-| FITS                 | 0.17   | 0.59    | 0.20   | 0.65    | 0.23        | 0.81  | 0.34           | 0.17       | 0.56           |
-| OFA                  | 0.15   | 0.56    | 0.18   | 0.63    | 0.21        | 0.81  | 0.42           | 0.17       | 0.55           |
-| LOF                  | 0.11   | 0.57    | 0.13   | 0.60    | 0.17        | 0.79  | 0.40           | 0.17       | 0.50           |
-| AnomalyTransformer   | 0.06   | 0.51    | 0.20   | 0.52    | 0.11        | 0.63  | 0.31           | 0.10       | 0.46           |
-
-
 ### ✉️ Contact
 
 If you have any questions or suggestions, feel free to contact:
@@ -273,7 +201,6 @@ If you have any questions or suggestions, feel free to contact:
 * John Paparrizos (paparrizos.1@osu.edu)
 
 Or describe it in Issues.
-
 
 ### 🎉 Acknowledgement
 We appreciate the following github repos a lot for their valuable code base:
