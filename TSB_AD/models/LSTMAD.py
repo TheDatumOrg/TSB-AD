@@ -1,8 +1,3 @@
-"""
-This function is adapted from [EasyTSAD] by [dawnvince et al.]
-Original source: [https://github.com/dawnvince/EasyTSAD]
-"""
-
 from typing import Dict
 import torchinfo
 import tqdm, math
@@ -221,7 +216,7 @@ class LSTMAD():
         assert scores.ndim == 1
         # self.y_hats = y_hats
         
-        print('scores: ', scores.shape)
+        # print('scores: ', scores.shape)
         if scores.shape[0] < len(data):
             padded_decision_scores_ = np.zeros(len(data))
             padded_decision_scores_[: self.window_size+self.pred_len-1] = scores[0]
