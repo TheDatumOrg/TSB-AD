@@ -71,7 +71,7 @@
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="TO BE UPDATED.pdf" target="_blank"
+                        <a href="https://openreview.net/pdf?id=R6kJtWsTGy" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -91,15 +91,25 @@
                   </a>
                 </span>
 
-                <span class="link-block">
-                  <a href="TO BE UPDATED" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="fas fa-folder-open"></i>
-                  </span>
-                  <span>Dataset</span>
-                </a>
-              </span>
+                  <span class="link-block">
+                    <a href="https://www.thedatum.org/datasets/TSB-AD-U.zip" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-folder-open"></i>
+                    </span>
+                    <span>TSB-AD-U</span>
+                  </a>
+                </span>
+
+                  <span class="link-block">
+                    <a href="https://www.thedatum.org/datasets/TSB-AD-M.zip" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-folder-open"></i>
+                    </span>
+                    <span>TSB-AD-M</span>
+                  </a>
+                </span>
 
                 <span class="link-block">
                   <a href="https://neurips.cc/media/neurips-2024/Slides/97690.pdf" target="_blank"
@@ -140,6 +150,17 @@
   </div>
 </section>
 
+<!-- Your image here -->
+<div class="item">
+  <p align="center">
+  <img width="800" src="static/images/tsb_overview.png" alt="Time Series Sample"/>
+  <h2 class="subtitle has-text-centered">
+    Example time series from TSB-AD, with anomalies highlighted in red.
+ </h2>
+ <p>
+</div>
+
+
 <!-- Paper abstract -->
 <section class="section hero is-light">
   <div class="container is-max-desktop">
@@ -158,6 +179,217 @@
 <!-- End paper abstract -->
 
 
+<!-- Leaderboard -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">📈 TSB-AD-U Leaderborad</h2>
+
+      <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+      <iframe src="static/leaderboard/TSB-AD-U.html" style="width: 90%; height: 300px; border: none;"></iframe>
+      </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title">📈 TSB-AD-M Leaderborad</h2>
+  
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+        <iframe src="static/leaderboard/TSB-AD-M.html" style="width: 90%; height: 300px; border: none;"></iframe>
+        </div>
+  
+        </div>
+      </div>
+    </section>  
+<!--End Leaderboard -->   
+
+<div class="container is-max-desktop content">
+  <h2 class="title">Summary of Datasets</h2>
+
+<div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+  <table style="width: 900px; border-collapse: collapse; font-size: 16px; text-align: left;">
+      <thead>
+          <tr style="background-color: #f2f2f2; font-weight: bold;">
+              <th style="border: 1px solid #ddd; padding: 8px;">Dataset</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">Description</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">Data Source</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">License</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">UCR</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">A collection of univariate time series of multiple domains, including air temperature, arterial blood pressure, astronomy, ECG, and more. Most anomalies are introduced artificially.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://wu.renjie.im/research/anomaly-benchmarks-are-flawed/#ucr-time-series-anomaly-archive" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">NAB</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">Labeled real-world and artificial time series, including AWS server metrics, online advertisement click rates, real-time traffic data, and Twitter mentions of publicly traded companies.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/numenta/NAB" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">GPL</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">YAHOO</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">A dataset published by Yahoo Labs, consisting of real and synthetic time series based on production traffic to Yahoo systems.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://webscope.sandbox.yahoo.com/catalog.php?datatype=s&did=70" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">See details in Website</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">IOPS</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">A dataset with performance indicators reflecting the scale, quality of web services, and machine health status.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/iopsai/iops" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">MGAB</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">Mackey-Glass time series, where anomalies exhibit chaotic behavior that is challenging for the human eye to distinguish.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/MarkusThill/MGAB" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">CC0-1.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">WSD</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a web service dataset, which contains real-world KPIs collected from large Internet companies.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/alumik/AnoTransfer-data" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SED</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">a simulated engine disk data from the NASA Rotary Dynamics Laboratory representing disk revolutions recorded over several runs (3K rpm speed).</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://helios2.mi.parisdescartes.fr/~themisp/SAND/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">TODS</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a synthetic dataset that comprises global, contextual, shapelet, seasonal, and trend anomalies.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/datamllab/tods/tree/benchmark" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Apache-2.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">NEK</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is collected from real production network equipment.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/CSTCloudOps/datasets" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Stock</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a stock trading traces dataset, containing one million transaction records throughout the trading hours of a day.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://wrds-www.wharton.upenn.edu/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Power</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">power consumption for a Dutch research facility for the entire year of 1997.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://link.springer.com/article/10.1007/s10115-006-0034-6" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>          
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">GHL</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">contains the status of 3 reservoirs such as the temperature and level. Anomalies indicate changes in max temperature or pump frequency.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://kas.pr/ics-research/dataset_ghl_1" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Daphnet</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">contains the annotated readings of 3 acceleration sensors at the hip and leg of Parkinson's disease patients that experience freezing of gait (FoG) during walking tasks.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://archive.ics.uci.edu/dataset/245/daphnet+freezing+of+gait" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Exathlon</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is based on real data traces collected from a Spark cluster over 2.5 months. For each of these anomalies, ground truth labels are provided for both the root cause interval and the corresponding effect interval.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/exathlonbenchmark/exathlon" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Apache-2.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Genesis</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a portable pick-and-place demonstrator that uses an air tank to supply all the gripping and storage units.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://www.kaggle.com/inIT-OWL/genesis-demonstrator-data-for-machine-learning" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY-NC-SA 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">OPP</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is devised to benchmark human activity recognition algorithms (e.g., classification, automatic data segmentation, sensor fusion, and feature extraction), which comprises the readings of motion sensors recorded while users executed typical daily activities.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://archive.ics.uci.edu/dataset/226/opportunity+activity+recognition" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SMD</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a 5-week-long dataset collected from a large Internet company, which contains 3 groups of entities from 28 different machines.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/NetManAIOps/OmniAnomaly" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">MIT</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SWaT</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a secure water treatment dataset that is collected from 51 sensors and actuators, where the anomalies represent abnormal behaviors under attack scenarios.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Needs request form</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">PSM</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a dataset collected internally from multiple application server nodes at eBay.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/eBay/RANSynCoders/tree/main/data" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SMAP</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is real spacecraft telemetry data with anomalies from Soil Moisture Active Passive satellite. It contains time series with one feature representing a sensor measurement, while the rest represent binary encoded commands.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/khundman/telemanom/blob/master/labeled_anomalies.csv" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Caltech</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">MSL</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is collected from Curiosity Rover on Mars satellite.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://www.kaggle.com/datasets/patrickfleith/nasa-anomaly-detection-dataset-smap-msl/code" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Caltech</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">CreditCard</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is an intrusion detection evaluation dataset, which consists of labeled network flows, including full packet payloads in pcap format, the corresponding profiles, and the labeled flows.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://www.unb.ca/cic/datasets/ids-2017.html" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">GECCO</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a water quality dataset used in a competition for online anomaly detection of drinking water quality.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://zenodo.org/records/3884398" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">MITDB</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">contains 48 half-hour excerpts of two-channel ambulatory ECG recordings, obtained from 47 subjects studied by the BIH Arrhythmia Laboratory between 1975 and 1979.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://physionet.org/content/mitdb/1.0.0/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Open Data Commons Attribution License v1.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SVDB</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">includes 78 half-hour ECG recordings chosen to supplement the examples of supraventricular arrhythmias in the MIT-BIH Arrhythmia Database.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://physionet.org/content/svdb/1.0.0/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Open Data Commons Attribution License v1.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">LTDB</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a collection of 7 long-duration ECG recordings (14 to 22 hours each), with manually reviewed beat annotations.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://physionet.org/content/ltdb/1.0.0/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Open Data Commons Attribution License v1.0</td>
+          </tr>          
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">CATSv2</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is the second version of the Controlled Anomalies Time Series (CATS) Dataset, which consists of commands, external stimuli, and telemetry readings of a simulated complex dynamical system with 200 injected anomalies.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://zenodo.org/records/8338435" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <!-- Add additional rows here in the same format -->
+      </tbody>
+  </table>
+</div>
+</div>
+
+
 <!-- Paper poster -->
 <section class="hero is-small is-light">
   <div class="hero-body">
@@ -174,7 +406,7 @@
 
 
 <!--BibTex citation -->
-  <section class="section" id="BibTeX">
+<section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
       <pre><code>@inproceedings{liu2024elephant,
@@ -183,6 +415,28 @@
         booktitle={NeurIPS 2024},
         year={2024}
       }</code></pre>
+
+      <pre><code>@article{paparrizos2022tsb,
+        title={Tsb-uad: an end-to-end benchmark suite for univariate time-series anomaly detection},
+        author={Paparrizos, John and Kang, Yuhao and Boniol, Paul and Tsay, Ruey S and Palpanas, Themis and Franklin, Michael J},
+        journal={Proceedings of the VLDB Endowment},
+        volume={15},
+        number={8},
+        pages={1697--1711},
+        year={2022},
+        publisher={VLDB Endowment}
+      }</code></pre>      
+
+      <pre><code>@article{paparrizos2022volume,
+        title={{Volume Under the Surface: A New Accuracy Evaluation Measure for Time-Series Anomaly Detection}},
+        author={Paparrizos, John and Boniol, Paul and Palpanas, Themis and Tsay, Ruey S and Elmore, Aaron and Franklin, Michael J},
+        journal={Proceedings of the VLDB Endowment},
+        volume={15},
+        number={11},
+        pages={2774--2787},
+        year={2022},
+        publisher={VLDB Endowment}
+      }</code></pre>           
     </div>
 </section>
 <!--End BibTex citation -->
