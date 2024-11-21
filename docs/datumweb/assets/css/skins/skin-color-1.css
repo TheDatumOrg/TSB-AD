@@ -1,0 +1,308 @@
+a{
+}
+a:focus{
+	color:#ccc;
+}
+.theme-color{
+	color:#ccc;
+}
+.ol-dropcaps{
+}
+.ol-dropcaps.colored{
+	background-color:#ccc;
+	border:1px solid #ccc;
+}
+.dark-wrapper .theme-color{
+	color:#ccc;
+}
+
+.newsletter-form .nl-title{
+	background-color: #ccc;
+}
+.twitter-carousel .tweet p a{
+}
+.twitter-carousel .tweet p a:hover, .twitter-carousel .tweet p a:focus{
+	color:#ccc;
+}
+.ol-price-table{
+	border-bottom:3px solid #ccc;
+}
+.ol-price-table{
+}
+.ol-price-table.featured .head{
+	background-color:#ccc;
+}
+
+.maintenance-message >i{
+	color:#ccc;
+}
+.course-purchase-btn i{
+	background-color: #ccc;
+}
+.course-intro .course-shop-data .course-purchase-btn{
+	background-color: #ccc;
+}
+.course-intro .course-shop-data .course-purchase-btn i{
+	color:#ccc;
+}
+.events{
+}
+.events.with-index .row-index{
+	background-color:#ccc;
+}
+.events.with-index .row-index:nth-child(2n){
+	background-color:rgba(204, 204, 204, 0.95);
+}
+.ol-agenda .ag-section .section-head{
+	background-color: #ccc;
+}
+.ol-agenda .ag-section:nth-child(2n+1) .section-head{
+	background-color:rgba(204, 204, 204, 0.9);
+}
+
+.book-el, .course-el{
+	border-bottom: 4px solid #ccc
+}
+
+.book-el:hover, .book-el:focus, .course-el:hover, .course-el:focus{
+	background-color:#ccc;
+}
+.journal-el{
+	border-bottom: 4px solid #ccc
+}
+.journal-el:before{
+	background-color:#ccc;
+}
+.journal-el:hover, .journal-el:focus{
+	background-color:#ccc;
+}
+.journal-el.set-bg{
+}
+.journal-el.set-bg:before{
+	background-color:#ccc;
+}
+
+.tagcloud a{
+}
+
+.tagcloud a:hover, .tagcloud a:focus{
+	background-color:#ccc;
+}
+.ol-grid .gi-desc > a{
+}
+.ol-grid .gi-desc > a:hover .title, .ol-grid .gi-desc > a:focus .title{
+	color:#ccc;
+}
+.ol-grid .gi-desc .tags a{
+}
+.ol-grid .gi-desc .tags a:hover, .ol-grid .gi-desc .tags a:focus{
+	color:#ccc;
+}
+
+.ol-iconic-link{
+}
+
+.ol-iconic-link:hover, .ol-iconic-linkfocus{
+	background-color:#ccc;
+}
+
+.icon-box{
+}
+
+.icon-box.ib-v2 > a{
+}
+
+.icon-box.ib-v2 > a:hover i, .icon-box.ib-v2 > a:focus i{
+	background-color:#ccc;
+}
+
+.icon-box.ib-v2 > a > i:after{
+	border:1px solid #ccc;
+}
+
+.icon-box.ib-v4{
+}
+
+.icon-box.ib-v4i-theme > i{
+	color:#ccc;
+}
+
+.icon-box.ib-v5, .icon-box.ib-v6{
+}
+
+.icon-box.ib-v5:not(.no-anim):hover > i, .icon-box.ib-v5:not(.no-anim):focus > i, .icon-box.ib-v6:not(.no-anim):hover > i, .icon-box.ib-v6:not(.no-anim):focus > i{
+}
+
+.icon-box.ib-v5:not(.no-anim):hover > i:after, .icon-box.ib-v5:not(.no-anim):focus > i:after, .icon-box.ib-v6:not(.no-anim):hover > i:after, .icon-box.ib-v6:not(.no-anim):focus > i:after{
+	border-color:#ccc;
+	transform:scale(0.7);
+}
+
+.icon-box.ib-v5:not(.no-anim):hover > i:before, .icon-box.ib-v5:not(.no-anim):focus > i:before, .icon-box.ib-v6:not(.no-anim):hover > i:before, .icon-box.ib-v6:not(.no-anim):focus > i:before{
+	background-color:#ccc;
+}
+
+.icon-box.ib-v7 > i{
+	background-color:#ccc;
+}
+
+.icon-box.ib-v7 a.ib-btn{
+	background-color:#ccc;
+}
+
+.icon-box.ib-v8 > a.ib-btn{
+	background-color:#ccc;
+}
+
+.icon-box.icon-theme-color >i{
+	color:#ccc !important;
+}
+
+.icon-list{
+}
+
+.icon-list.skin-theme li i{
+	background:#ccc;
+}
+
+.pub-item .description .citation a{
+}
+
+.pub-item .description .citation a:hover, .pub-item .description .citation a:focus{
+	color:#ccc;
+}
+.modal-title{
+	background-color: #ccc;
+}
+
+.ol-pagination .pagination >li.active > a, .ol-pagination .pagination >li > a:hover, .ol-pagination .pagination >li > a:focus {
+	background:#ccc;
+}
+
+.ol-pagination.lined-links .pagination >li{
+}
+
+.ol-pagination.lined-links .pagination >li:after{
+	background-color:#ccc;
+}
+.vc-card{
+}
+.vc-card.hoverable-links .links a{
+}
+.vc-card.hoverable-links .links a:hover{
+	background-color:#ccc;
+}
+
+
+.dark-wrapper .progress {
+}
+
+
+.dark-wrapper .progress.progress-theme-color .progress-bar{
+	background-color:#ccc;
+}
+
+
+.progress.progress-theme-color .progress-bar{
+	background-color:#ccc;
+}
+
+.ol-side-navigation > li > .sub-menu >li{
+}
+
+.ol-side-navigation > li > .sub-menu >li.current-menu-item >a:before, .ol-side-navigation > li > .sub-menu >li.current-menu-parent >a:before{
+	background-color:#ccc;
+}
+
+.ol-side-navigation > li > .sub-menu:after{
+	background-color:#ccc;
+}
+
+.ol-side-navigation > li.active > a, .ol-side-navigation > li.current-menu-item > a{
+	background-color:#ccc;
+}
+.social-icons{
+}
+.social-icons.skin{
+}
+.social-icons.skin-theme li a{
+	color:#ccc;
+}
+.social-icons.skin-theme[class*="shape-"] li a{
+	background-color:#ccc;
+}
+.social-icons.hover{
+}
+.social-icons.hover-theme{
+}
+.social-icons.hover-theme[class*="shape-"] li a{
+}
+.social-icons.hover-theme[class*="shape-"] li a:hover, .social-icons.hover-theme[class*="shape-"] li a:focus{
+	background-color:#ccc;
+	border-color:#ccc;
+}
+
+.chaos-table a{
+}
+
+.chaos-table a:hover{
+	color:#ccc;
+}
+
+.ol-accordion .ac-item.open .item-head{
+	background-color: #ccc;
+}
+
+.ol-tab .tab-navigation li.active{
+}
+
+.ol-tab .tab-navigation li.active:after{
+	background-color:#ccc;
+}
+
+.ol-timeline .tl-section, .ol-timeline .tl-item{
+}
+
+.ol-timeline .tl-section.active .item-section:after, .ol-timeline .tl-item.active .item-section:after{
+	background-color:#ccc;
+}
+
+.ol-timeline .item-section{
+}
+
+.ol-timeline .item-section.is_stuck{
+}
+
+.ol-timeline .item-section.is_stuck:after{
+	background-color:#ccc;
+}
+.ol-timeline:not(.scrollable-timeline) .item-section:after{
+	background-color:#ccc;
+}
+.ol-timeline-tab .tl-head li{
+}
+.ol-timeline-tab .tl-head li.active{
+}
+.ol-timeline-tab .tl-head li.active:after{
+	background-color:#ccc;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
