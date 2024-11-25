@@ -1,0 +1,81 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+import bottleneck as bn
+from sklearn.preprocessing import MinMaxScaler
+
+class MedianMethod:
+    """
+    Anomaly detection using a moving median and standard deviation window-based method.
+
+    :param int neighbourhood_size: number of time steps to include in the window from past and future
+    """
+    def __init__(self, neighbourhood_size):
+        self._neighbourhood_size = neighbourhood_size
+        self.decision_scores_ = None
+
+    def fit(self, data):
+        self._timeseries = data
+        self.decision_scores_ = self._compute_anomaly_scores(data)
+
+    def _compute_windows(self, window_type):
+        if window_type == "std":
+            windows = bn.move_std(self._timeseries, window=self._neighbourhood_size * 2 + 1)
+        else:
+            windows = bn.move_median(self._timeseries, window=self._neighbourhood_size * 2 + 1)
+        return np.roll(windows, -self._neighbourhood_size)
+
+    def _compute_anomaly_scores(self, data):
+        median_windows = self._compute_windows("median")
+        std_windows = self._compute_windows("std")
+        dist_windows = np.abs(median_windows - data)
+        scores = dist_windows / std_windows
+        return np.nan_to_num(scores)
+
+    def decision_function(self, data):
+        return self._compute_anomaly_scores(data)
+
+def run_median_method(data, neighbourhood_size=5):
+    clf = MedianMethod(neighbourhood_size=neighbourhood_size)
+    clf.fit(data)
+    scores = clf.decision_function(data) 
+    scores = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    return scores
+
+class AnomalyEvaluator:
+    @staticmethod
+    def evaluate(true_labels, predicted_scores):
+        threshold = 0.5
+        binary_scores = (predicted_scores > threshold).astype(int)
+        precision = precision_score(true_labels, binary_scores)
+        recall = recall_score(true_labels, binary_scores)
+        f1 = f1_score(true_labels, binary_scores)
+        auc = roc_auc_score(true_labels, predicted_scores)
+        print(f"Precision: {precision:.3f}, Recall: {recall:.3f}, F1 Score: {f1:.3f}, AUC-ROC: {auc:.3f}")
+
+class AnomalyPlotter:
+    @staticmethod
+    def plot_results(data, anomaly_scores):
+        fig, axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+        axs[0].plot(data, color="blue", label="Time Series Data")
+        axs[0].set_title("Time Series Data")
+        axs[0].legend()
+        axs[1].plot(anomaly_scores, color="blue", label="Anomaly Scores")
+        axs[1].set_title("Anomaly Scores")
+        axs[1].legend()
+        plt.tight_layout()
+        plt.show()
+
+def main():
+    data_path = "/content/sample_data/stb-4.test.csv"
+    df = pd.read_csv(data_path, header=None)
+    time_series_data = df.iloc[:, 0].values
+    true_labels = df.iloc[:, 1].values
+    anomaly_scores = run_median_method(time_series_data)
+    auc_roc = roc_auc_score(true_labels, anomaly_scores)
+    print(f"AUC ROC: {auc_roc:.3f}")
+    print("Anomaly Scores:", anomaly_scores)
+
+if __name__ == "__main__":
+    main()
