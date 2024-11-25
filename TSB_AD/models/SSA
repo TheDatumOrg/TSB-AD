@@ -1,0 +1,125 @@
+import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
+import math
+
+class SSA:
+    def __init__(self, ep=3, method='GARCH', rf_method='all', n=720, a=0.2):
+        self.ep = ep
+        self.n = n
+        self.method = method
+        self.rf_method = rf_method
+        self.a = a
+
+    def reference_time(self, index, a, ground_truth=False):
+        n = self.n
+        X = self.X_train_
+        if ground_truth:
+            return X[index - 2 * n: index - n], X[index - n: index]
+        else:
+            if isinstance(a, float):
+                return X[index - 2 * n: index - n] * (1 - a) + a * X[index - n: index], X[index - n: index]
+            else:
+                num = math.floor(index / n)
+                A = a[:num]
+                A = A / np.sum(A)
+                rf = np.zeros(n)
+                for i in range(len(A)):
+                    rf += A[i] * X[index - (i + 1) * n: index - i * n]
+                return rf, X[index - n: index]
+
+    def Linearization(self, X2, e=1):
+        i = 0
+        fit = {'index': [], 'rep': []}
+        while i < len(X2):
+            fit['index'].append(i)
+            fit['Y' + str(i)] = X2[i]
+            fit['rep'].append(np.array([i, X2[i]]))
+            if i + 1 >= len(X2):
+                break
+            k = X2[i + 1] - X2[i]
+            b = -i * (X2[i + 1] - X2[i]) + X2[i]
+            fit['reg' + str(i)] = np.array([k, b])
+            i += 2
+            if i >= len(X2):
+                break
+            d = abs(X2[i] - (k * i + b))
+            while d < e:
+                i += 1
+                if i >= len(X2):
+                    break
+                d = abs(X2[i] - (k * i + b))
+        return fit
+
+    def SSA(self, X2, X3, e=1):
+        fit = self.Linearization(X2, e=e)
+        fit2 = self.Linearization(X3, e=e)
+        Index = list(set(fit['index'] + fit2['index']))
+        Y = 0
+        for i in Index:
+            if i in fit['index'] and i in fit2['index']:
+                Y += abs(fit['Y' + str(i)] - fit2['Y' + str(i)])
+            elif i in fit['index']:
+                J = np.max(np.where(np.array(fit2['index']) < i))
+                index = fit2['index'][J]
+                k, b = fit2['reg' + str(index)]
+                Y += abs(k * i + b - fit['Y' + str(i)])
+            elif i in fit2['index']:
+                J = np.max(np.where(np.array(fit['index']) < i))
+                index = fit['index'][J]
+                k, b = fit['reg' + str(index)]
+                Y += abs(k * i + b - fit2['Y' + str(i)])
+        score = Y / len(Index)
+        return score
+
+    def fit(self, X, y=None):
+        self.X_train_ = X
+        self.n_train_ = len(X)
+        n = self.n
+        self.decision_scores_ = np.zeros(len(X))
+        self.raw_decision_scores_ = np.zeros(len(X))
+        a = self.a
+        ep = self.ep
+
+        if self.rf_method == 'all':
+            rf = np.zeros(self.n)
+            num = math.floor(self.n_train_ / self.n)
+            for i in range(num):
+                rf += X[i * self.n: (i + 1) * self.n] / num
+            for i in range(2 * n, len(X)):
+                X1 = X[i - n:i]
+                score = self.SSA(X1, rf)
+                self.decision_scores_[i] = min(score / (2 * ep), 1)
+                self.raw_decision_scores_[i] = score
+
+        elif self.rf_method == 'alpha':
+            for i in range(2 * n, len(X)):
+                X1, X2 = self.reference_time(index=i, a=a)
+                score = self.SSA(X1, X2)
+                self.decision_scores_[i] = min(score / (2 * ep), 1)
+                self.raw_decision_scores_[i] = score
+        else:
+            raise ValueError(self.method + " is not a valid reference timeseries method")
+        return self
+
+# Wrapper
+def run_SSA(data, ep=3, method='GARCH', rf_method='all', n=720, a=0.2):
+    clf = SSA(ep=ep, method=method, rf_method=rf_method, n=n, a=a)
+    clf.fit(data)
+    scores = clf.decision_scores_
+    scores_scaled = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    return scores_scaled
+
+
+if __name__ == "__main__":
+    data_path = "/content/sample_data/machine-1-1.test.csv@9.out"
+    data = pd.read_csv(data_path)
+    time_series = data.iloc[:, 0].values
+    labels = data.iloc[:, 1].values
+
+    anomaly_scores = run_SSA(time_series, ep=3, method='GARCH', rf_method='all', n=720, a=0.2)
+    print(anomaly_scores)
+
+    auc_roc = roc_auc_score(labels, anomaly_scores)
+    print(f"AUC-ROC: {auc_roc:.2f}")
