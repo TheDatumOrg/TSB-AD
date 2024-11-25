@@ -1,0 +1,98 @@
+import numpy as np
+import pandas as pd
+import stumpy
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
+
+
+class AnomalyDetection:
+    def __init__(self, config):
+        self.config = config
+        self.verbose = self.or_op(config["customParameters"].get("verbose"), 1)
+        self.window_size = self.or_op(config["customParameters"].get("anomaly_window_size"), 30)
+        self.n_jobs = self.or_op(config["customParameters"].get("n_jobs"), 1)
+        self.random_state = self.or_op(config["customParameters"].get("random_state"), 42)
+
+        np.random.seed(self.random_state)
+
+        if self.window_size < 4:
+            if self.verbose > 0:
+                print("WARN: window_size must be at least 4. Dynamically setting window_size to 4.")
+            self.window_size = 4
+
+    def or_op(self, a, b):
+        return b if a is None or pd.isna(a) or (isinstance(a, float) and np.isnan(a)) or not a else a
+
+    def fit(self, values, labels):
+        self.values = values
+        self.labels = labels
+        self.compute_anomaly_scores()
+
+    def compute_anomaly_scores(self):
+        if self.n_jobs <= 1:
+            stomp_mp = stumpy.stump(self.values, m=self.window_size)
+        else:
+            stomp_mp = stumpy.stump(self.values, m=self.window_size, n_threads=self.n_jobs)
+
+        self.anomaly_scores = stomp_mp[:, 0]
+        self.labels_adjusted = self.labels[self.window_size - 1:]
+        self.anomaly_scores_adjusted = self.anomaly_scores[:len(self.labels_adjusted)]
+
+    def decision_function(self):
+        return self.anomaly_scores_adjusted
+
+    def calculate_auc(self):
+        try:
+            auc_roc = roc_auc_score(self.labels_adjusted, self.anomaly_scores_adjusted)
+            print(f"AUC-ROC Score: {auc_roc}")
+        except ValueError as e:
+            print(f"Error calculating AUC-ROC: {e}")
+
+    def plot_results(self):
+        fig, axs = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+
+        axs[0].plot(self.values, label="Time Series", color="blue")
+        axs[0].set_title("Time Series Data")
+        axs[0].legend()
+
+        axs[1].plot(range(self.window_size - 1, self.window_size - 1 + len(self.anomaly_scores_adjusted)),
+                    self.anomaly_scores_adjusted, label="Anomaly Scores", color="red")
+        axs[1].set_title("Anomaly Scores")
+        axs[1].legend()
+
+        plt.xlabel("Time")
+        plt.tight_layout()
+        plt.show()
+
+# Wrapper
+def run_STOMP(values, labels, window_size=30, n_jobs=1, random_state=42):
+    config = {
+        "customParameters": {
+            "anomaly_window_size": window_size,
+            "n_jobs": n_jobs,
+            "random_state": random_state
+        }
+    }
+    clf = AnomalyDetection(config)
+    clf.fit(values, labels)
+    scores = clf.decision_function()
+    scores_scaled = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    return scores_scaled
+
+
+def main():
+    df = pd.read_csv("/content/sample_data/A-2_test.csv")
+    values = df.iloc[:, 0].values
+    labels = df.iloc[:, -1].values
+    
+    window_size = 30
+    n_jobs = 1
+    random_state = 42
+
+    scores = run_STOMP(values, labels, window_size, n_jobs, random_state)
+    print(scores)
+
+
+if __name__ == "__main__":
+    main()
