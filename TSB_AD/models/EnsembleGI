@@ -1,0 +1,187 @@
+import numpy as np
+import pandas as pd
+from typing import Iterator, Tuple
+from sksequitur import parse, Grammar
+from saxpy.sax import ts_to_string
+from saxpy.znorm import znorm
+from saxpy.paa import paa
+from saxpy.alphabet import cuts_for_asize
+from sklearn.metrics import roc_auc_score
+from joblib import Parallel, delayed
+from sklearn.preprocessing import MinMaxScaler
+
+
+class SAXTransformer:
+    def __init__(self, window_size: int):
+        self.window_size = window_size
+
+    def sax(self, X: np.ndarray, w: int, a: int, method: str = "orig") -> str:
+        # Convert time series to SAX representation
+        saxed = []
+        if method == "sliding":
+            iter_range = range(len(X) - self.window_size + 1)
+        elif method == "tumbling":
+            iter_range = range(0, len(X), self.window_size)
+        else:
+            iter_range = range(len(X) // self.window_size)
+
+        for i in iter_range:
+            _paa = paa(znorm(X[i:i+self.window_size]), w)
+            saxed.append(_paa)
+
+        if method == "orig":
+            rest = len(X) % self.window_size
+            rest_segments = int(w * (rest / self.window_size)) or 1
+            if rest > 0:
+                _paa = paa(znorm(X[-rest:]), rest_segments)
+                saxed.append(_paa)
+
+        saxed = np.concatenate(saxed)
+        return ts_to_string(saxed, cuts_for_asize(a))
+
+
+class GrammarInduction:
+    @staticmethod
+    def density_curve(grammar: Grammar) -> np.ndarray:
+        # Generate a density curve from grammar rules
+        rules = grammar[0]
+        density_curve = []
+        i = 0
+        depth = 0
+        depths = []
+        while i < len(rules):
+            value_at_i = rules[i]
+            rule = grammar.get(value_at_i, value_at_i)
+            if isinstance(rule, str):
+                i += 1
+                density_curve.append(depth)
+                if depths:
+                    depths[-1] -= 1
+                    while depths and depths[-1] < 1:
+                        depths.pop()
+                        depth -= 1
+                        if depths:
+                            depths[-1] -= 1
+            else:
+                rules[i] = rule
+                depth += 1
+                depths.append(len(rule))
+            rules = GrammarInduction.flatten(rules)
+        return np.array(density_curve)
+
+    @staticmethod
+    def flatten(x: list) -> list:
+        # Flatten a list of lists
+        _x = []
+        for dd in x:
+            if isinstance(dd, list):
+                _x.extend(dd)
+            else:
+                _x.append(dd)
+        return _x
+
+    @staticmethod
+    def stretch_density_curve(density_curve: np.ndarray, w: int, l: int) -> np.ndarray:
+        # Interpolate density curve to match original length
+        return np.interp(np.arange(l), np.linspace(0, l, len(density_curve)), density_curve)
+
+    def induce_grammar(self, X: np.ndarray, w: int, a: int, window_method: str, sax_transformer: SAXTransformer) -> np.ndarray:
+        # Induce grammar and compute density curve
+        saxed = sax_transformer.sax(X, w, a, method=window_method)
+        parsed = parse(saxed)
+        density_curve = self.density_curve(parsed)
+        return self.stretch_density_curve(density_curve, w, len(X))
+
+
+class EnsembleGI:
+    def __init__(self, anomaly_window_size=50, n_estimators=10, max_paa_transform_size=20, max_alphabet_size=10,
+                 selectivity=0.8, random_state=42, n_jobs=1):
+        self.window_size = anomaly_window_size
+        self.ensemble_size = n_estimators
+        self.w_max = max_paa_transform_size
+        self.a_max = max_alphabet_size
+        self.selectivity = selectivity
+        self.n_jobs = n_jobs
+        np.random.seed(random_state)
+        self.decision_scores_ = None 
+
+    def _random_params(self) -> Iterator[Tuple[int, int]]:
+        # Generate random (w, a) pairs for ensemble members
+        n_combinations = (self.w_max - 2) * (self.a_max - 2)
+        comb_idx = np.random.choice(n_combinations, size=self.ensemble_size, replace=False)
+        w = (comb_idx // (self.w_max - 2)) + 2
+        a = (comb_idx % (self.a_max - 2)) + 2
+        return zip(w, a)
+
+    def fit(self, X: np.ndarray, window_method: str = "orig") -> "EnsembleGI":
+        # The fit method constructs the anomaly detector and computes the anomaly scores
+        sax_transformer = SAXTransformer(self.window_size)
+        grammar_inductor = GrammarInduction()
+
+        def calculate_density_curve(i, w, a):
+            return grammar_inductor.induce_grammar(X, w, a, window_method, sax_transformer)
+
+        density_curves = Parallel(n_jobs=self.n_jobs)(delayed(calculate_density_curve)(i, w, a)
+                                                       for i, (w, a) in enumerate(self._random_params()))
+
+        density_curves = np.stack(density_curves)
+        indices = np.argsort(density_curves.std(axis=1))[::-1]
+        selected_curves = indices[:int(self.ensemble_size * self.selectivity)]
+        density_curves = density_curves[selected_curves]
+        
+        density_curves = density_curves / np.max(density_curves, axis=0)
+        
+        density_overall = 1 - np.median(density_curves, axis=0)
+        
+        self.decision_scores_ = density_overall
+
+        return self
+
+    def detect(self, X: np.ndarray, window_method: str = "orig") -> np.ndarray:
+        # The detect function uses the computed model to return the anomaly scores
+        if self.decision_scores_ is None:
+            raise RuntimeError("fit must be called before detect.")
+        
+        return self.decision_scores_
+
+def run_ensemble_gi(data, anomaly_window_size=50, n_estimators=10, max_paa_transform_size=20,
+                    max_alphabet_size=10, selectivity=0.8, random_state=42, n_jobs=1) -> np.ndarray:
+    clf = EnsembleGI(
+        anomaly_window_size=anomaly_window_size,
+        n_estimators=n_estimators,
+        max_paa_transform_size=max_paa_transform_size,
+        max_alphabet_size=max_alphabet_size,
+        selectivity=selectivity,
+        random_state=random_state,
+        n_jobs=n_jobs
+    )
+    
+    # Fit the model with the data (this computes the anomaly scores)
+    clf.fit(data)
+    
+    scores = clf.decision_scores_
+    
+    scores = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    
+    return scores
+
+def main():
+    data_path = '/content/sample_data/Yahoo_A1real_3_data.csv'
+    data = pd.read_csv(data_path, header=None)
+    X = data[0].values
+    y_true = data[1].values
+
+    # Run the EnsembleGI algorithm
+    y_scores = run_ensemble_gi(X)
+
+    # Calculate AUC ROC
+    auc_roc = roc_auc_score(y_true, y_scores)
+
+    # Return anomaly scores and AUC ROC
+    return y_scores, auc_roc
+
+
+if __name__ == "__main__":
+    scores, auc = main()
+    print("Anomaly Scores:", scores)
+    print("AUC ROC:", auc)
