@@ -1,0 +1,82 @@
+import pandas as pd
+import numpy as np
+import stumpy
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+
+class AnomalyDetection:
+    def __init__(self, config):
+        self.config = config
+        self.input_path = self.get_or(config.get("dataInput"), "/content/sample_data/Yahoo_A1real_3_data.csv")
+        self.output_path = self.get_or(config.get("dataOutput"), "/content/sample_data/anomaly_scores.csv")
+        self.window_min = max(self.get_or(config["customParameters"].get("min_anomaly_window_size"), 30), 4)
+        self.window_max = max(self.window_min + 1, self.get_or(config["customParameters"].get("max_anomaly_window_size"), 40))
+        self.heap_size = self.get_or(config["customParameters"].get("heap_size"), 50)
+        self.exclusion_zone = self.get_or(config["customParameters"].get("exclusion_zone"), 0.5)
+        self.verbose = self.get_or(config["customParameters"].get("verbose"), 1)
+        self.random_state = self.get_or(config["customParameters"].get("random_state"), 42)
+
+        np.random.seed(self.random_state)
+
+        self.data = pd.read_csv(self.input_path)
+        self.values = self.data.iloc[:, 0].values
+
+        if self.verbose > 1:
+            self.print_configuration()
+
+    def get_or(self, value, default):
+        return value if value is not None else default
+
+    def fit(self):
+        matrix_profile = stumpy.stump(self.values, m=self.window_min)
+        self.decision_scores_ = matrix_profile[:, 0]
+
+    def decision_function(self):
+        return self.decision_scores_
+
+    def save_results(self):
+        np.savetxt(self.output_path, self.decision_scores_, delimiter=",", newline="\n")
+
+    def run(self):
+        self.fit()
+        self.save_results()
+        print("Anomaly Scores:")
+        print(self.decision_scores_)
+
+# Wrapper
+def run_stump(data, window_size=30, n_init_train=100, random_state=42):
+    clf = AnomalyDetection(config={
+        "dataInput": "",
+        "customParameters": {
+            "min_anomaly_window_size": window_size,
+            "max_anomaly_window_size": window_size,
+            "heap_size": 50,
+            "exclusion_zone": 0.5,
+            "verbose": 1,
+            "random_state": random_state
+        }
+    })
+    clf.fit()
+    score = clf.decision_function()
+    score = MinMaxScaler(feature_range=(0, 1)).fit_transform(score.reshape(-1, 1)).ravel()
+    return score
+
+
+def main():
+    config = {
+        "dataInput": "/content/sample_data/Yahoo_A1real_3_data.csv",
+        "customParameters": {
+            "min_anomaly_window_size": 30,
+            "max_anomaly_window_size": 40,
+            "heap_size": 50,
+            "exclusion_zone": 0.5,
+            "verbose": 1,
+            "random_state": 42
+        }
+    }
+
+    anomaly_detection = AnomalyDetection(config)
+    anomaly_detection.run()
+
+if __name__ == "__main__":
+    main()
