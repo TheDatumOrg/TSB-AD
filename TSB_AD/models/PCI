@@ -1,0 +1,117 @@
+import numpy as np
+import pandas as pd
+from scipy import stats
+from dataclasses import dataclass
+from typing import Tuple
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import roc_auc_score
+
+class PCIAnomalyDetector:
+    def __init__(self, k: int, p: float, calculate_labels=True):
+        assert 0 < p < 1
+        self.k = k
+        self.p = p
+        self.w = np.concatenate((np.arange(1, k + 1), np.arange(1, k + 1)[::-1]))
+        self.calculate_labels = calculate_labels
+        self.decision_scores_ = None
+
+    def fit(self, ts: np.ndarray) -> None:
+        self.decision_scores_, self.anomaly_labels_ = self._detect(ts)
+        self.decision_scores_ = MinMaxScaler(feature_range=(0, 1)).fit_transform(self.decision_scores_.reshape(-1, 1)).ravel()
+
+    def decision_function(self, ts: np.ndarray) -> np.ndarray:
+        scores, _ = self._detect(ts)
+        return MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+
+    def _pci(self, v: float, window_predictions: np.ndarray, eta: np.ndarray) -> Tuple[float, float]:
+        t = stats.t.ppf(self.p, df=2 * self.k - 1)
+        s = (eta - window_predictions).std()
+        lower_bound = v - t * s * np.sqrt(1 + (1 / (2 * self.k)))
+        upper_bound = v + t * s * np.sqrt(1 + (1 / (2 * self.k)))
+        return lower_bound, upper_bound
+
+    def _predict(self, eta: np.ndarray) -> float:
+        eta_no_nan = eta[~np.isnan(eta)]
+        w_no_nan = self.w[~np.isnan(eta)]
+        if w_no_nan.size == 0:
+            return np.nan
+        v_hat = np.matmul(eta_no_nan, w_no_nan) / w_no_nan.sum()
+        return v_hat
+
+    def _generate_window(self, ts: np.ndarray, i: int) -> np.ndarray:
+        result = np.zeros(2 * self.k)
+        m = len(ts)
+        left_start = max(i - self.k, 0)
+        left_end = max(i - 1 + 1, 0)
+        left_length = left_end - left_start
+        right_start = min(i + 1, m)
+        right_end = min(i + self.k + 1, m)
+        right_length = right_end - right_start
+        result[self.k - left_length:self.k] = ts[left_start:left_end]
+        result[self.k:self.k + right_length] = ts[right_start:right_end]
+        return result
+
+    def _combine_left_right(self, left: list, right: list) -> np.ndarray:
+        prediction_window = np.zeros(2 * self.k)
+        if len(left) > 0:
+            prediction_window[self.k - len(left):self.k] = left[-self.k:]
+        if len(right) > 0:
+            prediction_window[self.k:self.k + len(right)] = right[-self.k:]
+        return prediction_window
+
+    def _detect(self, ts: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        predictions = []
+        anomaly_scores = np.zeros(len(ts))
+        anomaly_labels = np.zeros(len(ts), dtype=int)
+        m = len(ts)
+        left_predictions = []
+        right_predictions = []
+        for i in range(m):
+            v = ts[i]
+            start = i + len(right_predictions)
+            for j in range(start, min(start + self.k, m) + 1):
+                eta_ = self._generate_window(ts, j)
+                right_v = self._predict(eta_)
+                right_predictions.append(right_v)
+            v_hat = right_predictions.pop(0) if right_predictions else np.nan
+            predictions.append(v_hat)
+            anomaly_scores[i] = abs(v_hat - v)
+            if self.calculate_labels:
+                prediction_window = self._combine_left_right(left_predictions, right_predictions)
+                eta = self._generate_window(ts, i)
+                lower_bound, upper_bound = self._pci(v_hat, prediction_window, eta)
+                anomaly_labels[i] = int(not lower_bound < v_hat < upper_bound)
+            left_predictions.append(v_hat)
+            if len(left_predictions) > self.k:
+                del left_predictions[0]
+        return anomaly_scores, anomaly_labels
+
+@dataclass
+class CustomParameters:
+    window_size: int = 20
+    thresholding_p: float = 0.4
+    random_state: int = 42
+
+def set_random_state(seed: int) -> None:
+    import random
+    random.seed(seed)
+    np.random.seed(seed)
+
+# Wrapper
+def run_PCI_anomaly_detection(data: np.ndarray, window_size: int = 20, thresholding_p: float = 0.4, true_labels: np.ndarray = None) -> Tuple[np.ndarray, float]:
+    clf = PCIAnomalyDetector(k=window_size // 2, p=thresholding_p, calculate_labels=True)
+    clf.fit(data)
+    scores = clf.decision_scores_
+    if true_labels is not None:
+        auc_roc = roc_auc_score(true_labels, scores)
+        print(f"AUC-ROC Score: {auc_roc}")
+    else:
+        auc_roc = None
+    return scores, auc_roc
+
+if __name__ == "__main__":
+    df = pd.read_csv("/content/sample_data/A-2_test.csv", header=None)
+    ts = df.values[:, 0]
+    true_labels = np.random.randint(0, 2, len(ts)) 
+    scores, auc_roc = run_PCI_anomaly_detection(ts, window_size=20, thresholding_p=0.4, true_labels=true_labels)
+    print("Anomaly Scores:", scores)
