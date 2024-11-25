@@ -1,0 +1,149 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
+from dataclasses import dataclass
+from typing import List
+
+@dataclass
+class LocalOutlier:
+    index: int
+    z_score: float
+
+    @property
+    def sign(self) -> int:
+        return np.sign(self.z_score)
+
+@dataclass
+class RegionOutlier:
+    start_idx: int
+    end_idx: int
+    score: float
+
+# Fourier transform helper class
+class FourierTransform:
+    @staticmethod
+    def reduce_parameters(f: np.ndarray, k: int) -> np.ndarray:
+        transformed = f.copy()
+        transformed[k:] = 0
+        return transformed
+
+# Main anomaly detection class
+class AnomalyDetector:
+    def __init__(self, ifft_parameters=5, local_neighbor_window=21,
+                 local_outlier_threshold=0.6, max_region_size=50, max_sign_change_distance=10):
+        self.ifft_parameters = ifft_parameters
+        self.local_neighbor_window = local_neighbor_window
+        self.local_outlier_threshold = local_outlier_threshold
+        self.max_region_size = max_region_size
+        self.max_sign_change_distance = max_sign_change_distance
+        self.decision_scores_ = None 
+
+    def fit(self, data: np.ndarray):
+        self.data = data
+        self.decision_scores_ = self.detect_anomalies()
+
+    def decision_function(self, test_data: np.ndarray = None) -> np.ndarray:
+        if test_data is not None:
+            self.data = test_data
+        return self.detect_anomalies()
+
+    def calculate_local_outliers(self) -> List[LocalOutlier]:
+        n = len(self.data)
+        k = max(min(self.ifft_parameters, n), 1)
+        y = FourierTransform.reduce_parameters(np.fft.fft(self.data), k)
+        f2 = np.real(np.fft.ifft(y))
+
+        so = np.abs(f2 - self.data)
+        mso = np.mean(so)
+        neighbor_c = self.local_neighbor_window // 2
+
+        scores = []
+        score_idxs = []
+        for i in range(n):
+            if so[i] > mso:
+                nav = np.mean(self.data[max(i - neighbor_c, 0):min(i + neighbor_c + 1, n)])
+                scores.append(self.data[i] - nav)
+                score_idxs.append(i)
+
+        if not scores:
+            return []
+
+        ms = np.mean(scores)
+        sds = np.std(scores) + 1e-6  # Adding small value to prevent division by zero
+        z_scores = (np.array(scores) - ms) / sds
+
+        return [LocalOutlier(index=score_idxs[i], z_score=z_scores[i])
+                for i in range(len(scores)) if abs(z_scores[i]) > self.local_outlier_threshold]
+
+    def calculate_region_outliers(self, local_outliers: List[LocalOutlier]) -> List[RegionOutlier]:
+        def distance(a: int, b: int) -> int:
+            return abs(local_outliers[b].index - local_outliers[a].index)
+
+        regions = []
+        i = 0
+        n_l = len(local_outliers) - 1
+        while i < n_l:
+            start_idx = i
+            while i < n_l and distance(i, i + 1) <= self.max_sign_change_distance:
+                i += 1
+            end_idx = i
+            if end_idx > start_idx:
+                score = np.mean([abs(local_outliers[j].z_score) for j in range(start_idx, end_idx + 1)])
+                regions.append(RegionOutlier(start_idx=start_idx, end_idx=end_idx, score=score))
+            i += 1
+
+        return regions
+
+    def detect_anomalies(self) -> np.ndarray:
+        local_outliers = self.calculate_local_outliers()
+        if not local_outliers:
+            print("No local outliers detected.")
+            return np.zeros_like(self.data)
+
+        regions = self.calculate_region_outliers(local_outliers)
+        anomaly_scores = np.zeros_like(self.data)
+        for region in regions:
+            start_index = local_outliers[region.start_idx].index
+            end_index = local_outliers[region.end_idx].index
+            anomaly_scores[start_index:end_index + 1] = region.score
+
+        return anomaly_scores
+
+# Wrapper
+def run_anomaly_detector(data, ifft_parameters=5, local_neighbor_window=21, 
+                         local_outlier_threshold=0.6, max_region_size=50, 
+                         max_sign_change_distance=10) -> np.ndarray:
+    clf = AnomalyDetector(
+        ifft_parameters=ifft_parameters,
+        local_neighbor_window=local_neighbor_window,
+        local_outlier_threshold=local_outlier_threshold,
+        max_region_size=max_region_size,
+        max_sign_change_distance=max_sign_change_distance
+    )
+    
+    clf.fit(data)
+    
+    scores = clf.decision_scores_
+    
+    scores = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    
+    return scores
+
+def main():
+    data_path = '/content/sample_data/A-2_test.csv'
+    df = pd.read_csv(data_path, header=None)
+    time_series_data = df[0].values
+    true_labels = df[1].values
+
+    anomaly_scores = run_anomaly_detector(time_series_data)
+
+    auc_roc = roc_auc_score(true_labels, anomaly_scores)
+
+    print(f"AUC ROC: {auc_roc:.3f}")
+    print("Anomaly Scores:", anomaly_scores)
+
+
+if __name__ == "__main__":
+    main()
