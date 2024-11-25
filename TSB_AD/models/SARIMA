@@ -1,0 +1,128 @@
+import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator, OutlierMixin
+from pmdarima.arima import ARIMA, AutoARIMA
+from pmdarima import model_selection
+from typing import Optional
+from sklearn.preprocessing import MinMaxScaler
+
+class SARIMA(BaseEstimator, OutlierMixin):
+    def __init__(self,
+                 train_window_size: int = 500,
+                 prediction_window_size: int = 10,
+                 max_lag: Optional[int] = None,
+                 period: int = 1,
+                 max_iter: int = 20,
+                 exhaustive_search: bool = False,
+                 n_jobs: int = 1,
+                 fixed_orders: Optional[dict] = None):
+        if max_lag and train_window_size > max_lag:
+            raise AttributeError("Train window size must be smaller than max lag!")
+
+        self.train_window_size = train_window_size
+        self.forecast_window_size = prediction_window_size
+        self.max_lag = max_lag
+        self.period = period
+        self.max_iter = max_iter
+        self.exhaustive_search = exhaustive_search
+        self.n_jobs = n_jobs
+        self.fixed_orders = fixed_orders
+
+    def _fit(self, X: np.ndarray) -> ARIMA:
+        if self.fixed_orders is not None:
+            seasonal = list(self.fixed_orders["seasonal_order"])
+            seasonal.append(self.period)
+            self.fixed_orders["seasonal_order"] = tuple(seasonal)
+            arima = ARIMA(
+                max_iter=self.max_iter,
+                suppress_warnings=False,
+                **self.fixed_orders
+            )
+        else:
+            arima = AutoARIMA(
+                start_p=1, max_p=3,
+                d=None, max_d=2,
+                start_q=1, max_q=3,
+                seasonal=True, m=self.period,
+                start_P=1, max_P=2,
+                D=None, max_D=1,
+                start_Q=1, max_Q=2,
+                maxiter=self.max_iter,
+                suppress_warnings=True, error_action="warn", trace=1,
+                stepwise=not self.exhaustive_search, n_jobs=self.n_jobs,
+            )
+        arima.fit(X)
+        self._arima = arima
+        return arima
+
+    def _predict(self, X: np.ndarray, with_conf_int: bool = False) -> np.ndarray:
+        N = len(X)
+        self._predictions = np.zeros(shape=N)
+        if with_conf_int:
+            self._conf_ints = np.zeros(shape=(N, 2))
+
+        self.max_lag = self.max_lag if self.max_lag else N
+        i = self.train_window_size
+        forecast_window_size = self.forecast_window_size
+        lag_points = i
+        while i < N:
+            start = i
+            end = i + forecast_window_size
+            if lag_points >= self.max_lag:
+                lag_points = 0
+                self._fit(X[i - self.train_window_size:i])
+
+            if end > N:
+                end = N
+                forecast_window_size = N - i
+
+            prediction = self._arima.predict(forecast_window_size, return_conf_int=with_conf_int)
+            if with_conf_int:
+                y_hat, y_hat_conf = prediction
+                self._predictions[start:end] = y_hat
+                self._conf_ints[start:end, :] = y_hat_conf
+            else:
+                self._predictions[start:end] = prediction
+
+            self._arima.update(X[start:end])
+            i += forecast_window_size
+            lag_points += forecast_window_size
+
+        return self._predictions
+
+    def _score_points(self, X: np.ndarray, y_hat: np.ndarray) -> np.ndarray:
+        self._scores = np.abs(X - y_hat)
+        return self._scores
+
+    def fit(self, X: np.ndarray, y: np.ndarray = None) -> None:
+        train, _ = model_selection.train_test_split(X, train_size=self.train_window_size)
+        self._fit(train)
+
+    def decision_function(self, X: np.ndarray) -> np.ndarray:
+        y_hat = self._predict(X)
+        scores = self._score_points(X, y_hat)
+        self.decision_scores_ = scores
+        return self.decision_scores_
+
+def run_sarima(data: np.ndarray, train_window_size=500, prediction_window_size=10, max_lag=None,
+               period=1, max_iter=20, exhaustive_search=False, n_jobs=1, fixed_orders=None) -> np.ndarray:
+    clf = SARIMA(
+        train_window_size=train_window_size,
+        prediction_window_size=prediction_window_size,
+        max_lag=max_lag,
+        period=period,
+        max_iter=max_iter,
+        exhaustive_search=exhaustive_search,
+        n_jobs=n_jobs,
+        fixed_orders=fixed_orders
+    )
+    clf.fit(data)
+    scores = clf.decision_function(data)
+    scores_scaled = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    return scores_scaled
+
+if __name__ == "__main__":
+    data = pd.read_csv("/content/sample_data/stb-4.test.csv", header=None, names=["value", "label"])
+    data.index.name = "timestamp"
+    scores = run_sarima(data["value"].values)
+    print(scores)
