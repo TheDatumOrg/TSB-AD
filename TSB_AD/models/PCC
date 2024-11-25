@@ -1,0 +1,111 @@
+import argparse
+import json
+import sys
+import numpy as np
+import pandas as pd
+from typing import Optional, Tuple
+from dataclasses import dataclass
+from pyod.models.pca import PCA
+from sklearn.metrics import precision_score, recall_score, fbeta_score, roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
+
+@dataclass
+class CustomParameters:
+    # Dataclass to store custom PCA parameters for anomaly detection.
+    n_components: Optional[int] = None
+    n_selected_components: Optional[int] = None
+    whiten: bool = False
+    svd_solver: str = 'auto'
+    tol: float = 0.0
+    max_iter: Optional[int] = None
+    random_state: int = 42
+
+class DataLoader:
+    # Class to load and preprocess data for anomaly detection.
+    def __init__(self, data_input: str):
+        self.data_input = data_input
+        self.df = None
+        self.y_true = None
+
+    def load_data(self) -> Tuple[np.ndarray, float]:
+        # Loads and preprocesses data, returning time series and contamination level.
+        self.df = pd.read_csv(self.data_input, header=None, names=['value', 'label'])
+        self.df['time'] = np.arange(len(self.df))
+        self.df['value'].fillna(self.df['value'].mean(), inplace=True)
+        self.y_true = self.df['label'].values
+
+        data = self.df['value'].values.reshape(-1, 1)
+        contamination = self.df['label'].mean()
+        contamination = np.nextafter(0, 1) if contamination == 0 else contamination
+        return data, contamination
+
+def run_PCA_anomaly_detection(data: np.ndarray, contamination: float, custom_params: CustomParameters) -> np.ndarray:
+    # Wrapper function for PCA anomaly detection that initializes, fits, and normalizes scores
+    clf = PCA(
+        contamination=contamination,
+        n_components=custom_params.n_components,
+        n_selected_components=custom_params.n_selected_components,
+        whiten=custom_params.whiten,
+        svd_solver=custom_params.svd_solver,
+        tol=custom_params.tol,
+        iterated_power=custom_params.max_iter or "auto",
+        random_state=custom_params.random_state,
+        copy=True,
+        weighted=True,
+        standardization=True,
+    )
+    
+    clf.fit(data)
+    scores = clf.decision_scores_
+
+    normalized_scores = MinMaxScaler(feature_range=(0, 1)).fit_transform(scores.reshape(-1, 1)).ravel()
+    return normalized_scores
+
+class Evaluator:
+
+    def __init__(self, y_true: np.ndarray, scores: np.ndarray):
+        self.y_true = y_true
+        self.scores = scores
+
+    def evaluate(self) -> float:
+
+        auc_roc = roc_auc_score(self.y_true, self.scores)
+        return auc_roc
+
+class AnomalyDetectionPipeline:
+    def __init__(self, config: dict):
+        self.config = config
+        self.custom_params = CustomParameters(**config['customParameters'])
+        self.data_loader = DataLoader(config['dataInput'])
+        self.scores = None
+
+    def run(self) -> Tuple[np.ndarray, float]:
+
+        data, contamination = self.data_loader.load_data()
+
+        self.scores = run_PCA_anomaly_detection(data, contamination, self.custom_params)
+
+        evaluator = Evaluator(self.data_loader.y_true, self.scores)
+        auc_roc = evaluator.evaluate()
+
+        return self.scores, auc_roc
+
+if __name__ == "__main__":
+    # Configuration dictionary for running the pipeline
+    config = {
+        "dataInput": "/content/sample_data/stb-4.test.csv",
+        "dataOutput": "anomaly_scores.csv",
+        "executionType": "execute",
+        "customParameters": {
+            "n_components": 1,
+            "whiten": False,
+            "svd_solver": "auto",
+            "random_state": 42
+        }
+    }
+
+    # Initialize and run the anomaly detection pipeline
+    pipeline = AnomalyDetectionPipeline(config)
+    scores, auc_roc = pipeline.run()
+    print("Anomaly Scores:", scores)
+    print("AUC-ROC:", auc_roc)
