@@ -12,3 +12,5 @@
     * Step 3: Specify `Custom_AD_HP` hyperparameter dict
     * Step 4: Run the custom algorithm either `run_Custom_AD_Unsupervised` or `run_Custom_AD_Semisupervised`
     * Step 5: Apply threshold to the anomaly score (if any)
+
+🪧 How to commit your own algorithm to TSB-AD: you can send us the Run_Custom_Detector.py (replace Custom_Detector with the model name) to us via (i) [email](liu.11085@osu.edu) or (ii) open a pull request and add the file to `benchmark_exp` folder in `TSB-AD-algo` branch. We will test and evaluate the algorithm and include it in our [leaderboard](https://thedatumorg.github.io/TSB-AD/).

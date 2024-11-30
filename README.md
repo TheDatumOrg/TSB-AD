@@ -171,8 +171,10 @@ Examples of how to run the benchmark experiments and develop your own algorithms
 
 * Hper-parameter Tuning Scripts
 * Benchmark Evaluation Scripts
-* Evaluation results of anomaly detectors across different time series in TSB-AD (also available in [link](https://thedatumorg.github.io/TSB-AD/))
-* How to Develop your own algorithm
+* Evaluation results of anomaly detectors across different time series in TSB-AD
+* Develop your own algorithm
+
+🪧 How to commit your own algorithm to TSB-AD: you can send us the Run_Custom_Detector.py (replace Custom_Detector with the model name) to us via (i) [email](liu.11085@osu.edu) or (ii) open a pull request and add the file to `benchmark_exp` folder in `TSB-AD-algo` branch. We will test and evaluate the algorithm and include it in our [leaderboard](https://thedatumorg.github.io/TSB-AD/).
 
 
 <h2 id="tsb"> 🏄‍♂️ Dive into TSB-AD </h2>
