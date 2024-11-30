@@ -5,6 +5,7 @@
 * Benchmark Evaluation: Run_Detector_U/M.py
 
 * `benchmark_eval_results/`: Evaluation results of anomaly detectors across different time series in TSB-AD
+    * All time series are normalized by z-score by default
 
 * Develop your own algorithm: Run_Custom_Detector.py
     * Step 1: Implement `Custom_AD` class
