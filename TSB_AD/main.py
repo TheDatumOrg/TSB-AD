@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Qinghua Liu <liu.11085@osu.edu>
-# License: MIT License
+# License: Apache-2.0 License
 
 import pandas as pd
 import torch

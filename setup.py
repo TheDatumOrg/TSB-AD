@@ -3,7 +3,7 @@ from io import open
 
 setup(
     name='TSB_AD',  # Replace with your own package name
-    version='1.0',  # The version of your package
+    version='1.1',  # The version of your package
     author='The Datum Lab',  # Your name
     description='Time-Series Anomaly Detection Benchmark',  # A short description
     long_description=open('README.md', encoding='utf-8').read(),  # Long description read from the README.md
@@ -16,7 +16,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
@@ -41,6 +41,7 @@ setup(
     ],
     python_requires='>=3.8',  # Minimum version requirement of the package
     entry_points={},
+    license="Apache-2.0 license",
     include_package_data=True,  # Whether to include non-code files in the package
     zip_safe=False,  # Whether the package can be run out of a zip file
 )

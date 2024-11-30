@@ -165,6 +165,16 @@ output = run_Unsupervise_AD(AD_Name, data)
 evaluation_result = get_metrics(output, label)
 ```
 
+<h3 id="usage">🧑‍💻 Customized Development</h3>
+
+Examples of how to run the benchmark experiments and develop your own algorithms can be find [here](https://github.com/TheDatumOrg/TSB-AD/tree/main/benchmark_exp), including:
+
+* Hper-parameter Tuning Scripts
+* Benchmark Evaluation Scripts
+* Evaluation results of anomaly detectors across different time series in TSB-AD (also available in [link](https://thedatumorg.github.io/TSB-AD/))
+* How to Develop your own algorithm
+
+
 <h2 id="tsb"> 🏄‍♂️ Dive into TSB-AD </h2>
 
 ### Dataset Overview 
