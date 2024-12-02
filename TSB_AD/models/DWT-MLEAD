@@ -1,0 +1,157 @@
+import warnings
+from typing import NamedTuple, Callable, List, Optional, Any
+import numpy as np
+import pywt as wt
+from numpy.lib.stride_tricks import sliding_window_view
+from sklearn.covariance import EmpiricalCovariance
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
+
+warnings.filterwarnings(action='ignore', category=UserWarning)
+
+class AnomalyCluster(NamedTuple):
+    center: float
+    score: float
+    points: np.ndarray
+
+class DWTProcessor:
+    def __init__(self, wavelet: str = "haar", mode: str = "periodic"):
+        self.wavelet = wavelet
+        self.mode = mode
+
+    def pad_series(self, data: np.ndarray) -> np.ndarray:
+        n = len(data)
+        exp = np.ceil(np.log2(n))
+        m = int(np.power(2, exp))
+        return wt.pad(data, (0, m - n), "periodic")
+
+    def multilevel_dwt(self, data: np.ndarray, start_level: int, max_level: int):
+        levels, approx_coefs, detail_coefs = [], [], []
+        a = data
+        for i in range(max_level):
+            a, d = wt.dwt(a, self.wavelet, self.mode)
+            if i + 1 >= start_level:
+                levels.append(i + 1)
+                approx_coefs.append(a)
+                detail_coefs.append(d)
+        return np.array(levels), approx_coefs, detail_coefs
+
+class AnomalyScorer:
+    def __init__(self, quantile_boundary_type: str, quantile_epsilon: float, window_sizes: np.ndarray):
+        self.quantile_boundary_type = quantile_boundary_type
+        self.quantile_epsilon = quantile_epsilon
+        self.window_sizes = window_sizes
+
+    def _estimate_gaussian_likelihoods(self, level: float, x_view: np.ndarray) -> np.ndarray:
+        e_cov_est = EmpiricalCovariance(assume_centered=False)
+        e_cov_est.fit(x_view)
+        p = np.empty(shape=len(x_view))
+        for i, window in enumerate(x_view):
+            p[i] = e_cov_est.score(window.reshape(1, -1))
+        return p
+
+    def _mark_anomalous_windows(self, p: np.ndarray) -> np.ndarray:
+        if self.quantile_boundary_type == "percentile":
+            z_eps = np.percentile(p, self.quantile_epsilon * 100)
+        else:
+            raise ValueError(f"The quantile boundary type '{self.quantile_boundary_type}' is not implemented yet!")
+        return p < z_eps
+
+    def reverse_windowing(self, data: np.ndarray, window_length: int, full_length: int,
+                          reduction: Callable = np.mean, fill_value: float = np.nan) -> np.ndarray:
+        mapped = np.full(shape=(full_length, window_length), fill_value=fill_value)
+        mapped[:len(data), 0] = data
+        for w in range(1, window_length):
+            mapped[:, w] = np.roll(mapped[:, 0], w)
+        return reduction(mapped, axis=1)
+
+    def score_anomalies(self, detail_coefs: List[np.ndarray], approx_coefs: List[np.ndarray], levels: np.ndarray) -> List[np.ndarray]:
+        anomaly_scores = []
+        for x, level in zip(Utility.combine_alternating(detail_coefs, approx_coefs), levels.repeat(2, axis=0)):
+            level_index = level - 1
+            if level_index < 0 or level_index >= len(self.window_sizes):
+                raise IndexError(f"Level index {level_index} is out of bounds for window_sizes of length {len(self.window_sizes)}")
+            window_size = self.window_sizes[level_index]
+            x_view = sliding_window_view(x, window_size)
+            p = self._estimate_gaussian_likelihoods(level, x_view)
+            a = self._mark_anomalous_windows(p)
+            xa = self.reverse_windowing(a, window_length=window_size, full_length=len(x), reduction=np.sum, fill_value=0)
+            anomaly_scores.append(xa)
+        return anomaly_scores
+
+class Utility:
+    @staticmethod
+    def combine_alternating(xs, ys):
+        for x, y in zip(xs, ys):
+            yield x
+            yield y
+
+class DWT_MLEAD:
+    def __init__(self, data: np.ndarray, start_level: int, quantile_boundary_type: str, quantile_epsilon: float,
+                 track_coefs: bool = False):
+        self.start_level = start_level
+        self.quantile_boundary_type = quantile_boundary_type
+        self.quantile_epsilon = quantile_epsilon
+        self.track_coefs = track_coefs
+        self.decision_scores_ = None 
+        
+        self.dwt_processor = DWTProcessor()
+        self.padded_data = self.dwt_processor.pad_series(data)
+        self.m = len(self.padded_data)
+        self.max_level = int(np.log2(self.m)) - 1
+        self.window_sizes = np.array([max(2, self.max_level - l - self.start_level + 1) for l in range(self.max_level)])
+        self.anomaly_scorer = AnomalyScorer(self.quantile_boundary_type, self.quantile_epsilon, self.window_sizes)
+
+    def fit(self, data: Optional[np.ndarray] = None):
+        if data is not None:
+            self.padded_data = self.dwt_processor.pad_series(data)
+            self.m = len(self.padded_data)
+            self.max_level = int(np.log2(self.m)) - 1
+            self.window_sizes = np.array([max(2, self.max_level - l - self.start_level + 1) for l in range(self.max_level)])
+
+        levels, approx_coefs, detail_coefs = self.dwt_processor.multilevel_dwt(
+            self.padded_data,
+            start_level=self.start_level,
+            max_level=self.max_level
+        )
+        coef_anomaly_counts = self.anomaly_scorer.score_anomalies(detail_coefs, approx_coefs, levels)
+        point_anomaly_scores = self._push_anomaly_counts_down_to_points(coef_anomaly_counts)
+        self.decision_scores_ = point_anomaly_scores[:len(self.padded_data)]
+        return self 
+    
+    def detect(self) -> np.ndarray:
+        """Run fit and return anomaly scores."""
+        self.fit()
+        return self.decision_scores_
+
+    def _push_anomaly_counts_down_to_points(self, coef_anomaly_counts: List[np.ndarray]) -> np.ndarray:
+        anomaly_counts = coef_anomaly_counts[0::2] + coef_anomaly_counts[1::2]
+        counter = np.zeros(self.m)
+        for ac in anomaly_counts:
+            counter += ac.repeat(self.m // len(ac), axis=0)
+        counter[counter < 2] = 0
+        return counter[:self.m]
+
+# Wrapper
+def run_DWT_MLEAD(data, start_level=1, quantile_boundary_type='percentile', quantile_epsilon=0.01):
+    clf = DWT_MLEAD(
+        data=data, 
+        start_level=start_level, 
+        quantile_boundary_type=quantile_boundary_type, 
+        quantile_epsilon=quantile_epsilon
+    )
+    clf.fit(data)
+    score = clf.decision_scores_
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1, 1)).ravel()
+    return score
+
+# Sample usage (assuming data and labels are loaded as in the original code)
+if __name__ == "__main__":
+    data_path = '/content/sample_data/A-2_test.csv'
+    df = pd.read_csv(data_path, header=None)
+    data = df.iloc[:, 0].values  # Assuming data is in the first column
+    labels = df.iloc[:, 1].values  # Assuming labels are in the second column
+
+    anomaly_scores = run_DWT_MLEAD(data, start_level=1, quantile_boundary_type='percentile', quantile_epsilon=0.01)
+    print("Anomaly Scores:", anomaly_scores)
