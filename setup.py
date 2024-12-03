@@ -3,7 +3,7 @@ from io import open
 
 setup(
     name='TSB_AD',  # Replace with your own package name
-    version='1.1',  # The version of your package
+    version='1.2',  # The version of your package
     author='The Datum Lab',  # Your name
     description='Time-Series Anomaly Detection Benchmark',  # A short description
     long_description=open('README.md', encoding='utf-8').read(),  # Long description read from the README.md

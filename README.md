@@ -5,6 +5,12 @@
 <h1 align="center">TSB-AD</h1>
 <h2 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
 
+<p align="center">
+<img alt="PyPI" src="https://img.shields.io/pypi/v/tsb_ad"> 
+<img alt="PyPI - Downloads" src="https://pepy.tech/badge/tsb_ad"> 
+<img alt="License" src="https://img.shields.io/github/license/TheDatumOrg/tsb-ad">
+</p>
+
 Main Recent Update:
 - [Nov. 20, 2024] Project homepage is online and release TSB-AD-U/M dataset.
 - [Nov. 6, 2024] Pip-installable package released.
@@ -99,7 +105,7 @@ The split of Tuning and Eval set in our benchmark study is available at [[Link]]
 You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/1.0/):
 
 ```bash
-pip install TSB-AD==1.0
+pip install TSB-AD
 ```
 
 To install TSB-AD from source, you will need the following tools:
