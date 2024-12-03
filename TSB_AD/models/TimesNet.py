@@ -205,7 +205,7 @@ class TimesNet():
         self.cuda = cuda
         self.device = get_gpu(self.cuda)
             
-        self.model = Model(seq_len=self.win_size, enc_in=self.enc_in).float().to(self.device)
+        self.model = Model(seq_len=self.win_size, enc_in=self.enc_in, c_out=self.enc_in).float().to(self.device)
         self.model_optim = optim.Adam(self.model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
         

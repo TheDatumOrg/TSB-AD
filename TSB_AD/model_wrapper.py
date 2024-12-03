@@ -289,9 +289,9 @@ def run_AutoEncoder(data_train, data_test, window_size=100, hidden_neurons=[64, 
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
     return score
 
-def run_CNN(data_train, data_test, window_size=100, num_channel=[32, 32, 40], n_jobs=1):
+def run_CNN(data_train, data_test, window_size=100, num_channel=[32, 32, 40], lr=0.0008, n_jobs=1):
     from .models.CNN import CNN
-    clf = CNN(window_size=window_size, num_channel=num_channel, feats=data_test.shape[1], batch_size=128)
+    clf = CNN(window_size=window_size, num_channel=num_channel, feats=data_test.shape[1], lr=lr, batch_size=128)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()

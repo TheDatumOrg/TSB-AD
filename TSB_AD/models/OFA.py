@@ -224,7 +224,7 @@ class OFA():
         self.cuda = cuda
         self.device = get_gpu(self.cuda)
             
-        self.model = Model(seq_len=self.win_size, enc_in=self.enc_in).float().to(self.device)
+        self.model = Model(seq_len=self.win_size, enc_in=self.enc_in, c_out=self.enc_in).float().to(self.device)
         self.model_optim = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss()
         
@@ -280,6 +280,7 @@ class OFA():
                     batch_x = batch_x.float().to(self.device)
 
                     outputs = self.model(batch_x)
+                    print('outputs: ', outputs.shape)
 
                     f_dim = -1 if self.features == 'MS' else 0
                     outputs = outputs[:, :, f_dim:]
