@@ -102,7 +102,7 @@ The split of Tuning and Eval set in our benchmark study is available at [[Link]]
 
 <h3 id="tsad">💻 Installation</h3>
 
-You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/1.0/):
+You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/):
 
 ```bash
 pip install TSB-AD
