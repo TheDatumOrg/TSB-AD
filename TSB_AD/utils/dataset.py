@@ -28,7 +28,7 @@ class TSDataset(torch.utils.data.Dataset):
 
 class ReconstructDataset(torch.utils.data.Dataset):
 
-    def __init__(self, data, window_size, step=1, normalize=True):
+    def __init__(self, data, window_size, stride=1, normalize=True):
         super().__init__()
         self.normalize = normalize
 
@@ -41,17 +41,17 @@ class ReconstructDataset(torch.utils.data.Dataset):
             self.data = data
 
         self.window_size = window_size
-        self.step = step
+        self.stride = stride
         
         if data.shape[1] == 1:
             data = data.squeeze()
             self.len, = data.shape
-            self.sample_num = max(0, (self.len - self.window_size) // self.step + 1)
+            self.sample_num = max(0, (self.len - self.window_size) // self.stride + 1)
             
             X = torch.zeros((self.sample_num, self.window_size))
             
             for i in range(self.sample_num):
-                X[i, :] = torch.from_numpy(data[i * step : i * step + self.window_size])
+                X[i, :] = torch.from_numpy(data[i * stride : i * stride + self.window_size])
                 
             self.samples, self.targets = torch.unsqueeze(X, -1), torch.unsqueeze(X, -1)
         else:
@@ -131,7 +131,7 @@ class ForecastDataset(torch.utils.data.Dataset):
 
 class ReconstructDataset_Moment(torch.utils.data.Dataset):
 
-    def __init__(self, data, window_size, step=1, normalize=True):
+    def __init__(self, data, window_size, stride=1, normalize=True):
         super().__init__()
         self.normalize = normalize
 
@@ -143,17 +143,17 @@ class ReconstructDataset_Moment(torch.utils.data.Dataset):
         else:
             self.data = data
         self.window_size = window_size
-        self.step = step
+        self.stride = stride
         
         if data.shape[1] == 1:
             data = data.squeeze()
             self.len, = data.shape
-            self.sample_num = max(0, (self.len - self.window_size) // self.step + 1)
+            self.sample_num = max(0, (self.len - self.window_size) // self.stride + 1)
             
             X = torch.zeros((self.sample_num, self.window_size))
             
             for i in range(self.sample_num):
-                X[i, :] = torch.from_numpy(data[i * step : i * step + self.window_size])
+                X[i, :] = torch.from_numpy(data[i * stride : i * stride + self.window_size])
                 
             self.samples, self.targets = torch.unsqueeze(X, -1), torch.unsqueeze(X, -1)
         else:
