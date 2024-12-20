@@ -5,6 +5,7 @@
 import pandas as pd
 import torch
 import random, argparse
+from sklearn.preprocessing import MinMaxScaler
 from .evaluation.metrics import get_metrics
 from .utils.slidingWindows import find_length_rank
 from .model_wrapper import *
@@ -51,6 +52,7 @@ if __name__ == '__main__':
         raise Exception(f"{args.AD_Name} is not defined")
 
     if isinstance(output, np.ndarray):
+        output = MinMaxScaler(feature_range=(0,1)).fit_transform(output.reshape(-1,1)).ravel()
         evaluation_result = get_metrics(output, label, slidingWindow=slidingWindow, pred=output > (np.mean(output)+3*np.std(output)))
         print('Evaluation Result: ', evaluation_result)
     else:
