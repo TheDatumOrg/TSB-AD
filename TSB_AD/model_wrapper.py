@@ -2,9 +2,9 @@ import numpy as np
 import math
 from .utils.slidingWindows import find_length_rank
 
-Unsupervise_AD_Pool = ['SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
+Unsupervise_AD_Pool = ['FFT', 'SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
                         'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
-Semisupervise_AD_Pool = ['SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
+Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
                         'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
@@ -29,6 +29,13 @@ def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
         error_message = f"Model function '{function_name}' is not defined."
         print(error_message)
         return error_message
+
+def run_FFT(data, ifft_parameters=5, local_neighbor_window=21, local_outlier_threshold=0.6, max_region_size=50, max_sign_change_distance=10):
+    from .models.FFT import FFT
+    clf = FFT(ifft_parameters=ifft_parameters, local_neighbor_window=local_neighbor_window, local_outlier_threshold=local_outlier_threshold, max_region_size=max_region_size, max_sign_change_distance=max_sign_change_distance)
+    clf.fit(data)  
+    score = clf.decision_scores_ 
+    return score.ravel()
 
 def run_Sub_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
     from .models.IForest import IForest
@@ -76,6 +83,13 @@ def run_MatrixProfile(data, periodicity=1, n_jobs=1):
     clf = MatrixProfile(window=slidingWindow)
     clf.fit(data)
     score = clf.decision_scores_
+    return score.ravel()
+
+def run_Left_STAMPi(data_train, data):
+    from .models.Left_STAMPi import Left_STAMPi
+    clf = Left_STAMPi(n_init_train=len(data_train), window_size=100)
+    clf.fit(data)
+    score = clf.decision_function(data)
     return score.ravel()
 
 def run_SAND(data_train, data_test, periodicity=1):

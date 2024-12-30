@@ -253,6 +253,8 @@ Optimal_Uni_algo_HP_dict = {
     'Sub_KNN': {'periodicity': 2, 'n_neighbors': 50}, 
     'KMeansAD_U': {'periodicity': 2, 'n_clusters': 10},
     'KShapeAD': {'periodicity': 1},
+    'FFT': {},
+    'Left_STAMPi': {},
     'AutoEncoder': {'window_size': 100, 'hidden_neurons': [128, 64]},
     'CNN': {'window_size': 50, 'num_channel': [32, 32, 40]},
     'LSTMAD': {'window_size': 100, 'lr': 0.0008},  
