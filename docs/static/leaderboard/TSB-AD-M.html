@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f2f2f2;
+            position: relative;
+        }
+        th.sort-asc::after {
+            content: ' ▲'; /* Ascending indicator */
+            position: absolute;
+            right: 8px;
+        }
+        th.sort-desc::after {
+            content: ' ▼'; /* Descending indicator */
+            position: absolute;
+            right: 8px;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Align the first column (Method) to the left */
+        td:first-child, th:first-child {
+            text-align: left;
+        }
+
+        /* Align all other columns to the center */
+        td:not(:first-child), th:not(:first-child) {
+            text-align: center;
+        }
+    </style>
+</head>
+
+
+<body>
+    <table id="sortableTable">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>AUC-PR</th>
+                <th>AUC-ROC</th>
+                <th class="sort-desc" data-order="desc">VUS-PR</th>
+                <th>VUS-ROC</th>
+                <th>Standard-F1</th>
+                <th>PA-F1</th>
+                <th>Event-based-F1</th>
+                <th>R-based-F1</th>
+                <th>Affiliation-F1</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>🥇 CNN</td><td><b>0.32</b></td><td><b>0.73</b></td><td><b>0.31</b></td><td><b>0.76</b></td><td><b>0.37</b></td><td>0.78</td><td><b>0.65</b></td><td><u>0.37</u></td><td><u>0.87</u></td></tr>
+            <tr><td>🥈 OmniAnomaly</td><td>0.27</td><td>0.65</td><td><u>0.31</u></td><td>0.69</td><td>0.32</td><td>0.55</td><td>0.41</td><td>0.37</td><td>0.81</td></tr>
+            <tr><td>🥉 PCA</td><td>0.31</td><td>0.70</td><td>0.31</td><td><u>0.74</u></td><td><u>0.37</u></td><td><u>0.79</u></td><td>0.59</td><td>0.29</td><td>0.85</td></tr>
+            <tr><td>LSTMAD</td><td><u>0.31</u></td><td><u>0.70</u></td><td>0.31</td><td>0.74</td><td>0.36</td><td><b>0.79</b></td><td><u>0.64</u></td><td><b>0.38</b></td><td><b>0.87</b></td></tr>
+            <tr><td>USAD</td><td>0.26</td><td>0.64</td><td>0.30</td><td>0.68</td><td>0.31</td><td>0.53</td><td>0.40</td><td>0.37</td><td>0.80</td></tr>
+            <tr><td>AutoEncoder</td><td>0.30</td><td>0.67</td><td>0.30</td><td>0.69</td><td>0.34</td><td>0.60</td><td>0.44</td><td>0.28</td><td>0.80</td></tr>
+            <tr><td>KMeansAD</td><td>0.25</td><td>0.69</td><td>0.29</td><td>0.73</td><td>0.31</td><td>0.68</td><td>0.49</td><td>0.33</td><td>0.82</td></tr>
+            <tr><td>CBLOF</td><td>0.28</td><td>0.67</td><td>0.27</td><td>0.70</td><td>0.32</td><td>0.65</td><td>0.45</td><td>0.31</td><td>0.81</td></tr>
+            <tr><td>MCD</td><td>0.27</td><td>0.65</td><td>0.27</td><td>0.69</td><td>0.33</td><td>0.46</td><td>0.33</td><td>0.20</td><td>0.76</td></tr>
+            <tr><td>OCSVM</td><td>0.23</td><td>0.61</td><td>0.26</td><td>0.67</td><td>0.28</td><td>0.48</td><td>0.41</td><td>0.30</td><td>0.80</td></tr>
+            <tr><td>Donut</td><td>0.20</td><td>0.64</td><td>0.26</td><td>0.71</td><td>0.28</td><td>0.52</td><td>0.36</td><td>0.21</td><td>0.81</td></tr>
+            <tr><td>RobustPCA</td><td>0.24</td><td>0.58</td><td>0.24</td><td>0.61</td><td>0.29</td><td>0.60</td><td>0.42</td><td>0.33</td><td>0.81</td></tr>
+            <tr><td>FITS</td><td>0.15</td><td>0.58</td><td>0.21</td><td>0.66</td><td>0.22</td><td>0.72</td><td>0.32</td><td>0.16</td><td>0.81</td></tr>
+            <tr><td>OFA</td><td>0.15</td><td>0.55</td><td>0.21</td><td>0.63</td><td>0.21</td><td>0.72</td><td>0.41</td><td>0.17</td><td>0.83</td></tr>
+            <tr><td>EIF</td><td>0.19</td><td>0.67</td><td>0.21</td><td>0.71</td><td>0.26</td><td>0.74</td><td>0.44</td><td>0.26</td><td>0.81</td></tr>
+            <tr><td>COPOD</td><td>0.20</td><td>0.65</td><td>0.20</td><td>0.69</td><td>0.27</td><td>0.72</td><td>0.41</td><td>0.24</td><td>0.80</td></tr>
+            <tr><td>IForest</td><td>0.19</td><td>0.66</td><td>0.20</td><td>0.69</td><td>0.26</td><td>0.68</td><td>0.41</td><td>0.24</td><td>0.80</td></tr>
+            <tr><td>HBOS</td><td>0.16</td><td>0.63</td><td>0.19</td><td>0.67</td><td>0.24</td><td>0.67</td><td>0.40</td><td>0.24</td><td>0.80</td></tr>
+            <tr><td>TimesNet</td><td>0.13</td><td>0.56</td><td>0.19</td><td>0.64</td><td>0.20</td><td>0.68</td><td>0.32</td><td>0.17</td><td>0.82</td></tr>
+            <tr><td>KNN</td><td>0.14</td><td>0.51</td><td>0.18</td><td>0.59</td><td>0.19</td><td>0.69</td><td>0.45</td><td>0.21</td><td>0.79</td></tr>
+            <tr><td>TranAD</td><td>0.14</td><td>0.59</td><td>0.18</td><td>0.65</td><td>0.21</td><td>0.68</td><td>0.40</td><td>0.21</td><td>0.79</td></tr>
+            <tr><td>LOF</td><td>0.10</td><td>0.53</td><td>0.14</td><td>0.60</td><td>0.15</td><td>0.57</td><td>0.32</td><td>0.14</td><td>0.76</td></tr>
+            <tr><td>AnomalyTransformer</td><td>0.07</td><td>0.52</td><td>0.12</td><td>0.57</td><td>0.12</td><td>0.53</td><td>0.33</td><td>0.14</td><td>0.74</td></tr>
+        </tbody>
+    </table>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('sortableTable');
+            const headers = table.querySelectorAll('th');
+            const tbody = table.querySelector('tbody');
+
+            // Default sorting column
+            const defaultColumnIndex = 2; // VUS-PR column
+            let currentSortedColumn = headers[defaultColumnIndex];
+            currentSortedColumn.setAttribute('data-order', 'asc');
+
+            // Sorting function
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.getAttribute('data-order') === 'asc';
+                    const newOrder = isAscending ? 'desc' : 'asc';
+
+                    // Remove sorting classes from all headers
+                    headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+
+                    // Apply sorting class to current header
+                    header.classList.add(newOrder === 'asc' ? 'sort-asc' : 'sort-desc');
+                    header.setAttribute('data-order', newOrder);
+
+                    const sortedRows = rows.sort((a, b) => {
+                        const aText = a.children[index]?.textContent.trim() || '';
+                        const bText = b.children[index]?.textContent.trim() || '';
+
+                        if (!isNaN(parseFloat(aText)) && !isNaN(parseFloat(bText))) {
+                            return newOrder === 'asc' ? aText - bText : bText - aText;
+                        }
+                        return newOrder === 'asc'
+                            ? aText.localeCompare(bText)
+                            : bText.localeCompare(aText);
+                    });
+
+                    // Remove old rows
+                    while (tbody.firstChild) {
+                        tbody.removeChild(tbody.firstChild);
+                    }
+
+                    // Append sorted rows
+                    tbody.append(...sortedRows);
+
+                    // Update current sorted column
+                    currentSortedColumn = index;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

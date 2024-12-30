@@ -755,3 +755,47 @@ class basic_metricor():
             AP_range = np.dot(width_PR, height_PR)
             ap_3d[window] = (AP_range)
         return tpr_3d, fpr_3d, prec_3d, window_3d, sum(auc_3d) / len(window_3d), sum(ap_3d) / len(window_3d)
+
+
+    def metric_VUS_pred(self, labels, preds, windowSize):
+        window_3d = np.arange(0, windowSize + 1, 1)
+        P = np.sum(labels)
+        seq = self.range_convers_new(labels)
+        l = self.new_sequence(labels, seq, windowSize)
+
+        recall_3d = np.zeros((windowSize + 1))
+        prec_3d = np.zeros((windowSize + 1))
+        f_3d = np.zeros((windowSize + 1))
+
+        N_pred = np.sum(preds)
+
+        for window in window_3d:
+
+            labels_extended = self.sequencing(labels, seq, window)
+            L = self.new_sequence(labels_extended, seq, window)
+                
+            labels = labels_extended.copy()
+            existence = 0
+
+            for seg in L:
+                labels[seg[0]:seg[1] + 1] = labels_extended[seg[0]:seg[1] + 1] * preds[seg[0]:seg[1] + 1]
+                if (preds[seg[0]:(seg[1] + 1)] > 0).any():
+                    existence += 1
+            for seg in seq:
+                labels[seg[0]:seg[1] + 1] = 1
+
+            TP = 0
+            N_labels = 0
+            for seg in l:
+                TP += np.dot(labels[seg[0]:seg[1] + 1], preds[seg[0]:seg[1] + 1])
+                N_labels += np.sum(labels[seg[0]:seg[1] + 1])
+
+            P_new = (P + N_labels) / 2
+            recall = min(TP / P_new, 1)
+            Precision = TP / N_pred            
+
+            recall_3d[window] = recall
+            prec_3d[window] = Precision
+            f_3d[window] = 2 * Precision * recall / (Precision + recall) if (Precision + recall) > 0 else 0
+
+        return sum(recall_3d) / len(window_3d), sum(prec_3d) / len(window_3d), sum(f_3d) / len(window_3d)

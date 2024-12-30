@@ -1,12 +1,959 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐘 TSB-AD</title>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="DESCRIPTION META TAG">
+  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
+  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
+  <meta property="og:url" content="URL OF THE WEBSITE"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
+  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>TSB-AD</title>
+  <link rel="icon" type="image/x-icon" href="static/images/elephant.svg">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
 </head>
 <body>
-    <h1>Welcome to TSB-AD's GitHub Pages</h1>
-    <p>This is a sample page for TSB-AD.</p>
-</body>
-</html>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">🐘 The Elephant in the Room: <br> Towards A Reliable Time-series Anomaly Detection Benchmark</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="https://qhliu26.github.io/" target="_blank">Qinghua Liu</a> and </span>
+                  <span class="author-block">
+                    <a href="https://www.paparrizos.org/" target="_blank">John Paparrizos</a>
+                  </span>
+                  </div>
+
+                  <div class="is-size-5 publication-authors">
+                    <span class="author-block">The Ohio State University<br>NeurIPS 2024 D&B</span>
+                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="https://openreview.net/pdf?id=R6kJtWsTGy" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/TheDatumOrg/TSB-AD" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                  <span class="link-block">
+                    <a href="https://www.thedatum.org/datasets/TSB-AD-U.zip" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-folder-open"></i>
+                    </span>
+                    <span>TSB-AD-U</span>
+                  </a>
+                </span>
+
+                  <span class="link-block">
+                    <a href="https://www.thedatum.org/datasets/TSB-AD-M.zip" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-folder-open"></i>
+                    </span>
+                    <span>TSB-AD-M</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://neurips.cc/media/neurips-2024/Slides/97690.pdf" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Slides</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://neurips.cc/media/PosterPDFs/NeurIPS%202024/97690.png?t=1731471706.5915518" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fas fa-file-pdf"></i>
+                </span>
+                <span>Poster</span>
+              </a>
+            </span>
+
+                <!-- ArXiv abstract Link -->
+                <!-- <span class="link-block">
+                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+            
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Your image here -->
+<div class="item">
+  <p align="center">
+  <img width="800" src="static/images/tsb_overview.png" alt="Time Series Sample"/>
+  <h2 class="subtitle has-text-centered">
+    Example time series from TSB-AD, with anomalies highlighted in red.
+ </h2>
+ <p>
+</div>
+
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Time-series anomaly detection is a fundamental task across scientific fields and industries. However, the field has long faced the ''🐘 elephant in the room:'' critical issues including flawed datasets, biased evaluation measures, and inconsistent benchmarking practices that have remained largely ignored and unaddressed. We introduce the TSB-AD to systematically tackle these issues in the following three aspects: (i) Dataset Integrity: with 1070 high-quality time series from a diverse collection of 40 datasets (doubling the size of the largest collection and four times the number of existing curated datasets), we provide the first large-scale, heterogeneous, meticulously curated dataset that combines the effort of human perception and model interpretation; (ii) Measure Reliability: by revealing issues and biases in evaluation measures, we identify the most reliable and accurate measure, namely, VUS-PR for anomaly detection in time series to address concerns from the community; and (iii) Comprehensive Benchmarking: with a broad spectrum of 40 detection algorithms, from statistical methods to the latest foundation models, we perform a comprehensive evaluation that includes a thorough hyperparameter tuning and a unified setup for a fair and reproducible comparison. Our findings challenge the conventional wisdom regarding the superiority of advanced neural network architectures, revealing that simpler architectures and statistical methods often yield better performance. The promising performance of neural networks on multivariate cases and foundation models on point anomalies highlights the need for further advancements in these methods.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- Leaderboard -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">📈 TSB-AD-U Leaderborad</h2>
+      <h3>📣 Z-normalization is applied for the time series preprocessing step, unless an alternative normalization is specified.</h3>
+
+      <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+      <iframe src="static/leaderboard/TSB-AD-U.html" style="width: 90%; height: 300px; border: none;"></iframe>
+      </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title">📈 TSB-AD-M Leaderborad</h2>
+  
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+        <iframe src="static/leaderboard/TSB-AD-M.html" style="width: 90%; height: 300px; border: none;"></iframe>
+        </div>
+  
+        </div>
+      </div>
+    </section>  
+<!--End Leaderboard -->   
+
+<div class="container is-max-desktop content">
+  <h2 class="title">Summary of Datasets</h2>
+
+<div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+  <table style="width: 900px; border-collapse: collapse; font-size: 16px; text-align: left;">
+      <thead>
+          <tr style="background-color: #f2f2f2; font-weight: bold;">
+              <th style="border: 1px solid #ddd; padding: 8px;">Dataset</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">Description</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">Data Source</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">License</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">UCR</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">A collection of univariate time series of multiple domains, including air temperature, arterial blood pressure, astronomy, ECG, and more. Most anomalies are introduced artificially.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://wu.renjie.im/research/anomaly-benchmarks-are-flawed/#ucr-time-series-anomaly-archive" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">NAB</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">Labeled real-world and artificial time series, including AWS server metrics, online advertisement click rates, real-time traffic data, and Twitter mentions of publicly traded companies.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/numenta/NAB" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">GPL</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">YAHOO</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">A dataset published by Yahoo Labs, consisting of real and synthetic time series based on production traffic to Yahoo systems.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://webscope.sandbox.yahoo.com/catalog.php?datatype=s&did=70" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">See details in Website</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">IOPS</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">A dataset with performance indicators reflecting the scale, quality of web services, and machine health status.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/iopsai/iops" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">MGAB</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">Mackey-Glass time series, where anomalies exhibit chaotic behavior that is challenging for the human eye to distinguish.</td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/MarkusThill/MGAB" target="_blank">Website</a></td>
+              <td style="border: 1px solid #ddd; padding: 8px;">CC0-1.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">WSD</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a web service dataset, which contains real-world KPIs collected from large Internet companies.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/alumik/AnoTransfer-data" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SED</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">a simulated engine disk data from the NASA Rotary Dynamics Laboratory representing disk revolutions recorded over several runs (3K rpm speed).</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://helios2.mi.parisdescartes.fr/~themisp/SAND/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">TODS</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a synthetic dataset that comprises global, contextual, shapelet, seasonal, and trend anomalies.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/datamllab/tods/tree/benchmark" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Apache-2.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">NEK</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is collected from real production network equipment.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/CSTCloudOps/datasets" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Stock</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a stock trading traces dataset, containing one million transaction records throughout the trading hours of a day.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://wrds-www.wharton.upenn.edu/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Power</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">power consumption for a Dutch research facility for the entire year of 1997.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://link.springer.com/article/10.1007/s10115-006-0034-6" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>          
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">GHL</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">contains the status of 3 reservoirs such as the temperature and level. Anomalies indicate changes in max temperature or pump frequency.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://kas.pr/ics-research/dataset_ghl_1" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Daphnet</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">contains the annotated readings of 3 acceleration sensors at the hip and leg of Parkinson's disease patients that experience freezing of gait (FoG) during walking tasks.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://archive.ics.uci.edu/dataset/245/daphnet+freezing+of+gait" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Exathlon</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is based on real data traces collected from a Spark cluster over 2.5 months. For each of these anomalies, ground truth labels are provided for both the root cause interval and the corresponding effect interval.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/exathlonbenchmark/exathlon" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Apache-2.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Genesis</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a portable pick-and-place demonstrator that uses an air tank to supply all the gripping and storage units.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://www.kaggle.com/inIT-OWL/genesis-demonstrator-data-for-machine-learning" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY-NC-SA 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">OPP</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is devised to benchmark human activity recognition algorithms (e.g., classification, automatic data segmentation, sensor fusion, and feature extraction), which comprises the readings of motion sensors recorded while users executed typical daily activities.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://archive.ics.uci.edu/dataset/226/opportunity+activity+recognition" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SMD</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a 5-week-long dataset collected from a large Internet company, which contains 3 groups of entities from 28 different machines.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/NetManAIOps/OmniAnomaly" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">MIT</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SWaT</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a secure water treatment dataset that is collected from 51 sensors and actuators, where the anomalies represent abnormal behaviors under attack scenarios.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Needs request form</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">PSM</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a dataset collected internally from multiple application server nodes at eBay.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/eBay/RANSynCoders/tree/main/data" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SMAP</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is real spacecraft telemetry data with anomalies from Soil Moisture Active Passive satellite. It contains time series with one feature representing a sensor measurement, while the rest represent binary encoded commands.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://github.com/khundman/telemanom/blob/master/labeled_anomalies.csv" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Caltech</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">MSL</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is collected from Curiosity Rover on Mars satellite.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://www.kaggle.com/datasets/patrickfleith/nasa-anomaly-detection-dataset-smap-msl/code" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Caltech</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">CreditCard</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is an intrusion detection evaluation dataset, which consists of labeled network flows, including full packet payloads in pcap format, the corresponding profiles, and the labeled flows.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://www.unb.ca/cic/datasets/ids-2017.html" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">None</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">GECCO</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a water quality dataset used in a competition for online anomaly detection of drinking water quality.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://zenodo.org/records/3884398" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">MITDB</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">contains 48 half-hour excerpts of two-channel ambulatory ECG recordings, obtained from 47 subjects studied by the BIH Arrhythmia Laboratory between 1975 and 1979.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://physionet.org/content/mitdb/1.0.0/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Open Data Commons Attribution License v1.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">SVDB</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">includes 78 half-hour ECG recordings chosen to supplement the examples of supraventricular arrhythmias in the MIT-BIH Arrhythmia Database.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://physionet.org/content/svdb/1.0.0/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Open Data Commons Attribution License v1.0</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">LTDB</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is a collection of 7 long-duration ECG recordings (14 to 22 hours each), with manually reviewed beat annotations.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://physionet.org/content/ltdb/1.0.0/" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">Open Data Commons Attribution License v1.0</td>
+          </tr>          
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">CATSv2</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">is the second version of the Controlled Anomalies Time Series (CATS) Dataset, which consists of commands, external stimuli, and telemetry readings of a simulated complex dynamical system with 200 injected anomalies.</td>
+            <td style="border: 1px solid #ddd; padding: 8px;"><a href="https://zenodo.org/records/8338435" target="_blank">Website</a></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">CC BY 4.0</td>
+          </tr>
+          <!-- Add additional rows here in the same format -->
+      </tbody>
+  </table>
+</div>
+</div>
+
+<div class="container is-max-desktop content">
+  <h2 class="title">Datasets Characteristics</h2>
+
+<div style="display: flex; justify-content: center;">
+  <table border="1" style="border-collapse: collapse; width: 90%; font-family: 'Times New Roman', Times, serif; font-size: 14px;">
+      <caption style="caption-side: top; font-style: italic; padding-top: 10px;">(i) Summary characteristics of datasets included in TSB-AD-U. '-' in the 2nd column indicates this dataset is transformed from the multivariate dataset. The 'Category' column indicates whether the datasets feature point anomalies (P) or sequence anomalies (Seq).</caption>
+      <thead style="background-color: #f2f2f2;">
+          <tr>
+              <th style="text-align: left; padding: 8px;">Name</th>
+              <th style="text-align: center; padding: 8px;"># TS Collected</th>
+              <th style="text-align: center; padding: 8px;"># TS Curated</th>
+              <th style="text-align: center; padding: 8px;">Avg Dim</th>
+              <th style="text-align: center; padding: 8px;">Avg TS Len</th>
+              <th style="text-align: center; padding: 8px;">Avg # Anomaly</th>
+              <th style="text-align: center; padding: 8px;">Avg Anomaly Len</th>
+              <th style="text-align: center; padding: 8px;">Anomaly Ratio</th>
+              <th style="text-align: center; padding: 8px;">Category</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td style="text-align: left; padding: 8px;">UCR</td>
+              <td style="text-align: center; padding: 8px;">250</td>
+              <td style="text-align: center; padding: 8px;">228</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">67818.7</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">198.9</td>
+              <td style="text-align: center; padding: 8px;">0.6%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">NAB</td>
+              <td style="text-align: center; padding: 8px;">58</td>
+              <td style="text-align: center; padding: 8px;">28</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">5099.7</td>
+              <td style="text-align: center; padding: 8px;">1.6</td>
+              <td style="text-align: center; padding: 8px;">370.1</td>
+              <td style="text-align: center; padding: 8px;">10.6%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">YAHOO</td>
+              <td style="text-align: center; padding: 8px;">367</td>
+              <td style="text-align: center; padding: 8px;">259</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1560.2</td>
+              <td style="text-align: center; padding: 8px;">5.5</td>
+              <td style="text-align: center; padding: 8px;">2.5</td>
+              <td style="text-align: center; padding: 8px;">0.6%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">IOPS</td>
+              <td style="text-align: center; padding: 8px;">58</td>
+              <td style="text-align: center; padding: 8px;">17</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">72792.3</td>
+              <td style="text-align: center; padding: 8px;">25.6</td>
+              <td style="text-align: center; padding: 8px;">48.7</td>
+              <td style="text-align: center; padding: 8px;">1.3%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">MGAB</td>
+              <td style="text-align: center; padding: 8px;">10</td>
+              <td style="text-align: center; padding: 8px;">9</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">97777.8</td>
+              <td style="text-align: center; padding: 8px;">9.7</td>
+              <td style="text-align: center; padding: 8px;">20.0</td>
+              <td style="text-align: center; padding: 8px;">0.2%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">WSD</td>
+              <td style="text-align: center; padding: 8px;">210</td>
+              <td style="text-align: center; padding: 8px;">111</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">17444.5</td>
+              <td style="text-align: center; padding: 8px;">5.1</td>
+              <td style="text-align: center; padding: 8px;">25.4</td>
+              <td style="text-align: center; padding: 8px;">0.6%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SED</td>
+              <td style="text-align: center; padding: 8px;">6</td>
+              <td style="text-align: center; padding: 8px;">3</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">23332.3</td>
+              <td style="text-align: center; padding: 8px;">14.7</td>
+              <td style="text-align: center; padding: 8px;">64.0</td>
+              <td style="text-align: center; padding: 8px;">4.1%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">TODS</td>
+              <td style="text-align: center; padding: 8px;">15</td>
+              <td style="text-align: center; padding: 8px;">15</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">5000.0</td>
+              <td style="text-align: center; padding: 8px;">97.3</td>
+              <td style="text-align: center; padding: 8px;">18.7</td>
+              <td style="text-align: center; padding: 8px;">6.3%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">NEK</td>
+              <td style="text-align: center; padding: 8px;">48</td>
+              <td style="text-align: center; padding: 8px;">9</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1073.0</td>
+              <td style="text-align: center; padding: 8px;">2.9</td>
+              <td style="text-align: center; padding: 8px;">51.1</td>
+              <td style="text-align: center; padding: 8px;">8.0%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Stock</td>
+              <td style="text-align: center; padding: 8px;">90</td>
+              <td style="text-align: center; padding: 8px;">20</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">15000.0</td>
+              <td style="text-align: center; padding: 8px;">1246.9</td>
+              <td style="text-align: center; padding: 8px;">1.1</td>
+              <td style="text-align: center; padding: 8px;">9.4%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Power</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">35040.0</td>
+              <td style="text-align: center; padding: 8px;">4</td>
+              <td style="text-align: center; padding: 8px;">750</td>
+              <td style="text-align: center; padding: 8px;">8.5%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Daphnet (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">38774.0</td>
+              <td style="text-align: center; padding: 8px;">6</td>
+              <td style="text-align: center; padding: 8px;">384.3</td>
+              <td style="text-align: center; padding: 8px;">5.9%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">CATSv2 (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">300000.0</td>
+              <td style="text-align: center; padding: 8px;">19.0</td>
+              <td style="text-align: center; padding: 8px;">778.9</td>
+              <td style="text-align: center; padding: 8px;">4.9%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SWaT (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">419919.0</td>
+              <td style="text-align: center; padding: 8px;">27.0</td>
+              <td style="text-align: center; padding: 8px;">1876.0</td>
+              <td style="text-align: center; padding: 8px;">12.1%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">LTDB (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">9</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">99700.0</td>
+              <td style="text-align: center; padding: 8px;">127.5</td>
+              <td style="text-align: center; padding: 8px;">144.5</td>
+              <td style="text-align: center; padding: 8px;">18.6%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">TAO (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">3</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">10000.0</td>
+              <td style="text-align: center; padding: 8px;">838.7</td>
+              <td style="text-align: center; padding: 8px;">1.1</td>
+              <td style="text-align: center; padding: 8px;">9.4%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Exathlon (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">32</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">44075.8</td>
+              <td style="text-align: center; padding: 8px;">3.1</td>
+              <td style="text-align: center; padding: 8px;">1577.3</td>
+              <td style="text-align: center; padding: 8px;">11.0%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">MITDB (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">8</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">631250.0</td>
+              <td style="text-align: center; padding: 8px;">68.7</td>
+              <td style="text-align: center; padding: 8px;">451.9</td>
+              <td style="text-align: center; padding: 8px;">4.2%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">MSL (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">9</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">3492.0</td>
+              <td style="text-align: center; padding: 8px;">1.3</td>
+              <td style="text-align: center; padding: 8px;">130.0</td>
+              <td style="text-align: center; padding: 8px;">5.8%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SMAP (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">19</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">7700.2</td>
+              <td style="text-align: center; padding: 8px;">1.2</td>
+              <td style="text-align: center; padding: 8px;">210.1</td>
+              <td style="text-align: center; padding: 8px;">2.8%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SMD (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">38</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">24207.7</td>
+              <td style="text-align: center; padding: 8px;">2.4</td>
+              <td style="text-align: center; padding: 8px;">173.7</td>
+              <td style="text-align: center; padding: 8px;">2.0%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SVDB (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">20</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">171380.0</td>
+              <td style="text-align: center; padding: 8px;">36.4</td>
+              <td style="text-align: center; padding: 8px;">292.5</td>
+              <td style="text-align: center; padding: 8px;">3.6%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">OPP (U)</td>
+              <td style="text-align: center; padding: 8px;">-</td>
+              <td style="text-align: center; padding: 8px;">29</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">16544.8</td>
+              <td style="text-align: center; padding: 8px;">1.4</td>
+              <td style="text-align: center; padding: 8px;">653.4</td>
+              <td style="text-align: center; padding: 8px;">6.4%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+        </tbody>
+  </table>
+</div>
+
+<div style="display: flex; justify-content: center;">
+  <table border="1" style="border-collapse: collapse; width: 90%; font-family: 'Times New Roman', Times, serif; font-size: 14px;">
+      <caption style="caption-side: top; font-style: italic; padding-top: 10px;">(ii) Summary characteristics of datasets included in TSB-AD-M. The 'Category' column indicates whether the datasets feature point anomalies (P) or sequence anomalies (Seq).</caption>
+      <thead style="background-color: #f2f2f2;">
+          <tr>
+              <th style="text-align: left; padding: 8px;">Name</th>
+              <th style="text-align: center; padding: 8px;"># TS Collected</th>
+              <th style="text-align: center; padding: 8px;"># TS Curated</th>
+              <th style="text-align: center; padding: 8px;">Avg Dim</th>
+              <th style="text-align: center; padding: 8px;">Avg TS Len</th>
+              <th style="text-align: center; padding: 8px;">Avg # Anomaly</th>
+              <th style="text-align: center; padding: 8px;">Avg Anomaly Len</th>
+              <th style="text-align: center; padding: 8px;">Anomaly Ratio</th>
+              <th style="text-align: center; padding: 8px;">Category</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td style="text-align: left; padding: 8px;">GHL</td>
+              <td style="text-align: center; padding: 8px;">48</td>
+              <td style="text-align: center; padding: 8px;">25</td>
+              <td style="text-align: center; padding: 8px;">19</td>
+              <td style="text-align: center; padding: 8px;">199001.0</td>
+              <td style="text-align: center; padding: 8px;">2.2</td>
+              <td style="text-align: center; padding: 8px;">1035.2</td>
+              <td style="text-align: center; padding: 8px;">1.1%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Daphnet</td>
+              <td style="text-align: center; padding: 8px;">17</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">9</td>
+              <td style="text-align: center; padding: 8px;">38774.0</td>
+              <td style="text-align: center; padding: 8px;">6.0</td>
+              <td style="text-align: center; padding: 8px;">384.3</td>
+              <td style="text-align: center; padding: 8px;">5.9%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Exathlon</td>
+              <td style="text-align: center; padding: 8px;">72</td>
+              <td style="text-align: center; padding: 8px;">27</td>
+              <td style="text-align: center; padding: 8px;">21</td>
+              <td style="text-align: center; padding: 8px;">60878.4</td>
+              <td style="text-align: center; padding: 8px;">4.3</td>
+              <td style="text-align: center; padding: 8px;">1373.3</td>
+              <td style="text-align: center; padding: 8px;">9.8%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">Genesis</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">18</td>
+              <td style="text-align: center; padding: 8px;">16220.0</td>
+              <td style="text-align: center; padding: 8px;">3.0</td>
+              <td style="text-align: center; padding: 8px;">16.7</td>
+              <td style="text-align: center; padding: 8px;">0.3%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">OPP</td>
+              <td style="text-align: center; padding: 8px;">24</td>
+              <td style="text-align: center; padding: 8px;">8</td>
+              <td style="text-align: center; padding: 8px;">248</td>
+              <td style="text-align: center; padding: 8px;">17426.75</td>
+              <td style="text-align: center; padding: 8px;">1.4</td>
+              <td style="text-align: center; padding: 8px;">394.3</td>
+              <td style="text-align: center; padding: 8px;">4.1%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SMD</td>
+              <td style="text-align: center; padding: 8px;">28</td>
+              <td style="text-align: center; padding: 8px;">22</td>
+              <td style="text-align: center; padding: 8px;">38</td>
+              <td style="text-align: center; padding: 8px;">25466.4</td>
+              <td style="text-align: center; padding: 8px;">8.9</td>
+              <td style="text-align: center; padding: 8px;">112.8</td>
+              <td style="text-align: center; padding: 8px;">3.8%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SWaT</td>
+              <td style="text-align: center; padding: 8px;">4</td>
+              <td style="text-align: center; padding: 8px;">2</td>
+              <td style="text-align: center; padding: 8px;">59</td>
+              <td style="text-align: center; padding: 8px;">207457.5</td>
+              <td style="text-align: center; padding: 8px;">16.5</td>
+              <td style="text-align: center; padding: 8px;">1093.6</td>
+              <td style="text-align: center; padding: 8px;">12.7%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">PSM</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">25</td>
+              <td style="text-align: center; padding: 8px;">217624.0</td>
+              <td style="text-align: center; padding: 8px;">72.0</td>
+              <td style="text-align: center; padding: 8px;">338.6</td>
+              <td style="text-align: center; padding: 8px;">11.2%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SMAP</td>
+              <td style="text-align: center; padding: 8px;">54</td>
+              <td style="text-align: center; padding: 8px;">27</td>
+              <td style="text-align: center; padding: 8px;">25</td>
+              <td style="text-align: center; padding: 8px;">7855.9</td>
+              <td style="text-align: center; padding: 8px;">1.3</td>
+              <td style="text-align: center; padding: 8px;">196.3</td>
+              <td style="text-align: center; padding: 8px;">2.9%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">MSL</td>
+              <td style="text-align: center; padding: 8px;">27</td>
+              <td style="text-align: center; padding: 8px;">16</td>
+              <td style="text-align: center; padding: 8px;">55</td>
+              <td style="text-align: center; padding: 8px;">3119.4</td>
+              <td style="text-align: center; padding: 8px;">1.3</td>
+              <td style="text-align: center; padding: 8px;">111.7</td>
+              <td style="text-align: center; padding: 8px;">5.1%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">CreditCard</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">29</td>
+              <td style="text-align: center; padding: 8px;">284807.0</td>
+              <td style="text-align: center; padding: 8px;">465.0</td>
+              <td style="text-align: center; padding: 8px;">1.1</td>
+              <td style="text-align: center; padding: 8px;">0.2%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">GECCO</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">1</td>
+              <td style="text-align: center; padding: 8px;">9</td>
+              <td style="text-align: center; padding: 8px;">138521.0</td>
+              <td style="text-align: center; padding: 8px;">51.0</td>
+              <td style="text-align: center; padding: 8px;">33.8</td>
+              <td style="text-align: center; padding: 8px;">1.2%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">MITDB</td>
+              <td style="text-align: center; padding: 8px;">48</td>
+              <td style="text-align: center; padding: 8px;">13</td>
+              <td style="text-align: center; padding: 8px;">2</td>
+              <td style="text-align: center; padding: 8px;">336153.8</td>
+              <td style="text-align: center; padding: 8px;">15.2</td>
+              <td style="text-align: center; padding: 8px;">1846.8</td>
+              <td style="text-align: center; padding: 8px;">2.7%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">SVDB</td>
+              <td style="text-align: center; padding: 8px;">78</td>
+              <td style="text-align: center; padding: 8px;">31</td>
+              <td style="text-align: center; padding: 8px;">2</td>
+              <td style="text-align: center; padding: 8px;">207122.6</td>
+              <td style="text-align: center; padding: 8px;">68.3</td>
+              <td style="text-align: center; padding: 8px;">268.2</td>
+              <td style="text-align: center; padding: 8px;">4.8%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">LTDB</td>
+              <td style="text-align: center; padding: 8px;">7</td>
+              <td style="text-align: center; padding: 8px;">5</td>
+              <td style="text-align: center; padding: 8px;">2</td>
+              <td style="text-align: center; padding: 8px;">100000.0</td>
+              <td style="text-align: center; padding: 8px;">105.0</td>
+              <td style="text-align: center; padding: 8px;">134.4</td>
+              <td style="text-align: center; padding: 8px;">15.5%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">CATSv2</td>
+              <td style="text-align: center; padding: 8px;">10</td>
+              <td style="text-align: center; padding: 8px;">6</td>
+              <td style="text-align: center; padding: 8px;">17</td>
+              <td style="text-align: center; padding: 8px;">240000.0</td>
+              <td style="text-align: center; padding: 8px;">11.5</td>
+              <td style="text-align: center; padding: 8px;">811.6</td>
+              <td style="text-align: center; padding: 8px;">3.7%</td>
+              <td style="text-align: center; padding: 8px;">Seq</td>
+          </tr>
+          <tr>
+              <td style="text-align: left; padding: 8px;">TAO</td>
+              <td style="text-align: center; padding: 8px;">45</td>
+              <td style="text-align: center; padding: 8px;">13</td>
+              <td style="text-align: center; padding: 8px;">3</td>
+              <td style="text-align: center; padding: 8px;">10000.0</td>
+              <td style="text-align: center; padding: 8px;">788.2</td>
+              <td style="text-align: center; padding: 8px;">1.1</td>
+              <td style="text-align: center; padding: 8px;">8.7%</td>
+              <td style="text-align: center; padding: 8px;">P&amp;Seq</td>
+          </tr>
+        </tbody>
+  </table>
+</div>
+
+
+</div>
+
+
+<!-- Paper poster -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title">Slides</h2>
+
+      <iframe  src="static/pdfs/TSB-AD-NeurIPS24.pdf" width="100%" height="550">
+          </iframe>
+        
+      </div>
+    </div>
+  </section>
+<!--End paper poster -->
+
+
+<!--BibTex citation -->
+<section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{liu2024elephant,
+        title={The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark},
+        author={Liu, Qinghua and Paparrizos, John},
+        booktitle={NeurIPS 2024},
+        year={2024}
+      }</code></pre>
+
+      <pre><code>@article{paparrizos2022tsb,
+        title={Tsb-uad: an end-to-end benchmark suite for univariate time-series anomaly detection},
+        author={Paparrizos, John and Kang, Yuhao and Boniol, Paul and Tsay, Ruey S and Palpanas, Themis and Franklin, Michael J},
+        journal={Proceedings of the VLDB Endowment},
+        volume={15},
+        number={8},
+        pages={1697--1711},
+        year={2022},
+        publisher={VLDB Endowment}
+      }</code></pre>      
+
+      <pre><code>@article{paparrizos2022volume,
+        title={{Volume Under the Surface: A New Accuracy Evaluation Measure for Time-Series Anomaly Detection}},
+        author={Paparrizos, John and Boniol, Paul and Palpanas, Themis and Tsay, Ruey S and Elmore, Aaron and Franklin, Michael J},
+        journal={Proceedings of the VLDB Endowment},
+        volume={15},
+        number={11},
+        pages={2774--2787},
+        year={2022},
+        publisher={VLDB Endowment}
+      }</code></pre>           
+    </div>
+</section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>

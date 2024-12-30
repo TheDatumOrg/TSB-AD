@@ -308,7 +308,6 @@ class AnomalyTransformer():
     def __init__(self, 
                  win_size=100,
                  input_c=1,
-                 output_c=1,
                  num_epochs=10,
                  batch_size=128,
                  step=1,
@@ -327,7 +326,7 @@ class AnomalyTransformer():
         self.step = step
         self.k = k
         self.input_c = input_c
-        self.output_c = output_c
+        self.output_c = input_c
         self.lr = lr
         self.batch_size = batch_size
         self.validation_size = validation_size

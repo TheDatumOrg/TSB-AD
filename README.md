@@ -5,12 +5,25 @@
 <h1 align="center">TSB-AD</h1>
 <h2 align="center">🐘 The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark</h2>
 
+<p align="center">
+<img alt="PyPI" src="https://img.shields.io/pypi/v/tsb_ad"> 
+<img alt="PyPI - Downloads" src="https://pepy.tech/badge/tsb_ad"> 
+<img alt="License" src="https://img.shields.io/github/license/TheDatumOrg/tsb-ad">
+</p>
 
 Main Recent Update:
+- [Nov. 20, 2024] Project homepage is online and release TSB-AD-U/M dataset.
 - [Nov. 6, 2024] Pip-installable package released.
 - [Sep. 26, 2024] Paper accepted to NeurIPS 2024 D&B Track!
 
-If you find our work helpful, please consider citing it:
+Related Repository:
+- [TSB-UAD](https://github.com/TheDatumOrg/TSB-UAD): An End-to-End Benchmark Suite for Univariate Time-Series Anomaly Detection.
+- [VUS](https://github.com/TheDatumOrg/VUS): A New Accuracy Evaluation Measure for Time-Series Anomaly Detection.
+
+If you find our work helpful, please consider citing:
+
+<details>
+<summary>"The Elephant in the Room: Towards A Reliable Time-Series Anomaly Detection Benchmark" Qinghua Liu and John Paparrizos. NeurIPS 2024.</summary>
 
 ```bibtex
 @inproceedings{liu2024elephant,
@@ -20,6 +33,43 @@ If you find our work helpful, please consider citing it:
   year={2024}
 }
 ```
+</details>
+
+<details>
+<summary>"TSB-UAD: An End-to-End Benchmark Suite for Univariate Time-Series Anomaly Detection" John Paparrizos, Yuhao Kang, Paul Boniol, Ruey Tsay, Themis Palpanas, and Michael Franklin. VLDB 2022.</summary>
+
+```bibtex
+@article{paparrizos2022tsb,
+  title={Tsb-uad: an end-to-end benchmark suite for univariate time-series anomaly detection},
+  author={Paparrizos, John and Kang, Yuhao and Boniol, Paul and Tsay, Ruey S and Palpanas, Themis and Franklin, Michael J},
+  journal={Proceedings of the VLDB Endowment},
+  volume={15},
+  number={8},
+  pages={1697--1711},
+  year={2022},
+  publisher={VLDB Endowment}
+}
+```
+</details>
+
+<details>
+
+<summary>"Volume Under the Surface: A New Accuracy Evaluation Measure for Time-Series Anomaly Detection" John Paparrizos, Paul Boniol, Themis Palpanas, Ruey Tsay, Aaron Elmore, and Michael Franklin. VLDB 2022.</summary>
+
+```bibtex
+@article{paparrizos2022volume,
+  title={{Volume Under the Surface: A New Accuracy Evaluation Measure for Time-Series Anomaly Detection}},
+  author={Paparrizos, John and Boniol, Paul and Palpanas, Themis and Tsay, Ruey S and Elmore, Aaron and Franklin, Michael J},
+  journal={Proceedings of the VLDB Endowment},
+  volume={15},
+  number={11},
+  pages={2774--2787},
+  year={2022},
+  publisher={VLDB Endowment}
+}
+```
+</details>
+
 
 ## Table of Contents
 
@@ -28,6 +78,7 @@ If you find our work helpful, please consider citing it:
     * [🗄️ Dataset](#dataset)
     * [💻 Installation](#tsad)
     * [🧑‍💻 Basic Usage](#usage)  
+    * [🧑‍💻 Customized Development](#custom)
 - [🏄‍♂️ Dive into TSB-AD](#tsb)
 
 
@@ -39,14 +90,22 @@ Time-series anomaly detection is a fundamental task across scientific fields and
 
 <h3 id="dataset">🗄️ Dataset</h3>
 
-Due to limitations in the upload size on GitHub, we host the datasets at [Link] (Will be available along with the camera ready version).
+Due to limitations in the upload size on GitHub, we host the datasets at a different location. Please download the datasets using the following links:
+
+* TSB-AD-U: https://www.thedatum.org/datasets/TSB-AD-U.zip
+
+* TSB-AD-M: https://www.thedatum.org/datasets/TSB-AD-M.zip
+
+> Disclaimer: The dataset is released for reproducibility purposes. The preprocessing and curation steps are provided under the Apache 2.0 license. If you use any of these datasets in your research, please refer to the original data source. License information for each dataset included in TSB-AD is provided at [[Link]](https://thedatumorg.github.io/TSB-AD/) for your reference.
+
+The split of Tuning and Eval set in our benchmark study is available at [[Link]](https://github.com/TheDatumOrg/TSB-AD/tree/main/Datasets/File_List/).
 
 <h3 id="tsad">💻 Installation</h3>
 
-You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/1.0/):
+You can install TSB-AD with [pip](https://pypi.org/project/TSB-AD/):
 
 ```bash
-pip install TSB-AD==1.0
+pip install TSB-AD
 ```
 
 To install TSB-AD from source, you will need the following tools:
@@ -113,11 +172,19 @@ output = run_Unsupervise_AD(AD_Name, data)
 evaluation_result = get_metrics(output, label)
 ```
 
+<h3 id="custom">🧑‍💻 Customized Development</h3>
+
+Examples of how to run the benchmark experiments and develop your own algorithms can be find [here](https://github.com/TheDatumOrg/TSB-AD/tree/main/benchmark_exp), including:
+
+* Hper-parameter Tuning Scripts
+* Benchmark Evaluation Scripts
+* Evaluation results of anomaly detectors across different time series in TSB-AD
+* Develop your own algorithm
+
+🪧 How to commit your own algorithm to TSB-AD: you can send us the Run_Custom_Detector.py (replace Custom_Detector with the model name) to us via (i) [email](liu.11085@osu.edu) or (ii) open a pull request and add the file to `benchmark_exp` folder in `TSB-AD-algo` branch. We will test and evaluate the algorithm and include it in our [leaderboard](https://thedatumorg.github.io/TSB-AD/).
+
+
 <h2 id="tsb"> 🏄‍♂️ Dive into TSB-AD </h2>
-
-### TSAD Leaderboard
-
-> [🔧 Coming Soon!]
 
 ### Dataset Overview 
 
@@ -126,39 +193,6 @@ evaluation_result = get_metrics(output, label)
 </p>
 
 > Example time series from TSB-AD, with anomalies highlighted in red. TSB-AD features high-quality labeled time series from a variety of domains, characterized by high variability in length and types of anomalies. Only one channel in a multivariate time series is visualized for brevity.
-
-Specifically, TSB-AD includes the following datasets:
-
-| Dataset    | Description|
-|:--|:---------|
-|UCR|is a collection of univariate time series of multiple domains including air temperature, arterial blood pressure, ABP, astronomy, EPG, ECG, gait, power demand, respiration, walking accelerator. Most of the anomalies are introduced artificially.|
-|NAB|is composed of labeled real-world and artificial time series including AWS server metrics, online advertisement clicking rates, real-time traffic data, and a collection of Twitter mentions of large publicly-traded companies.|
-|YAHOO|is a dataset published by Yahoo labs consisting of real and synthetic time series based on the real production traffic to some of the Yahoo production systems.|
-|IOPS|is a dataset with performance indicators that reflect the scale, quality of web services, and health status of a machine.|
-|MGAB|is composed of the Mackey-Glass time series, where anomalies exhibit chaotic behavior that is difficult for the human eye to distinguish.|
-|WSD|is a web service dataset, which contains real-world KPIs collected from large Internet companies.|
-|SED|a simulated engine disk data from the NASA Rotary Dynamics Laboratory representing disk revolutions recorded over several runs (3K rpm speed).|
-|Stock|is a stock trading traces dataset, containing one million transaction records throughout the trading hours of a day.|
-|TODS|is a synthetic dataset that comprises global, contextual, shapelet, seasonal, and trend anomalies.|
-|GHL|contains the status of 3 reservoirs such as the temperature and level. Anomalies indicate changes in max temperature or pump frequency.|
-|Daphnet|contains the annotated readings of 3 acceleration sensors at the hip and leg of Parkinson’s disease patients that experience freezing of gait (FoG) during walking tasks.|
-|Exathlon|is based on real data traces collected from a Spark cluster over 2.5 months. For each of these anomalies, ground truth labels are provided for both the root cause interval and the corresponding effect interval.|
-|Genesis|is a portable pick-and-place demonstrator that uses an air tank to supply all the gripping and storage units.|
-|OPPORTUNITY|is devised to benchmark human activity recognition algorithms (e.g., classification, automatic data segmentation, sensor fusion, and feature extraction), which comprises the readings of motion sensors recorded while users executed typical daily activities.|
-|SMD|is a 5-week-long dataset collected from a large Internet company, which contains 3 groups of entities from 28 different machines.|
-|SWaT|is a secure water treatment dataset that is collected from 51 sensors and actuators, where the anomalies represent abnormal behaviors under attack scenarios.|
-|WADI|is a water distribution dataset with data collected from 123 sensors and actuators under 16 days of continuous operation.|
-|SMAP|is real spacecraft telemetry data with anomalies from Soil Moisture Active Passive satellite. It contains time series with one feature representing a sensor measurement, while the rest represent binary encoded commands.|
-|MSL|is collected from Curiosity Rover on Mars satellite.|
-|CreditCard|is an intrusion detection evaluation dataset, which consists of labeled network flows, including full packet payloads in pcap format, the corresponding profiles, and the labeled flows.|
-|GECCO|is a water quality dataset used in a competition for online anomaly detection of drinking water quality.|
-|MITDB|contains 48 half-hour excerpts of two-channel ambulatory ECG recordings, obtained from 47 subjects studied by the BIH Arrhythmia Laboratory between 1975 and 1979.|
-|SVDB|includes 78 half-hour ECG recordings chosen to supplement the examples of supraventricular arrhythmias in the MIT-BIH Arrhythmia Database.|
-|CATSv2|is the second version of the Controlled Anomalies Time Series (CATS) Dataset, which consists of commands, external stimuli, and telemetry readings of a simulated complex dynamical system with 200 injected anomalies.|
-|LTDB| is a collection of 7 long-duration ECG recordings (14 to 22 hours each), with manually reviewed beat annotations.|
-|TAO| contains 575, 648 records with 3 attributes which are collected from the Tropical Atmosphere Ocean project.|
-|NEK| is collected from real production network equipment.|
-
 
 ### Detection Algorithm
 

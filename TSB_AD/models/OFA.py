@@ -197,16 +197,18 @@ class Model(nn.Module):
 class OFA():
     def __init__(self,
                  win_size = 100,
+                 stride = 1,
                  enc_in = 1,
                  features = 'M',
                  batch_size = 128,
                  learning_rate = 0.0001,
-                 epochs = 20,
+                 epochs = 10,
                  patience = 3,
                  lradj = "type1",
                  validation_size=0.2):
         super().__init__()
         self.win_size = win_size
+        self.stride = stride
         self.enc_in = enc_in
         self.features = features
         self.batch_size = batch_size
@@ -216,7 +218,7 @@ class OFA():
         self.lradj = lradj
         self.validation_size = validation_size
 
-        self.__anomaly_score = None
+        self.decision_scores_ = None
         
         cuda = True
         self.y_hats = None
@@ -224,7 +226,7 @@ class OFA():
         self.cuda = cuda
         self.device = get_gpu(self.cuda)
             
-        self.model = Model(seq_len=self.win_size, enc_in=self.enc_in).float().to(self.device)
+        self.model = Model(seq_len=self.win_size, enc_in=self.enc_in, c_out=self.enc_in).float().to(self.device)
         self.model_optim = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss()
         
@@ -236,13 +238,13 @@ class OFA():
         tsValid = data[int((1-self.validation_size)*len(data)):]
 
         train_loader = DataLoader(
-            dataset=ReconstructDataset(tsTrain, window_size=self.win_size),
+            dataset=ReconstructDataset(tsTrain, window_size=self.win_size, stride=self.stride),
             batch_size=self.batch_size,
             shuffle=True
         )
         
         valid_loader = DataLoader(
-            dataset=ReconstructDataset(tsValid, window_size=self.win_size),
+            dataset=ReconstructDataset(tsValid, window_size=self.win_size, stride=self.stride),
             batch_size=self.batch_size,
             shuffle=False
         )
@@ -280,7 +282,6 @@ class OFA():
                     batch_x = batch_x.float().to(self.device)
 
                     outputs = self.model(batch_x)
-
                     f_dim = -1 if self.features == 'MS' else 0
                     outputs = outputs[:, :, f_dim:]
                     pred = outputs.detach().cpu()
@@ -302,7 +303,7 @@ class OFA():
             
     def decision_function(self, data):
         test_loader = DataLoader(
-            dataset=ReconstructDataset(data, window_size=self.win_size),
+            dataset=ReconstructDataset(data, window_size=self.win_size, stride=self.stride),
             batch_size=self.batch_size,
             shuffle=False
         )
@@ -343,22 +344,19 @@ class OFA():
         self.save_path = None
         if self.save_path and os.path.exists(self.save_path):
             shutil.rmtree(self.save_path)
-            
-        self.__anomaly_score = scores
-        self.y_hats = y_hats
+        
+        # Custom stride length
+        scores_win = [scores[i] for i in range(scores.shape[0])]
+        self.decision_scores_ = np.zeros(len(data))
+        count = np.zeros(len(data))
+        for i, score in enumerate(scores_win):
+            start = i * self.stride
+            end = start + self.win_size
+            self.decision_scores_[start:end] += score
+            count[start:end] += 1
+        self.decision_scores_ = self.decision_scores_ / np.maximum(count, 1)
 
-        if self.__anomaly_score.shape[0] < len(data):
-            self.__anomaly_score = np.array([self.__anomaly_score[0]]*math.ceil((self.win_size-1)/2) + 
-                        list(self.__anomaly_score) + [self.__anomaly_score[-1]]*((self.win_size-1)//2))
-        
-        return self.__anomaly_score
-        
-                
-    def anomaly_score(self) -> np.ndarray:
-        return self.__anomaly_score
-    
-    def get_y_hat(self) -> np.ndarray:
-        return self.y_hats
+        return self.decision_scores_
     
     def param_statistic(self, save_file):
         model_stats = torchinfo.summary(self.model, self.input_shape, verbose=0)
