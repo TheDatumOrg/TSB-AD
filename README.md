@@ -12,8 +12,8 @@
 </p>
 
 Main Recent Update:
-- [Nov. 20, 2024] Project homepage is online and release TSB-AD-U/M dataset.
-- [Nov. 6, 2024] Pip-installable package released.
+- [Nov. 20, 2024] [Project homepage](https://thedatumorg.github.io/TSB-AD/) is online and release TSB-AD-U/M dataset.
+- [Nov. 6, 2024] Pip-installable package released (pip install TSB-AD).
 - [Sep. 26, 2024] Paper accepted to NeurIPS 2024 D&B Track!
 
 Related Repository:
