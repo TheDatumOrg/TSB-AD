@@ -223,9 +223,8 @@ class PCA(BaseDetector):
         """
         n_samples, n_features = X.shape
 
-        if n_features == 1 and self.sub: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
 
         # validate inputs X and y (optional)
         X = check_array(X)
@@ -313,7 +312,7 @@ class PCA(BaseDetector):
         n_samples, n_features = X.shape
         if n_features == 1: 
             # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X).to_numpy()
+            X = Window(window = self.slidingWindow).convert(X)
 
         X = check_array(X)
         if self.standardization:

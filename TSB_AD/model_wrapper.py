@@ -45,10 +45,9 @@ def run_Sub_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_job
     score = clf.decision_scores_
     return score.ravel()
 
-def run_IForest(data, periodicity=1, n_estimators=100, max_features=1, n_jobs=1):
+def run_IForest(data, slidingWindow=100, n_estimators=100, max_features=1, n_jobs=1):
     from .models.IForest import IForest
-    slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = IForest(slidingWindow=slidingWindow, sub=False, n_estimators=n_estimators, max_features=max_features, n_jobs=n_jobs)
+    clf = IForest(slidingWindow=slidingWindow, n_estimators=n_estimators, max_features=max_features, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
     return score.ravel()
@@ -64,7 +63,7 @@ def run_Sub_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=
 def run_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=1):
     from .models.LOF import LOF
     slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = LOF(slidingWindow=slidingWindow, sub=False, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs)
+    clf = LOF(slidingWindow=slidingWindow, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
     return score.ravel()
@@ -130,10 +129,9 @@ def run_Sub_PCA(data, periodicity=1, n_components=None, n_jobs=1):
     score = clf.decision_scores_
     return score.ravel()
 
-def run_PCA(data, periodicity=1, n_components=None, n_jobs=1):
+def run_PCA(data, slidingWindow=100, n_components=None, n_jobs=1):
     from .models.PCA import PCA
-    slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = PCA(slidingWindow = slidingWindow, sub=False, n_components=n_components)
+    clf = PCA(slidingWindow = slidingWindow, n_components=n_components)
     clf.fit(data)
     score = clf.decision_scores_
     return score.ravel()
@@ -161,7 +159,7 @@ def run_Sub_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
 def run_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
     from .models.HBOS import HBOS
     slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = HBOS(slidingWindow=slidingWindow, sub=False, n_bins=n_bins, tol=tol)
+    clf = HBOS(slidingWindow=slidingWindow, n_bins=n_bins, tol=tol)
     clf.fit(data)
     score = clf.decision_scores_
     return score.ravel()
@@ -177,7 +175,7 @@ def run_Sub_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_
 def run_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_jobs=1):
     from .models.OCSVM import OCSVM
     slidingWindow = find_length_rank(data_test, rank=periodicity)
-    clf = OCSVM(slidingWindow=slidingWindow, sub=False, kernel=kernel, nu=nu)
+    clf = OCSVM(slidingWindow=slidingWindow, kernel=kernel, nu=nu)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     return score.ravel()
@@ -193,7 +191,7 @@ def run_Sub_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_j
 def run_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_jobs=1):
     from .models.MCD import MCD
     slidingWindow = find_length_rank(data_test, rank=periodicity)
-    clf = MCD(slidingWindow=slidingWindow, sub=False, support_fraction=support_fraction)
+    clf = MCD(slidingWindow=slidingWindow, support_fraction=support_fraction)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     return score.ravel()
@@ -206,10 +204,9 @@ def run_Sub_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1)
     score = clf.decision_scores_
     return score.ravel()
 
-def run_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1):
+def run_KNN(data, slidingWindow=100, n_neighbors=10, method='largest', n_jobs=1):
     from .models.KNN import KNN
-    slidingWindow = find_length_rank(data, rank=periodicity)
-    clf = KNN(slidingWindow=slidingWindow, n_neighbors=n_neighbors, sub=False, method=method, n_jobs=n_jobs)
+    clf = KNN(slidingWindow=slidingWindow, n_neighbors=n_neighbors, method=method, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
     return score.ravel()

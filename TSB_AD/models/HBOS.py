@@ -103,9 +103,8 @@ class HBOS(BaseDetector):
         """
         n_samples, n_features = X.shape
 
-        if n_features == 1 and self.sub: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X).to_numpy()
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
         if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # validate inputs X and y (optional)
@@ -186,7 +185,7 @@ class HBOS(BaseDetector):
         n_samples, n_features = X.shape
         if n_features == 1: 
             # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X).to_numpy()
+            X = Window(window = self.slidingWindow).convert(X)
         if self.normalize: X = zscore(X, axis=1, ddof=1)
         
         X = check_array(X)

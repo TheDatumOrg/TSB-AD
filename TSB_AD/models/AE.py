@@ -274,7 +274,7 @@ class AutoEncoder(BaseDetector):
 
         if n_features == 1: 
             # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X).to_numpy()
+            X = Window(window = self.slidingWindow).convert(X)
 
         # validate inputs X and y (optional)
         X = check_array(X)
@@ -374,7 +374,7 @@ class AutoEncoder(BaseDetector):
 
         if n_features == 1: 
             # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X).to_numpy()
+            X = Window(window = self.slidingWindow).convert(X)
 
         X = check_array(X)
         X = MinMaxScaler(feature_range=(0,1)).fit_transform(X.T).T

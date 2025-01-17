@@ -5,6 +5,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 import warnings
 from builtins import range
 from numpy.linalg import LinAlgError
+from numpy.lib.stride_tricks import sliding_window_view
 
 with warnings.catch_warnings():
     # Ignore warnings of the patsy package
@@ -15,28 +16,17 @@ with warnings.catch_warnings():
 from hurst import compute_Hc
 
 class Window:
-    """ The  class for rolling window feature mapping.
-    The mapping converts the original timeseries X into a matrix. 
-    The matrix consists of rows of sliding windows of original X. 
+    """ The class for rolling window feature mapping.
+    Converts the original time series X into a matrix of sliding windows.
     """
-
-    def __init__(self,  window = 100, stride = 1):
+    def __init__(self, window=100, stride=1):
         self.window = window
         self.stride = stride
-        self.detector = None
+
     def convert(self, X):
-        n = self.window
-        X = X.squeeze()     # (len,)
-        X = pd.Series(X)
-        L = []
-        if n == 0:
-            df = X
-        else:
-            for i in range(0, n*self.stride, self.stride):
-                L.append(X.shift(i))
-            df = pd.concat(L, axis = 1)
-            df = df.iloc[(n-1)*self.stride:]
-        return df
+        shape = (X.shape[0] - (self.window - 1), -1)
+        windows = sliding_window_view(X, window_shape=self.window, axis=0).reshape(shape)[::self.stride, :]        
+        return windows
 
 class tf_Stat:
     '''statisitc feature extraction using the tf_feature package. 
