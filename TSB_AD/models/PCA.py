@@ -310,9 +310,9 @@ class PCA(BaseDetector):
         check_is_fitted(self, ['components_', 'w_components_'])
 
         n_samples, n_features = X.shape
-        if n_features == 1: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X)
+                    
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
 
         X = check_array(X)
         if self.standardization:

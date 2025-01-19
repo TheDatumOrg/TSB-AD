@@ -183,9 +183,8 @@ class HBOS(BaseDetector):
         check_is_fitted(self, ['hist_', 'bin_edges_'])
 
         n_samples, n_features = X.shape
-        if n_features == 1: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X)
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
         if self.normalize: X = zscore(X, axis=1, ddof=1)
         
         X = check_array(X)

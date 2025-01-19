@@ -238,9 +238,8 @@ class IForest(BaseDetector):
         check_is_fitted(self, ['decision_scores_', 'threshold_', 'labels_'])
 
         n_samples, n_features = X.shape
-        if n_features == 1 and self.sub: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X)
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
 
         # invert outlier scores. Outliers comes with higher outlier scores
         decision_scores_ = invert_order(self.detector_.decision_function(X))

@@ -231,9 +231,8 @@ class LOF(BaseDetector):
 
         print('self.slidingWindow: ', self.slidingWindow)
         n_samples, n_features = X.shape
-        if n_features == 1: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X)
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
 
         # Invert outlier scores. Outliers comes with higher outlier scores
         # noinspection PyProtectedMember

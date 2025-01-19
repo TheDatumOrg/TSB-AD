@@ -208,9 +208,8 @@ class OCSVM(BaseDetector):
 
         n_samples, n_features = X.shape
 
-        if n_features == 1: 
-            # Converting time series data into matrix format
-            X = Window(window = self.slidingWindow).convert(X)
+        # Converting time series data into matrix format
+        X = Window(window = self.slidingWindow).convert(X)
         if self.normalize: X = zscore(X, axis=1, ddof=1)
 
         # invert outlier scores. Outliers comes with higher outlier scores

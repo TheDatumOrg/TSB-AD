@@ -196,6 +196,19 @@ class KNN(BaseDetector):
 
         self.neigh_.fit(X)
 
+        if self.neigh_._tree is not None:
+            self.tree_ = self.neigh_._tree
+
+        else:
+            if self.metric_params is not None:
+                self.tree_ = BallTree(X, leaf_size=self.leaf_size,
+                                      metric=self.metric,
+                                      **self.metric_params)
+            else:
+                self.tree_ = BallTree(X, leaf_size=self.leaf_size,
+                                      metric=self.metric)
+
+
         dist_arr, _ = self.neigh_.kneighbors(n_neighbors=self.n_neighbors,
                                              return_distance=True)
 
@@ -226,11 +239,13 @@ class KNN(BaseDetector):
             The anomaly score of the input samples.
         """
         print("inside decision Function")
-        check_is_fitted(self, ['tree_', 'decision_scores_',
-                               'threshold_', 'labels_'])
+        # check_is_fitted(self, ['tree_', 'decision_scores_',
+        #                        'threshold_', 'labels_'])
 
+        n_samples = X.shape[0]
         X = check_array(X)
-
+        X = Window(window = self.slidingWindow).convert(X)
+        
         # initialize the output score
         pred_scores = np.zeros([X.shape[0], 1])
 
@@ -246,7 +261,12 @@ class KNN(BaseDetector):
             # record the current item
             pred_scores[i, :] = pred_score_i
 
-        return pred_scores.ravel()
+        pred_scores = pred_scores.ravel()
+        if pred_scores.shape[0] < n_samples:
+            padded_decision_scores_ = np.array([pred_scores[0]]*math.ceil((self.slidingWindow-1)/2) + 
+                        list(pred_scores) + [pred_scores[-1]]*((self.slidingWindow-1)//2))
+
+        return padded_decision_scores_
     
 
     def _get_dist_by_method(self, dist_arr):
