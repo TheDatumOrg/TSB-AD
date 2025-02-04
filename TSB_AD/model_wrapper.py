@@ -60,9 +60,8 @@ def run_Sub_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=
     score = clf.decision_scores_
     return score.ravel()
 
-def run_LOF(data, periodicity=1, n_neighbors=30, metric='minkowski', n_jobs=1):
+def run_LOF(data, slidingWindow=1, n_neighbors=30, metric='minkowski', n_jobs=1):
     from .models.LOF import LOF
-    slidingWindow = find_length_rank(data, rank=periodicity)
     clf = LOF(slidingWindow=slidingWindow, n_neighbors=n_neighbors, metric=metric, n_jobs=n_jobs)
     clf.fit(data)
     score = clf.decision_scores_
@@ -156,9 +155,8 @@ def run_Sub_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
     score = clf.decision_scores_
     return score.ravel()
 
-def run_HBOS(data, periodicity=1, n_bins=10, tol=0.5, n_jobs=1):
+def run_HBOS(data, slidingWindow=1, n_bins=10, tol=0.5, n_jobs=1):
     from .models.HBOS import HBOS
-    slidingWindow = find_length_rank(data, rank=periodicity)
     clf = HBOS(slidingWindow=slidingWindow, n_bins=n_bins, tol=tol)
     clf.fit(data)
     score = clf.decision_scores_
@@ -172,9 +170,8 @@ def run_Sub_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_
     score = clf.decision_function(data_test)
     return score.ravel()
 
-def run_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, periodicity=1, n_jobs=1):
+def run_OCSVM(data_train, data_test, kernel='rbf', nu=0.5, slidingWindow=1, n_jobs=1):
     from .models.OCSVM import OCSVM
-    slidingWindow = find_length_rank(data_test, rank=periodicity)
     clf = OCSVM(slidingWindow=slidingWindow, kernel=kernel, nu=nu)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
@@ -188,9 +185,8 @@ def run_Sub_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_j
     score = clf.decision_function(data_test)
     return score.ravel()
 
-def run_MCD(data_train, data_test, support_fraction=None, periodicity=1, n_jobs=1):
+def run_MCD(data_train, data_test, support_fraction=None, slidingWindow=1, n_jobs=1):
     from .models.MCD import MCD
-    slidingWindow = find_length_rank(data_test, rank=periodicity)
     clf = MCD(slidingWindow=slidingWindow, support_fraction=support_fraction)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
@@ -204,7 +200,7 @@ def run_Sub_KNN(data, n_neighbors=10, method='largest', periodicity=1, n_jobs=1)
     score = clf.decision_scores_
     return score.ravel()
 
-def run_KNN(data, slidingWindow=100, n_neighbors=10, method='largest', n_jobs=1):
+def run_KNN(data, slidingWindow=1, n_neighbors=10, method='largest', n_jobs=1):
     from .models.KNN import KNN
     clf = KNN(slidingWindow=slidingWindow, n_neighbors=n_neighbors, method=method, n_jobs=n_jobs)
     clf.fit(data)

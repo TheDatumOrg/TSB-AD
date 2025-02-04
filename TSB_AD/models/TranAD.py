@@ -85,12 +85,12 @@ class TransformerDecoderLayer(nn.Module):
         return tgt
 
 class TranADModel(nn.Module):
-    def __init__(self, feats):
+    def __init__(self, batch_size, feats, win_size):
         super(TranADModel, self).__init__()
         self.name = "TranAD"
-        self.batch = 128
+        self.batch = batch_size
         self.n_feats = feats
-        self.n_window = 10
+        self.n_window = win_size
         self.n = self.n_feats * self.n_window
         self.pos_encoder = PositionalEncoding(2 * feats, 0.1, self.n_window)
         encoder_layers = TransformerEncoderLayer(
@@ -148,7 +148,7 @@ class TranAD(BaseDetector):
         self.feats = feats
         self.validation_size = validation_size
 
-        self.model = TranADModel(feats=self.feats).to(self.device)
+        self.model = TranADModel(batch_size=self.batch_size, feats=self.feats, win_size=self.win_size).to(self.device)
         self.optimizer = torch.optim.AdamW(
             self.model.parameters(), lr=lr, weight_decay=1e-5
         )
