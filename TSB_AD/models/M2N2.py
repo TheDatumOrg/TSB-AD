@@ -585,14 +585,19 @@ class M2N2(BaseDetector):
         )
         
         anoscs = tester.online(test_loader, self.tau, normalization=self.normalization)
-        
-        self.__anomaly_score = anoscs
 
-        if self.__anomaly_score.shape[0] < len(data):
-            self.__anomaly_score = np.array([self.__anomaly_score[0]]*math.ceil((self.win_size-1)/2) + 
-                        list(self.__anomaly_score) + [self.__anomaly_score[-1]]*((self.win_size-1)//2))
+        # Custom stride length
+        scores_win = [anoscs[i] for i in range(anoscs.shape[0])]
+        self.decision_scores_ = np.zeros(len(data))
+        count = np.zeros(len(data))
+        for i, score in enumerate(scores_win):
+            start = i * self.stride
+            end = start + self.win_size
+            self.decision_scores_[start:end] += score
+            count[start:end] += 1
+        self.decision_scores_ = self.decision_scores_ / np.maximum(count, 1)
         
-        return anoscs
+        return self.decision_scores_
         
         
         

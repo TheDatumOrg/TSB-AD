@@ -270,5 +270,6 @@ Optimal_Uni_algo_HP_dict = {
     'Chronos': {'win_size': 100},
     'TimesFM': {'win_size': 96},
     'MOMENT_ZS': {'win_size': 64},
-    'MOMENT_FT': {'win_size': 64}
+    'MOMENT_FT': {'win_size': 64},
+    'M2N2': {}
 }

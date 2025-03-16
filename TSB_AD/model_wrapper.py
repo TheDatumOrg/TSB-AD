@@ -13,8 +13,12 @@ def run_Unsupervise_AD(model_name, data, **kwargs):
         function_to_call = globals()[function_name]
         results = function_to_call(data, **kwargs)
         return results
-    except:
+    except KeyError:
         error_message = f"Model function '{function_name}' is not defined."
+        print(error_message)
+        return error_message
+    except Exception as e:
+        error_message = f"An error occurred while running the model '{function_name}': {str(e)}"
         print(error_message)
         return error_message
 
@@ -25,8 +29,12 @@ def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
         function_to_call = globals()[function_name]
         results = function_to_call(data_train, data_test, **kwargs)
         return results
-    except:
+    except KeyError:
         error_message = f"Model function '{function_name}' is not defined."
+        print(error_message)
+        return error_message
+    except Exception as e:
+        error_message = f"An error occurred while running the model '{function_name}': {str(e)}"
         print(error_message)
         return error_message
 

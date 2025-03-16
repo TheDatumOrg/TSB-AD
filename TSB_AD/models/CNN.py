@@ -110,7 +110,7 @@ class CNN():
         self.lr = lr
         self.validation_size = validation_size
         
-        self.model = CNNModel(n_features=feats, num_channel=num_channel, device=self.device).to(self.device)
+        self.model = CNNModel(n_features=feats, num_channel=num_channel, predict_time_steps=self.pred_len, device=self.device).to(self.device)
         
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
         self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=5, gamma=0.75)
