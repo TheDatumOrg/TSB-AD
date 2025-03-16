@@ -238,6 +238,7 @@ We organize the detection algorithms in TSB-AD in the following three categories
 |TranAD|is a deep transformer network-based method, which leverages self-conditioning and adversarial training to amplify errors and gain training stability.|
 |TimesNet|is a general time series analysis model with applications in forecasting, classification, and anomaly detection. It features TimesBlock, which can discover the multi-periodicity adaptively and extract the complex temporal variations from transformed 2D tensors by a parameter-efficient inception block.|
 |FITS|is a lightweight model that operates on the principle that time series can be manipulated through interpolation in the complex frequency domain.|
+|M2N2|uses exponential moving average for trend estimation to detrend data and updates model with normal test instances based on predictions for unsupervised TSAD distribution shifts.
 
 #### (iii) Foundation Model-based Method
 
