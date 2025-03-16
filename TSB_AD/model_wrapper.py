@@ -5,7 +5,7 @@ from .utils.slidingWindows import find_length_rank
 Unsupervise_AD_Pool = ['FFT', 'SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
                         'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
 Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
-                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT']
+                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
     try:
@@ -372,6 +372,13 @@ def run_MOMENT_FT(data_train, data_test, win_size=256):
     clf = MOMENT(win_size=win_size, input_c=data_test.shape[1])
 
     # Finetune
+    clf.fit(data_train)
+    score = clf.decision_function(data_test)
+    return score.ravel()
+
+def run_M2N2(data_train, data_test, epochs=10, win_size=12, lr=1e-3, batch_size=128):
+    from .models.M2N2 import M2N2
+    clf = M2N2(win_size=win_size, num_channels=data_test.shape[1], lr=lr, batch_size=batch_size, epochs=epochs)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     return score.ravel()
