@@ -1,5 +1,5 @@
 <p align="center">
-<img width="300" src="assets/fig/readme_title.png"/>
+<img width="300" src="assets/fig/readme_title_2.png"/>
 </p>
 
 <h1 align="center">TSB-AD</h1>
