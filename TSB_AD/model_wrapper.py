@@ -384,9 +384,23 @@ def run_MOMENT_FT(data_train, data_test, win_size=256):
     score = clf.decision_function(data_test)
     return score.ravel()
 
-def run_M2N2(data_train, data_test, epochs=10, win_size=12, lr=1e-3, batch_size=128):
+def run_M2N2(
+        data_train, data_test, win_size=12, stride=12,
+        batch_size=64, epochs=100, latent_dim=16,
+        lr=1e-3, ttlr=1e-3, normalization='Detrend',
+        gamma=0.99, th=0.9, valid_size=0.2, infer_mode='online'
+    ):
     from .models.M2N2 import M2N2
-    clf = M2N2(win_size=win_size, num_channels=data_test.shape[1], lr=lr, batch_size=batch_size, epochs=epochs)
+    clf = M2N2(
+        win_size=win_size, stride=stride,
+        num_channels=data_test.shape[1],
+        batch_size=batch_size, epochs=epochs,
+        latent_dim=latent_dim,
+        lr=lr, ttlr=ttlr,
+        normalization=normalization,
+        gamma=gamma, th=th, valid_size=valid_size,
+        infer_mode=infer_mode
+    )
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     return score.ravel()
