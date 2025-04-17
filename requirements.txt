@@ -14,3 +14,10 @@ stumpy>=1.12.0
 networkx>=3.1
 transformers>=4.38.0
 torch==2.3.0
+# autogluon
+# momentfm
+# timesfm[torch]
+gluonts[torch]<=0.14.4
+plotly
+seaborn
+scikit_posthocs

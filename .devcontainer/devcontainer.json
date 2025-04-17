@@ -1,0 +1,65 @@
+// .devcontainer/devcontainer.json
+{
+    "name": "CUDA Python Dev Container",
+
+    // Use an official NVIDIA CUDA image.
+    // Find suitable tags here: https://hub.docker.com/r/nvidia/cuda/tags
+    // Choose '-devel' for compilers (nvcc) and headers.
+    // Choose '-cudnn' if you need cuDNN (common for deep learning).
+    // Match the Ubuntu version (e.g., 22.04) and CUDA version (e.g., 12.1.1)
+    // Example: CUDA 12.1.1, cuDNN 8, on Ubuntu 22.04
+    "image": "nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04",
+
+    // Enable access to the host GPU using the NVIDIA Container Toolkit.
+    // This adds "--gpus=all" to the docker run command.
+    "runArgs": [
+        "--gpus=all",
+        "--shm-size=1g" // Optional: Increase shared memory, often useful for GPU tasks
+    ],
+
+    // Add features for common tools like Python and Git.
+    "features": {
+        // Install Python using the official feature
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.11" // Specify your desired Python version
+        },
+        // Install Git
+        "ghcr.io/devcontainers/features/git:1": {}
+        // Add other features as needed (e.g., Docker-in-Docker, Conda)
+        // "ghcr.io/devcontainers/features/conda": {}
+    },
+
+    // Commands to run after the container is created.
+    // Use this to install project dependencies or other tools.
+    "postCreateCommand": "bash ./.devcontainer/post-create.sh",
+
+    // Configure VS Code settings and extensions inside the container.
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Example: Set default Python path if needed (often auto-detected)
+                // "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "terminal.integrated.defaultProfile.linux": "bash"
+                // Add any other specific settings
+            },
+            "extensions": [
+                "ms-python.python",             // Python language support
+                "ms-python.debugpy",            // Python debugger
+                "ms-vscode.cpptools",           // C/C++ tools (useful for CUDA kernels)
+                "nvidia.nsight-vscode-edition", // NVIDIA Nsight (CUDA debugger, profiler)
+                "njpwerner.autodocstring"       // Example: Useful Python extension
+                // Add other extensions your project uses
+            ]
+        }
+    }
+
+    // Optional: Mount your local SSH keys if needed for git cloning private repos
+    // "mounts": [
+    //  "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    // ],
+
+    // Run container commands as root (common for NVIDIA images, simplifies package installs)
+    // If your base image creates a non-root user like 'vscode', you might need
+    // to adjust permissions or use 'sudo' in postCreateCommand.
+    // "remoteUser": "root" // Or "vscode" if the image uses it
+}

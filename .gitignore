@@ -5,3 +5,5 @@ run_scripts
 Datasets/TSB-AD-Datasets
 TSB_AD/models/NormA.py
 TSB_AD/models/Series2Graph.py
+Datasets/TSB-AD-M
+Datasets/TSB-AD-U

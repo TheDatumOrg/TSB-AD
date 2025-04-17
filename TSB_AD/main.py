@@ -9,7 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 from .evaluation.metrics import get_metrics
 from .utils.slidingWindows import find_length_rank
 from .model_wrapper import *
-from .HP_list import Optimal_Uni_algo_HP_dict
+from .HP_list import Optimal_Multi_algo_HP_dict, Optimal_Uni_algo_HP_dict
 
 # seeding
 seed = 2024
@@ -29,10 +29,10 @@ if __name__ == '__main__':
 
     ## ArgumentParser
     parser = argparse.ArgumentParser(description='Running TSB-AD')
-    parser.add_argument('--filename', type=str, default='001_NAB_id_1_Facility_tr_1007_1st_2014.csv')
-    parser.add_argument('--data_direc', type=str, default='Datasets/TSB-AD-U/')
+    parser.add_argument('--filename', type=str, default='057_SMD_id_1_Facility_tr_4529_1st_4629.csv')
+    parser.add_argument('--data_direc', type=str, default='Datasets/TSB-AD-M/')
     parser.add_argument('--save', type=bool, default=False)
-    parser.add_argument('--AD_Name', type=str, default='IForest')
+    parser.add_argument('--AD_Name', type=str, default='PCA')
     args = parser.parse_args()
 
     df = pd.read_csv(args.data_direc + args.filename).dropna()
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     slidingWindow = find_length_rank(data, rank=1)
     train_index = args.filename.split('.')[0].split('_')[-3]
     data_train = data[:int(train_index), :]
-    Optimal_Det_HP = Optimal_Uni_algo_HP_dict[args.AD_Name]
+    Optimal_Det_HP = Optimal_Multi_algo_HP_dict[args.AD_Name]
 
     if args.AD_Name in Semisupervise_AD_Pool:
         output = run_Semisupervise_AD(args.AD_Name, data_train, data, **Optimal_Det_HP)
