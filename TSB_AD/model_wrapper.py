@@ -3,7 +3,7 @@ import math
 from .utils.slidingWindows import find_length_rank
 
 Unsupervise_AD_Pool = ['FFT', 'SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
-                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
+                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS', 'TTM']
 Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
                         'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2']
 
@@ -404,3 +404,43 @@ def run_M2N2(
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     return score.ravel()
+
+
+def run_TTM(data, context_length=512, prediction_length=96, model_path="ibm-granite/granite-timeseries-ttm-r2"):
+    from .models.TTM import TTM
+    from sklearn.preprocessing import MinMaxScaler
+    import numpy as np
+
+    try:
+        clf = TTM(
+            context_length=context_length,
+            prediction_length=prediction_length,
+            model_path=model_path
+        )
+
+        clf.fit(data)
+        score = clf.decision_function(data)
+
+        if not isinstance(score, np.ndarray):
+            raise ValueError(f"[run_TTM] Invalid score type: {type(score)}")
+
+            if score.ndim == 2 and score.shape[1] == 1:
+                score = score.ravel()
+
+            if score.ndim != 1:
+                raise ValueError(f"[run_TTM] Score must be 1D, got shape: {score.shape}")
+
+            if len(score) != len(data):
+                print(
+                    f"[run_TTM] Warning: Score length ({len(score)}) != data length ({len(data)}). You may need to pad or align.")
+
+        score = MinMaxScaler().fit_transform(score.reshape(-1, 1))
+        return score.ravel()
+
+    except Exception as e:
+        print(f"[run_TTM] Error occurred: {e}")
+        return np.array([-1])
+
+
+
+
