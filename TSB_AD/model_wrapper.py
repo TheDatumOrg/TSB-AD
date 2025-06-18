@@ -411,35 +411,30 @@ def run_TTM(data, context_length=512, prediction_length=96, model_path="ibm-gran
     from sklearn.preprocessing import MinMaxScaler
     import numpy as np
 
-    try:
-        clf = TTM(
-            context_length=context_length,
-            prediction_length=prediction_length,
-            model_path=model_path
-        )
+    clf = TTM(
+        context_length=context_length,
+        prediction_length=prediction_length,
+        model_path=model_path
+    )
 
-        clf.fit(data)
-        score = clf.decision_function(data)
+    clf.fit(data)
+    score = clf.decision_function(data)
 
-        if not isinstance(score, np.ndarray):
-            raise ValueError(f"[run_TTM] Invalid score type: {type(score)}")
+    if not isinstance(score, np.ndarray):
+        raise ValueError(f"[run_TTM] Invalid score type: {type(score)}")
 
-            if score.ndim == 2 and score.shape[1] == 1:
-                score = score.ravel()
+        if score.ndim == 2 and score.shape[1] == 1:
+            score = score.ravel()
 
-            if score.ndim != 1:
-                raise ValueError(f"[run_TTM] Score must be 1D, got shape: {score.shape}")
+        if score.ndim != 1:
+            raise ValueError(f"[run_TTM] Score must be 1D, got shape: {score.shape}")
 
-            if len(score) != len(data):
-                print(
-                    f"[run_TTM] Warning: Score length ({len(score)}) != data length ({len(data)}). You may need to pad or align.")
+        if len(score) != len(data):
+            print(
+                f"[run_TTM] Warning: Score length ({len(score)}) != data length ({len(data)}). You may need to pad or align.")
 
-        score = MinMaxScaler().fit_transform(score.reshape(-1, 1))
-        return score.ravel()
-
-    except Exception as e:
-        print(f"[run_TTM] Error occurred: {e}")
-        return np.array([-1])
+    score = MinMaxScaler().fit_transform(score.reshape(-1, 1))
+    return score.ravel()
 
 
 

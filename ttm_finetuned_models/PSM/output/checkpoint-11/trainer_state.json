@@ -1,0 +1,36 @@
+{
+  "best_metric": 0.6971727013587952,
+  "best_model_checkpoint": "ttm_finetuned_models/PSM/output/checkpoint-11",
+  "epoch": 1.0,
+  "eval_steps": 500,
+  "global_step": 11,
+  "is_hyper_param_search": false,
+  "is_local_process_zero": true,
+  "is_world_process_zero": true,
+  "log_history": [
+    {
+      "epoch": 1.0,
+      "grad_norm": 0.964717447757721,
+      "learning_rate": 5.061698303187559e-05,
+      "loss": 0.3036,
+      "step": 11
+    },
+    {
+      "epoch": 1.0,
+      "eval_loss": 0.6971727013587952,
+      "eval_runtime": 9.9554,
+      "eval_samples_per_second": 191.354,
+      "eval_steps_per_second": 3.013,
+      "step": 11
+    }
+  ],
+  "logging_steps": 500,
+  "max_steps": 550,
+  "num_input_tokens_seen": 0,
+  "num_train_epochs": 50,
+  "save_steps": 500,
+  "total_flos": 41993097216000.0,
+  "train_batch_size": 64,
+  "trial_name": null,
+  "trial_params": null
+}
