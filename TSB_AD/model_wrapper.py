@@ -406,35 +406,31 @@ def run_M2N2(
     return score.ravel()
 
 
-def run_TTM(data, context_length=512, prediction_length=96, model_path="ibm-granite/granite-timeseries-ttm-r2"):
+def run_TTM(
+    data,
+    context_length=512,
+    prediction_length=96,
+    model_path="ibm-granite/granite-timeseries-ttm-r2",
+    return_feature=False,
+    return_time_feature=False
+):
     from .models.TTM import TTM
-    from sklearn.preprocessing import MinMaxScaler
-    import numpy as np
 
     clf = TTM(
         context_length=context_length,
         prediction_length=prediction_length,
         model_path=model_path
     )
-
     clf.fit(data)
-    score = clf.decision_function(data)
+    results = [clf.decision_function(data)]
 
-    if not isinstance(score, np.ndarray):
-        raise ValueError(f"[run_TTM] Invalid score type: {type(score)}")
+    if return_feature:
+        results.append(clf.feature_importance())
 
-        if score.ndim == 2 and score.shape[1] == 1:
-            score = score.ravel()
+    if return_time_feature:
+        results.append(clf.time_feature())
 
-        if score.ndim != 1:
-            raise ValueError(f"[run_TTM] Score must be 1D, got shape: {score.shape}")
-
-        if len(score) != len(data):
-            print(
-                f"[run_TTM] Warning: Score length ({len(score)}) != data length ({len(data)}). You may need to pad or align.")
-
-    score = MinMaxScaler().fit_transform(score.reshape(-1, 1))
-    return score.ravel()
+    return tuple(results) if len(results) > 1 else results[0]
 
 
 
