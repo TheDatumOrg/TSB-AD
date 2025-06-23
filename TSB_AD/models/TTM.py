@@ -27,16 +27,16 @@ import math
 class TTM(BaseDetector):
     def __init__(self,
                  model_path="ibm-granite/granite-timeseries-ttm-r2",
-                 context_length=24, #512,
-                 prediction_length=6,#96,
-                 batch_size=1,#4
-                 num_epochs=1,#50
+                 context_length=512, #512,
+                 prediction_length=96,#96,
+                 batch_size=4,#4
+                 num_epochs=50,#50
                  learning_rate=0.001,
                  fewshot_percent=5,
                  freeze_backbone=False,
                  loss="mse",
                  quantile=0.5):
-        super().__init__(contamination=0.1)
+        #super().__init__(contamination=0.1)
         self.model_name = 'TTM'
         self.model_path = model_path
         self.context_length = context_length
@@ -53,9 +53,9 @@ class TTM(BaseDetector):
         self.column_specifiers = {}
         self.split_config = {}
 
-    def fit(self, data):
+    def zero_shot(self, data):
 
-        print("[TTM] Reconstructing DataFrame")
+        print("[Zero] Reconstructing DataFrame")
         num_features = data.shape[1]
         feature_names = [f"feature_{i}" for i in range(num_features)]
         df = pd.DataFrame(data, columns=feature_names)
@@ -76,7 +76,7 @@ class TTM(BaseDetector):
                 "test": [int(0.9 * num_rows), num_rows],
             }
 
-        print("[TTM] Initializing preprocessor")
+        print("[Zero] Initializing preprocessor")
         self.tsp = TimeSeriesPreprocessor(
             context_length=self.context_length,
             prediction_length=self.prediction_length,
@@ -86,7 +86,135 @@ class TTM(BaseDetector):
             column_specifiers=self.column_specifiers
         )
 
-        print("[TTM] Loading model")
+        print("[Zero] Loading model")
+        self.model = get_model(
+            self.model_path,
+            context_length=self.context_length,
+            prediction_length=self.prediction_length,
+            freq_prefix_tuning=False,
+            freq=None,
+            prefer_l1_loss=False,
+            prefer_longer_context=True,
+            #loss=self.loss,
+            #quantile=self.quantile,
+        )
+
+        print("[Zero] Creating datasets")
+        dset_train, dset_val, dset_test = get_datasets(
+            self.tsp,
+            df,
+            self.split_config,
+            use_frequency_token=self.model.config.resolution_prefix_tuning
+        )
+
+        print("[Zero] Training")
+        temp_dir = tempfile.mkdtemp()
+        training_args = TrainingArguments(
+            output_dir=temp_dir,
+            per_device_eval_batch_size=self.batch_size,
+            report_to="none",
+            seed=7,
+        )
+
+        zeroshot_trainer = Trainer(
+            model=self.model,
+            args=training_args,
+        )
+
+        print("+" * 20, f"Test MSE zero-shot", "+" * 20)
+        zeroshot_trainer.model.loss = "mse"
+        zeroshot_output = zeroshot_trainer.evaluate(dset_test)
+        print(zeroshot_output)
+        print("+" * 60)
+
+        print("[Zero] Predicting")
+        predictions = zeroshot_trainer.predict(dset_test)
+        preds = predictions.predictions[0]
+
+        print("[Zero] Extracting targets")
+        targets = torch.stack([sample["future_values"] for sample in dset_test])
+
+        preds = preds.numpy() if isinstance(preds, torch.Tensor) else preds
+        targets = targets.numpy() if isinstance(targets, torch.Tensor) else targets
+
+        scores = (targets.squeeze() - preds.squeeze()) ** 2
+        #scores_merge = np.mean(scores, axis=1)
+
+        print("[Zero] Calculating mean squared error")
+        per_timestamp_score = np.mean(scores, axis=(1, 2))  # shape: (N,)
+        per_feature_score = np.mean(scores, axis=1)  # shape: (N, num_features)
+
+        pad_start = self.context_length + self.prediction_length - 1
+
+        # timestamp scores
+        padded_timestamp_score = np.zeros(len(data))
+        if pad_start + len(per_timestamp_score) > len(data):
+            raise ValueError(
+                f"[Zero] Cannot pad timestamp scores: score={len(per_timestamp_score)}, pad_start={pad_start}, data_len={len(data)}"
+            )
+        padded_timestamp_score[:pad_start] = per_timestamp_score[0]
+        padded_timestamp_score[pad_start:pad_start + len(per_timestamp_score)] = per_timestamp_score
+
+        # feature scores
+        num_features = data.shape[1]
+        padded_feature_score = np.zeros((len(data), num_features))
+        if pad_start + len(per_feature_score) > len(data):
+            raise ValueError(
+                f"[Zero] Cannot pad feature scores: score={len(per_feature_score)}, pad_start={pad_start}, data_len={len(data)}"
+            )
+        padded_feature_score[:pad_start, :] = per_feature_score[0]
+        padded_feature_score[pad_start:pad_start + len(per_feature_score), :] = per_feature_score
+
+        # time-feature scores
+        padded_time_feature_score = np.zeros((len(data), scores.shape[1], scores.shape[2]))
+        if pad_start + len(scores) > len(data):
+            raise ValueError(
+                f"[Zero] Cannot pad time-feature scores: score={len(scores)}, pad_start={pad_start}, data_len={len(data)}"
+            )
+        padded_time_feature_score[:pad_start, :, :] = scores[0]  # or np.zeros, or scores.mean(0)
+        padded_time_feature_score[pad_start:pad_start + len(scores), :, :] = scores
+        self.time_feature_scores_ = padded_time_feature_score
+
+        print("[Zero] Padding complete")
+        self.decision_scores_ = padded_timestamp_score  # (len(data),)
+        self.feature_scores_ = padded_feature_score  # (len(data), num_features)
+        self.time_feature_scores_ = padded_time_feature_score
+
+
+    def fit(self, data):
+
+        print("[FT] Reconstructing DataFrame")
+        num_features = data.shape[1]
+        feature_names = [f"feature_{i}" for i in range(num_features)]
+        df = pd.DataFrame(data, columns=feature_names)
+
+        if not self.column_specifiers:
+            self.column_specifiers = {
+                "timestamp_column": None,
+                "id_columns": [],
+                "target_columns": feature_names,
+                "control_columns": [],
+            }
+
+        if not self.split_config:
+            num_rows = len(df)
+            self.split_config = {
+                "train": [0, int(0.8 * num_rows)],
+                "valid": [int(0.8 * num_rows), int(0.9 * num_rows)],
+                "test": [int(0.9 * num_rows), num_rows],
+            }
+
+        print("[FT] Initializing preprocessor")
+        self.tsp = TimeSeriesPreprocessor(
+            context_length=self.context_length,
+            prediction_length=self.prediction_length,
+            scaling=True,
+            encode_categorical=False,
+            scaler_type="standard",
+            column_specifiers=self.column_specifiers
+        )
+
+        print("[FT] Loading model")
         self.model = get_model(
             self.model_path,
             context_length=self.context_length,
@@ -100,7 +228,7 @@ class TTM(BaseDetector):
         )
 
         if self.freeze_backbone:
-            print("[TTM] Freezing backbone parameters")
+            print("[FT] Freezing backbone parameters")
             print("Number of params before freezing:", count_parameters(self.model))
 
             for param in self.model.backbone.parameters():
@@ -108,7 +236,7 @@ class TTM(BaseDetector):
 
             print("Number of params after freezing:", count_parameters(self.model))
 
-        print("[TTM] Creating datasets")
+        print("[FT] Creating datasets")
         dset_train, dset_val, dset_test = get_datasets(
             self.tsp,
             df,
@@ -125,11 +253,11 @@ class TTM(BaseDetector):
             dset_train,
             batch_size=self.batch_size,
             )
-            print("[TTM] OPTIMAL SUGGESTED LEARNING RATE =", self.learning_rate)
+            print("[FT] OPTIMAL SUGGESTED LEARNING RATE =", self.learning_rate)
         else:
-            print(f"[TTM] Using provided learning rate: {self.learning_rate}")
+            print(f"[FT] Using provided learning rate: {self.learning_rate}")
 
-        print("[TTM] Training")
+        print("[FT] Training")
         temp_dir = tempfile.mkdtemp()
         training_args = TrainingArguments(
             output_dir=temp_dir,
@@ -179,16 +307,16 @@ class TTM(BaseDetector):
         print(fewshot_output)
         print("+" * 60)
 
-        print("[TTM] Predicting")
+        print("[FT] Predicting")
         predictions = trainer.predict(dset_test)
         preds = predictions.predictions[0]
 
-        print("[TTM] Extracting targets")
+        print("[FT] Extracting targets")
         first_sample = dset_test[0]
         if isinstance(first_sample, dict):
             targets = torch.stack([sample["future_values"] for sample in dset_test])
         else:
-            raise ValueError("[TTM] Unexpected dataset sample structure")
+            raise ValueError("[FT] Unexpected dataset sample structure")
 
         preds = preds.numpy() if isinstance(preds, torch.Tensor) else preds
         targets = targets.numpy() if isinstance(targets, torch.Tensor) else targets
@@ -196,42 +324,42 @@ class TTM(BaseDetector):
         scores = (preds.squeeze() - targets.squeeze()) ** 2
         #scores_merge = np.mean(scores, axis=1)
 
-        print("[TTM] Calculating mean squared error")
+        print("[FT] Calculating mean squared error")
         per_timestamp_score = np.mean(scores, axis=(1, 2))  # shape: (N,)
         per_feature_score = np.mean(scores, axis=1)  # shape: (N, num_features)
 
         pad_start = self.context_length + self.prediction_length - 1
 
-        print("[TTM] timestamp scores")
+        # timestamp scores
         padded_timestamp_score = np.zeros(len(data))
         if pad_start + len(per_timestamp_score) > len(data):
             raise ValueError(
-                f"[TTM] Cannot pad timestamp scores: score={len(per_timestamp_score)}, pad_start={pad_start}, data_len={len(data)}"
+                f"[FT] Cannot pad timestamp scores: score={len(per_timestamp_score)}, pad_start={pad_start}, data_len={len(data)}"
             )
         padded_timestamp_score[:pad_start] = per_timestamp_score[0]
         padded_timestamp_score[pad_start:pad_start + len(per_timestamp_score)] = per_timestamp_score
 
-        print("[TTM] feature scores")
+        # feature scores
         num_features = data.shape[1]
         padded_feature_score = np.zeros((len(data), num_features))
         if pad_start + len(per_feature_score) > len(data):
             raise ValueError(
-                f"[TTM] Cannot pad feature scores: score={len(per_feature_score)}, pad_start={pad_start}, data_len={len(data)}"
+                f"[FT] Cannot pad feature scores: score={len(per_feature_score)}, pad_start={pad_start}, data_len={len(data)}"
             )
         padded_feature_score[:pad_start, :] = per_feature_score[0]
         padded_feature_score[pad_start:pad_start + len(per_feature_score), :] = per_feature_score
 
-        print("[TTM] time-feature scores")
+        # time-feature scores
         padded_time_feature_score = np.zeros((len(data), scores.shape[1], scores.shape[2]))
         if pad_start + len(scores) > len(data):
             raise ValueError(
-                f"[TTM] Cannot pad time-feature scores: score={len(scores)}, pad_start={pad_start}, data_len={len(data)}"
+                f"[FT] Cannot pad time-feature scores: score={len(scores)}, pad_start={pad_start}, data_len={len(data)}"
             )
         padded_time_feature_score[:pad_start, :, :] = scores[0]  # or np.zeros, or scores.mean(0)
         padded_time_feature_score[pad_start:pad_start + len(scores), :, :] = scores
         self.time_feature_scores_ = padded_time_feature_score
 
-        print("[TTM] Padding complete")
+        print("[FT] Padding complete")
         self.decision_scores_ = padded_timestamp_score  # (len(data),)
         self.feature_scores_ = padded_feature_score  # (len(data), num_features)
         self.time_feature_scores_ = padded_time_feature_score

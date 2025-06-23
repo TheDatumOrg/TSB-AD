@@ -3,9 +3,9 @@ import math
 from .utils.slidingWindows import find_length_rank
 
 Unsupervise_AD_Pool = ['FFT', 'SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
-                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS', 'TTM']
+                        'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS', 'TTM_ZS']
 Semisupervise_AD_Pool = ['Left_STAMPi', 'SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
-                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2']
+                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'M2N2', 'TTM_FT']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
     try:
@@ -406,7 +406,34 @@ def run_M2N2(
     return score.ravel()
 
 
-def run_TTM(
+def run_TTM_FT(
+    data_train,
+    data_test,
+    context_length=512,
+    prediction_length=96,
+    model_path="ibm-granite/granite-timeseries-ttm-r2",
+    return_feature=False,
+    return_time_feature=False
+):
+    from .models.TTM import TTM
+
+    clf = TTM(
+        context_length=context_length,
+        prediction_length=prediction_length,
+        model_path=model_path
+    )
+    clf.fit(data_train)
+    results = [clf.decision_function(data_test)]
+
+    if return_feature:
+        results.append(clf.feature_importance())
+
+    if return_time_feature:
+        results.append(clf.time_feature())
+
+    return tuple(results) if len(results) > 1 else results[0]
+
+def run_TTM_ZS(
     data,
     context_length=512,
     prediction_length=96,
@@ -421,7 +448,7 @@ def run_TTM(
         prediction_length=prediction_length,
         model_path=model_path
     )
-    clf.fit(data)
+    clf.zero_shot(data)
     results = [clf.decision_function(data)]
 
     if return_feature:
@@ -431,7 +458,5 @@ def run_TTM(
         results.append(clf.time_feature())
 
     return tuple(results) if len(results) > 1 else results[0]
-
-
 
 
