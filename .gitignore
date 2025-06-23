@@ -9,3 +9,4 @@ venv
 .idea
 *.DS_Store
 Datasets
+ttm_finetuned_models
