@@ -27,10 +27,10 @@ import math
 class TTM(BaseDetector):
     def __init__(self,
                  model_path="ibm-granite/granite-timeseries-ttm-r2",
-                 context_length=512, #512,
-                 prediction_length=96,#96,
-                 batch_size=4,#4
-                 num_epochs=50,#50
+                 context_length=24, #512,
+                 prediction_length=6,#96,
+                 batch_size=1,#4
+                 num_epochs=1,#50
                  learning_rate=0.001,
                  fewshot_percent=5,
                  freeze_backbone=False,
@@ -171,7 +171,7 @@ class TTM(BaseDetector):
             raise ValueError(
                 f"[Zero] Cannot pad time-feature scores: score={len(scores)}, pad_start={pad_start}, data_len={len(data)}"
             )
-        padded_time_feature_score[:pad_start, :, :] = scores[0]  # or np.zeros, or scores.mean(0)
+        padded_time_feature_score[:pad_start, :, :] = scores[0]
         padded_time_feature_score[pad_start:pad_start + len(scores), :, :] = scores
         self.time_feature_scores_ = padded_time_feature_score
 
@@ -227,15 +227,6 @@ class TTM(BaseDetector):
             quantile=self.quantile,
         )
 
-        if self.freeze_backbone:
-            print("[FT] Freezing backbone parameters")
-            print("Number of params before freezing:", count_parameters(self.model))
-
-            for param in self.model.backbone.parameters():
-                param.requires_grad = False
-
-            print("Number of params after freezing:", count_parameters(self.model))
-
         print("[FT] Creating datasets")
         dset_train, dset_val, dset_test = get_datasets(
             self.tsp,
@@ -245,7 +236,16 @@ class TTM(BaseDetector):
             fewshot_location="first",
             use_frequency_token=self.model.config.resolution_prefix_tuning
         )
-        self.test_size_ = len(dset_test)
+        #self.test_size_ = len(dset_test)
+
+        if self.freeze_backbone:
+            print("[FT] Freezing backbone parameters")
+            print("Number of params before freezing:", count_parameters(self.model))
+
+            for param in self.model.backbone.parameters():
+                param.requires_grad = False
+
+            print("Number of params after freezing:", count_parameters(self.model))
 
         if self.learning_rate is None:
             self.learning_rate, self.model = optimal_lr_finder(
@@ -312,16 +312,17 @@ class TTM(BaseDetector):
         preds = predictions.predictions[0]
 
         print("[FT] Extracting targets")
-        first_sample = dset_test[0]
-        if isinstance(first_sample, dict):
-            targets = torch.stack([sample["future_values"] for sample in dset_test])
-        else:
-            raise ValueError("[FT] Unexpected dataset sample structure")
+        targets = torch.stack([sample["future_values"] for sample in dset_test])
+        #first_sample = dset_test[0]
+        #if isinstance(first_sample, dict):
+        #    targets = torch.stack([sample["future_values"] for sample in dset_test])
+        #else:
+        #    raise ValueError("[FT] Unexpected dataset sample structure")
 
         preds = preds.numpy() if isinstance(preds, torch.Tensor) else preds
         targets = targets.numpy() if isinstance(targets, torch.Tensor) else targets
 
-        scores = (preds.squeeze() - targets.squeeze()) ** 2
+        scores = (targets.squeeze() - preds.squeeze()) ** 2
         #scores_merge = np.mean(scores, axis=1)
 
         print("[FT] Calculating mean squared error")
@@ -355,9 +356,14 @@ class TTM(BaseDetector):
             raise ValueError(
                 f"[FT] Cannot pad time-feature scores: score={len(scores)}, pad_start={pad_start}, data_len={len(data)}"
             )
-        padded_time_feature_score[:pad_start, :, :] = scores[0]  # or np.zeros, or scores.mean(0)
+        padded_time_feature_score[:pad_start, :, :] = scores[0]
         padded_time_feature_score[pad_start:pad_start + len(scores), :, :] = scores
         self.time_feature_scores_ = padded_time_feature_score
+
+        # After padding
+        print("[DEBUG] padded_timestamp_score.shape:", padded_timestamp_score.shape)
+        print("[DEBUG] padded_feature_score.shape:", padded_feature_score.shape)
+        print("[DEBUG] padded_time_feature_score.shape:", padded_time_feature_score.shape)
 
         print("[FT] Padding complete")
         self.decision_scores_ = padded_timestamp_score  # (len(data),)
