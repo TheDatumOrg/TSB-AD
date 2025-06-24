@@ -313,11 +313,6 @@ class TTM(BaseDetector):
 
         print("[FT] Extracting targets")
         targets = torch.stack([sample["future_values"] for sample in dset_test])
-        #first_sample = dset_test[0]
-        #if isinstance(first_sample, dict):
-        #    targets = torch.stack([sample["future_values"] for sample in dset_test])
-        #else:
-        #    raise ValueError("[FT] Unexpected dataset sample structure")
 
         preds = preds.numpy() if isinstance(preds, torch.Tensor) else preds
         targets = targets.numpy() if isinstance(targets, torch.Tensor) else targets
@@ -359,11 +354,6 @@ class TTM(BaseDetector):
         padded_time_feature_score[:pad_start, :, :] = scores[0]
         padded_time_feature_score[pad_start:pad_start + len(scores), :, :] = scores
         self.time_feature_scores_ = padded_time_feature_score
-
-        # After padding
-        print("[DEBUG] padded_timestamp_score.shape:", padded_timestamp_score.shape)
-        print("[DEBUG] padded_feature_score.shape:", padded_feature_score.shape)
-        print("[DEBUG] padded_time_feature_score.shape:", padded_time_feature_score.shape)
 
         print("[FT] Padding complete")
         self.decision_scores_ = padded_timestamp_score  # (len(data),)

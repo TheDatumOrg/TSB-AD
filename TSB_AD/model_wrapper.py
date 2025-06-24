@@ -412,6 +412,7 @@ def run_TTM_FT(
     context_length=512,
     prediction_length=96,
     model_path="ibm-granite/granite-timeseries-ttm-r2",
+    fewshot_percent=5,
     return_feature=False,
     return_time_feature=False
 ):
@@ -420,7 +421,8 @@ def run_TTM_FT(
     clf = TTM(
         context_length=context_length,
         prediction_length=prediction_length,
-        model_path=model_path
+        model_path=model_path,
+        fewshot_percent=fewshot_percent
     )
     clf.fit(data_train)
     results = [clf.decision_function(data_test)]
