@@ -84,7 +84,7 @@ if __name__ == '__main__':
         ### whether to save the evaluation result
         if args.save:
             try:
-                evaluation_result = get_metrics(output, label, metric='all', slidingWindow=slidingWindow)
+                evaluation_result = get_metrics(output, label, slidingWindow=slidingWindow)
                 print('evaluation_result: ', evaluation_result)
                 list_w = list(evaluation_result.values())
             except:
