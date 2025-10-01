@@ -233,7 +233,12 @@ class LOF(BaseDetector):
         n_samples, n_features = X.shape
         # Converting time series data into matrix format
         X = Window(window = self.slidingWindow).convert(X)
-
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
+                
         # Invert outlier scores. Outliers comes with higher outlier scores
         # noinspection PyProtectedMember
         try:

@@ -144,7 +144,11 @@ class MCD(BaseDetector):
 
         # Converting time series data into matrix format
         X = Window(window = self.slidingWindow).convert(X)
-        if self.normalize: X = zscore(X, axis=1, ddof=1)
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
 
         # Validate inputs X and y (optional)
         X = check_array(X)
@@ -198,8 +202,12 @@ class MCD(BaseDetector):
         if n_features == 1: 
             # Converting time series data into matrix format
             X = Window(window = self.slidingWindow).convert(X)
-        if self.normalize: X = zscore(X, axis=1, ddof=1)
-
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
+                
         X = check_array(X)
 
         # Computer mahalanobis distance of the samples

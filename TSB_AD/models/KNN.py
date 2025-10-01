@@ -189,7 +189,11 @@ class KNN(BaseDetector):
 
         # Converting time series data into matrix format
         X = Window(window = self.slidingWindow).convert(X)
-        if self.normalize: X = zscore(X, axis=1, ddof=1)
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
 
         # validate inputs X and y (optional)
         X = check_array(X)
@@ -245,7 +249,12 @@ class KNN(BaseDetector):
         n_samples = X.shape[0]
         X = check_array(X)
         X = Window(window = self.slidingWindow).convert(X)
-        
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
+
         # initialize the output score
         pred_scores = np.zeros([X.shape[0], 1])
 

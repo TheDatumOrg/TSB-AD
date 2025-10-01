@@ -17,6 +17,7 @@ from .feature import Window
 from .base import BaseDetector
 from ..utils.utility import check_parameter
 from ..utils.utility import standardizer    
+from ..utils.utility import zscore
 
 class PCA(BaseDetector):
     """Principal component analysis (PCA) can be used in detecting outliers.
@@ -187,7 +188,7 @@ class PCA(BaseDetector):
     def __init__(self, slidingWindow=100, sub = True, n_components=None, n_selected_components=None,
                  contamination=0.1, copy=True, whiten=False, svd_solver='auto',
                  tol=0.0, iterated_power='auto', random_state=0,
-                 weighted=True, standardization=True, zero_pruning=True):
+                 weighted=True, standardization=True, zero_pruning=True, normalize=True):
 
         super(PCA, self).__init__(contamination=contamination)
         self.slidingWindow = slidingWindow
@@ -203,6 +204,7 @@ class PCA(BaseDetector):
         self.weighted = weighted
         self.standardization = standardization
         self.zero_pruning = zero_pruning
+        self.normalize = normalize
 
     # noinspection PyIncorrectDocstring
     def fit(self, X, y=None):
@@ -225,7 +227,12 @@ class PCA(BaseDetector):
 
         # Converting time series data into matrix format
         X = Window(window = self.slidingWindow).convert(X)
-
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
+                
         # validate inputs X and y (optional)
         X = check_array(X)
         self._set_n_classes(y)
@@ -313,6 +320,11 @@ class PCA(BaseDetector):
                     
         # Converting time series data into matrix format
         X = Window(window = self.slidingWindow).convert(X)
+        if self.normalize: 
+            if n_features == 1:
+                X = zscore(X, axis=0, ddof=0)
+            else: 
+                X = zscore(X, axis=1, ddof=1)
 
         X = check_array(X)
         if self.standardization:

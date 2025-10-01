@@ -11,12 +11,13 @@
 <img alt="License" src="https://img.shields.io/github/license/TheDatumOrg/tsb-ad">
 </p>
 
-Main Recent Update:
-- [Nov. 20, 2024] [Project homepage](https://thedatumorg.github.io/TSB-AD/) is online and release TSB-AD-U/M dataset.
-- [Nov. 6, 2024] Pip-installable package released (pip install TSB-AD).
-- [Sep. 26, 2024] Paper accepted to NeurIPS 2024 D&B Track!
+🚀 **What’s New?**
+- [Nov. 20, 2024] [🌐 Project homepage](https://thedatumorg.github.io/TSB-AD/) is online and release TSB-AD-U/M dataset.
+- [Nov. 6, 2024] 📦 Easy installation via PyPI: `pip install TSB-AD`.
+- [Sep. 26, 2024] 🎉 Paper accepted to NeurIPS 2024 D&B Track!
 
-Related Repository:
+📚 **Related Repositories**
+- [TSB-AutoAD](https://github.com/TheDatumOrg/TSB-AutoAD): Automated Solutions for Time-Series Anomaly Detection.
 - [TSB-UAD](https://github.com/TheDatumOrg/TSB-UAD): An End-to-End Benchmark Suite for Univariate Time-Series Anomaly Detection.
 - [VUS](https://github.com/TheDatumOrg/VUS): A New Accuracy Evaluation Measure for Time-Series Anomaly Detection.
 
