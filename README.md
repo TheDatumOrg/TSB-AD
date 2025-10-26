@@ -12,6 +12,7 @@
 </p>
 
 🚀 **What’s New?**
+- [Oct. 26, 2025] [✨ Tutorial](https://github.com/TheDatumOrg/TSB-AD/tree/main/tutorials) featuring hands-on notebooks and useful resources.
 - [Nov. 20, 2024] [🌐 Project homepage](https://thedatumorg.github.io/TSB-AD/) is online and release TSB-AD-U/M dataset.
 - [Nov. 6, 2024] 📦 Easy installation via PyPI: `pip install TSB-AD`.
 - [Sep. 26, 2024] 🎉 Paper accepted to NeurIPS 2024 D&B Track!
