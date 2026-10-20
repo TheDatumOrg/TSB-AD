@@ -23,7 +23,7 @@ VUS-PR on the TSB-AD eval set (350 uni, 180 mv, 530 total, no failures):
 | `CHARM_kNN` | 0.678 | 0.539 | 0.631 |
 | `CHARM_ZS` | 0.606 | 0.459 | 0.556 |
 
-Per-series scores are in `benchmark_eval_results/CHARM_{uni,multi}_mergedTable_VUS-PR.csv`.
+Per-series scores are in `leaderboard_results/CHARM_{uni,multi}_mergedTable_VUS-PR.csv`.
 
 ## Run
 
