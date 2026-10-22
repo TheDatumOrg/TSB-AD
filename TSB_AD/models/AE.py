@@ -7,7 +7,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import torch, math
+import torch, math, copy
 from sklearn.utils import check_array
 from sklearn.utils.validation import check_is_fitted
 from torch import nn
@@ -282,8 +282,10 @@ class AutoEncoder(BaseDetector):
         self._set_n_classes(y)
 
         n_features = X_windowed.shape[1]
-        self.scaler = MinMaxScaler(feature_range=(0,1)).fit(X_windowed.T)
-        X_windowed = self.scaler.transform(X_windowed.T).T
+        # fit the scaler per column on the training data, so test data of any length
+        # is rescaled with the training range
+        self.scaler = MinMaxScaler(feature_range=(0,1)).fit(X_windowed)
+        X_windowed = self.scaler.transform(X_windowed)
 
         # conduct standardization if needed
         if self.preprocessing:
@@ -350,7 +352,8 @@ class AutoEncoder(BaseDetector):
             if np.mean(overall_loss) <= self.best_loss:
                 # print("epoch {ep} is the current best; loss={loss}".format(ep=epoch, loss=np.mean(overall_loss)))
                 self.best_loss = np.mean(overall_loss)
-                self.best_model_dict = self.model.state_dict()
+                # state_dict() returns references to the live parameters, so copy them
+                self.best_model_dict = copy.deepcopy(self.model.state_dict())
 
     def decision_function(self, X):
         """Predict raw anomaly score of X using the fitted detector.
@@ -379,7 +382,7 @@ class AutoEncoder(BaseDetector):
             X = Window(window = self.slidingWindow).convert(X)
 
         X = check_array(X)
-        X = self.scaler.transform(X.T).T
+        X = self.scaler.transform(X)
 
         # note the shuffle may be true but should be False
         if self.preprocessing:
